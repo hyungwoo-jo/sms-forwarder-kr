@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    
+    <exclude
+        domain="database"
+        path="sms_forwarder.db" />
+    
+    <exclude
+        domain="sharedpref"
+        path="forwarder_config.xml" />
+    <exclude
+        domain="sharedpref"
+        path="forwarder_msg.xml" />
+</full-backup-content>

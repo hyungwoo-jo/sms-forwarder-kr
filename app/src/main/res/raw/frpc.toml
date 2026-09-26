@@ -1,0 +1,19 @@
+serverAddr = "88.88.88.88"
+serverPort = 8888
+transport.dialServerTimeout = 60
+loginFailExit = false
+auth.method = "token"
+auth.token = "88888888"
+
+[[proxies]]
+name = "SmsForwarder-TCP-001"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 5000
+remotePort = 5000
+
+[[proxies]]
+name = "SmsForwarder-HTTP-001"
+type = "http"
+localPort = 5000
+customDomains = ["smsf.demo.com"]
