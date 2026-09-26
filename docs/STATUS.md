@@ -13,6 +13,7 @@
 | 새 저장소 debug/단위 테스트/lint | DONE | debug 빌드 성공, JVM 테스트 10개 성공, lint 오류 0개 |
 | 새 저장소 release/서명/리소스 검증 | DONE | arm64/universal APK, v1/v2 서명 및 LICENSE 확인, 최종 리소스 중국어 0개 |
 | GitHub 소스·설치 안내 인계 | DONE | main 푸시, dist 산출물 및 HANDOFF.md |
+| 저장소·APK 공개 | DONE | 공개 저장소 및 GitHub release v3.5.0.260926-kr-1581e5a |
 | 휴대폰·Galaxy Watch 검증 | DEVICE_PENDING | 연결 기기 없음 |
 | 선택 CI | NOT RUN | 로컬 서명·빌드 사용, 자동 배포 없음 |
 

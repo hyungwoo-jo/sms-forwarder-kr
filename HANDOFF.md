@@ -2,7 +2,7 @@
 
 ## 현재 작업 위치
 
-- 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr (비공개)
+- 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr (공개)
 - 폴더: /home/hyungwoo/codespace/sms-forwarder-kr
 - 브랜치: main
 - 기존 smsforwarder-ko 폴더/포크는 이전 기록이며 다음 변경을 거기서 시작하지 않는다.
@@ -29,4 +29,4 @@ DEVICE_PENDING: 사용자가 기기 연결 및 설치를 요청하면 다음을 
 
 기기 미연결 상태를 완료로 표시하지 않는다. 실제 업무 메시지·토큰을 테스트 로그에 남기지 않는다.
 검증과 설치 안내는 docs/VALIDATION.md 및 docs/README-install-ko.md에 있다.
-필요한 재빌드는 bash scripts/build-local.sh. 자동 CI·공개 release 발행은 현재 범위에 없다.
+필요한 재빌드는 bash scripts/build-local.sh. 자동 CI는 현재 범위에 없다. 사용자의 추가 요청에 따라 GitHub 공개 릴리스와 APK 다운로드를 제공한다.

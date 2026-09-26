@@ -3,6 +3,15 @@
 문자·통화·앱 알림을 사용자가 지정한 채널로 전달하는 한국어 전용 Android 앱입니다.
 규칙, 자동 작업, Telegram·Webhook·메일, 서버·클라이언트·FRP 기능을 유지합니다.
 
+## APK 다운로드
+
+- [arm64-v8a APK — 일반적인 최신 Android 휴대폰](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260926-kr-1581e5a/SmsKR_3.5.0.260926-kr-1581e5a_300056_arm64-v8a_release.apk)
+- [범용 APK — CPU 종류를 모를 때](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260926-kr-1581e5a/SmsKR_3.5.0.260926-kr-1581e5a_100056_universal_release.apk)
+- [릴리스·해시·설치 안내](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260926-kr-1581e5a)
+
+휴대폰에 설치합니다. 기존 개인판을 갱신할 때는 같은 ABI APK를 사용하십시오.
+실제 휴대폰·워치 확인은 아직 남아 있으며 워치를 사용하지 않으면 워치 항목은 해당되지 않습니다.
+
 ## 빌드
 
 JDK 11, Android SDK 33, Build Tools 33.0.1을 사용합니다.
