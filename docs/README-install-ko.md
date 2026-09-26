@@ -20,8 +20,12 @@ bash scripts/build-local.sh
 
 개인 키는 작업공간의 `.smsforwarder-local/signing/`, 서명 설정은 저장소의 gitignore 된 `signing.properties`에 있습니다. 이 파일들은 GitHub에 올리지 마십시오. 키와 암호를 별도로 안전하게 백업해야 기존 설치를 갱신할 수 있습니다. 키를 잃으면 기존 설치에 동일한 앱 ID로 업데이트할 수 없습니다.
 
-ABI별 versionCode는 원본의 `ABI 코드 × 100000 + 기본 코드` 방식을 유지합니다. universal은 100056, arm64-v8a는 300056 계열입니다. arm64에서 universal로 바꾸면 versionCode가 낮아질 수 있어 설치가 거절될 수 있습니다. 향후 갱신 시 기본 versionCode를 증가시키십시오.
+ABI별 versionCode는 원본의 `ABI 코드 × 100000 + 기본 코드` 방식을 유지합니다. universal은 100057, arm64-v8a는 300057 계열입니다. arm64에서 universal로 바꾸면 versionCode가 낮아질 수 있어 설치가 거절될 수 있습니다. 향후 갱신 시 기본 versionCode를 증가시키십시오.
 
 ## 확인 범위
 
 서버에서 빌드·서명·자동 테스트를 확인했습니다. 휴대폰과 Galaxy Watch의 실제 알림 전달, 재부팅·절전 동작은 기기 연결 후 확인해야 합니다. 검증 결과는 `docs/VALIDATION.md`에 기록합니다. 날짜 기반 버전과 서명 때문에 APK의 바이트 단위 재현성을 보장하지 않습니다.
+
+## 보안 패치 사용 안내
+
+문자 및 앱 알림만 지원합니다. 외부 Webhook은 HTTPS 최종 URL을 입력하세요. 자동 리다이렉트를 따르지 않으며 인증서 검증을 끄는 옵션은 없습니다. 재부팅 후 처음 잠금을 풀어야 앱이 동작합니다. [보안 패치 설명](SECURITY-PATCH.md)을 확인하세요.

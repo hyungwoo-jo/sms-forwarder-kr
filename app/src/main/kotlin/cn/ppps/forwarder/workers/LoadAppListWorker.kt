@@ -38,7 +38,6 @@ class LoadAppListWorker(context: Context, params: WorkerParameters) : CoroutineW
             App.SystemAppList.sortBy { appInfo -> appInfo.name }
 
             LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).post("finish")
-            App.LoadingAppList = false
             Log.d(TAG, "LoadAppListWorker finish")
 
             return@withContext Result.success()
@@ -46,6 +45,8 @@ class LoadAppListWorker(context: Context, params: WorkerParameters) : CoroutineW
             e.printStackTrace()
             Log.e(TAG, "LoadAppListWorker error: ${e.message}")
             return@withContext Result.failure()
+        } finally {
+            App.LoadingAppList = false
         }
     }
 

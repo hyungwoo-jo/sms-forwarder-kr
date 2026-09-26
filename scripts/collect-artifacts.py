@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import zipfile
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,6 +39,14 @@ for element in metadata["elements"]:
         raise SystemExit("Chinese text found in packaged Android resource table")
     if "application-debuggable" in badging:
         raise SystemExit("Release APK is debuggable")
+    android = "{http://schemas.android.com/apk/res/android}"
+    tools = "{http://schemas.android.com/tools}"
+    source_manifest = ET.parse(ROOT / "app/src/main/AndroidManifest.xml").getroot()
+    allowed_permissions = {e.get(android + "name") for e in source_manifest.findall("uses-permission") if e.get(tools + "node") != "remove"}
+    allowed_permissions.add("com.hwserve.smsforwarder.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION")
+    actual_permissions = set(re.findall(r"uses-permission: name='([^']+)'", badging))
+    if actual_permissions - allowed_permissions:
+        raise SystemExit("Unexpected merged APK permissions: " + str(sorted(actual_permissions - allowed_permissions)))
     package = re.search(r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging)
     if not package or package[1] != "com.hwserve.smsforwarder":
         raise SystemExit("Unexpected release application ID")
@@ -51,9 +60,8 @@ for element in metadata["elements"]:
         for name in names:
             if re.fullmatch(r"classes\d*\.dex", name) and b"com/umeng/" in archive.read(name):
                 raise SystemExit("Umeng descriptor found in APK DEX")
-        expected_abis = ["arm64-v8a"] if abi == "arm64-v8a" else ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"]
-        if any(f"lib/{a}/libgojni.so" not in names for a in expected_abis):
-            raise SystemExit("Bundled FRPC native library missing")
+        if any(name.endswith("/libgojni.so") for name in names):
+            raise SystemExit("Removed FRP native library returned")
     digest = hashlib.sha256(apk.read_bytes()).hexdigest()
     shutil.copy2(apk, DIST / apk.name)
     (DIST / f"{abi}-apksigner.txt").write_text(cert + "\n")

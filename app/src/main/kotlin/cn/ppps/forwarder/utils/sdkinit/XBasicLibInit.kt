@@ -63,7 +63,10 @@ class XBasicLibInit private constructor() {
             XHttpSDK.init(application)
             // Only the app's redacted interceptor may emit HTTP diagnostics.
             //设置网络请求的全局基础地址
-            XHttpSDK.setBaseUrl("https://gitee.com/")
+            XHttpSDK.setBaseUrl("https://localhost.invalid/")
+            XHttpSDK.addInterceptor(cn.ppps.forwarder.utils.interceptor.SecureTransportInterceptor())
+            XHttp.getInstance().addNetworkInterceptor(cn.ppps.forwarder.utils.interceptor.SecureTransportInterceptor())
+            cn.ppps.forwarder.utils.interceptor.SecureTransportInterceptor.configure(XHttp.getOkHttpClientBuilder())
             //设置自定义的日志打印拦截器
             //XHttpSDK.debug(LoggingInterceptor())
             //设置动态参数添加拦截器

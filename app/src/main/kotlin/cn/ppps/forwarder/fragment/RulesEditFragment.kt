@@ -491,7 +491,8 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         if (ruleType != "app") return
 
         //未开启异步获取已安装App信息开关时，规则编辑不显示已安装APP下拉框
-        if (!SettingUtils.enableLoadUserAppList && !SettingUtils.enableLoadSystemAppList) return
+        // Rule selection must work independently of startup preloading preferences.
+        val includeUserApps = SettingUtils.enableLoadUserAppList || !SettingUtils.enableLoadSystemAppList
 
         if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
             XToastUtils.info(getString(R.string.loading_app_list))
@@ -501,7 +502,7 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         }
 
         appListSpinnerList.clear()
-        if (SettingUtils.enableLoadUserAppList) {
+        if (includeUserApps) {
             for (appInfo in App.UserAppList) {
                 if (TextUtils.isEmpty(appInfo.packageName)) continue
                 appListSpinnerList.add(AppListAdapterItem(appInfo.name, appInfo.icon, appInfo.packageName))
@@ -522,7 +523,8 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         binding!!.spApp.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val appInfo = appListSpinnerAdapter.getItemSource(position) as AppListAdapterItem
-                CommonUtils.insertOrReplaceText2Cursor(binding!!.etValue, appInfo.packageName.toString())
+                binding!!.etValue.setText(appInfo.packageName)
+                binding!!.etValue.setSelection(binding!!.etValue.text?.length ?: 0)
             } catch (e: Exception) {
                 XToastUtils.error(e.message.toString())
             }

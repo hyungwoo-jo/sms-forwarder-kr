@@ -3,6 +3,7 @@ package cn.ppps.forwarder.utils
 import android.content.Context
 import android.os.Build
 import cn.ppps.forwarder.App
+import cn.ppps.forwarder.BuildConfig
 import cn.ppps.forwarder.utils.interceptor.SensitiveLogRedactor
 import java.io.File
 import java.io.FileWriter
@@ -42,6 +43,7 @@ object Log {
     }
 
     fun logToFile(level: String, tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         if (Build.DEVICE == null) return
         
         if (!::appContext.isInitialized) {
@@ -70,78 +72,92 @@ object Log {
     }
 
     fun v(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.v(tag, SensitiveLogRedactor.redact(message))
         logToFile("V", tag, message)
     }
 
     fun v(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.v(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("V", tag, logMessage)
     }
 
     fun d(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.d(tag, SensitiveLogRedactor.redact(message))
         logToFile("D", tag, message)
     }
 
     fun d(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.d(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("D", tag, logMessage)
     }
 
     fun i(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.d(tag, SensitiveLogRedactor.redact(message))
         logToFile("I", tag, message)
     }
 
     fun i(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.d(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("I", tag, logMessage)
     }
 
     fun w(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.w(tag, SensitiveLogRedactor.redact(message))
         logToFile("W", tag, message)
     }
 
     fun w(tag: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = getStackTraceString(throwable)
         AndroidLog.w(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("W", tag, logMessage)
     }
 
     fun w(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.w(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("W", tag, logMessage)
     }
 
     fun e(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.e(tag, SensitiveLogRedactor.redact(message))
         logToFile("E", tag, message)
     }
 
     fun e(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.e(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("E", tag, logMessage)
     }
 
     fun wtf(tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.wtf(tag, SensitiveLogRedactor.redact(message))
         logToFile("WTF", tag, message)
     }
 
     fun wtf(tag: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = getStackTraceString(throwable)
         AndroidLog.wtf(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("WTF", tag, logMessage)
     }
 
     fun wtf(tag: String, message: String, throwable: Throwable) {
+        if (!BuildConfig.DEBUG) return
         val logMessage = "${message}\n${getStackTraceString(throwable)}"
         AndroidLog.wtf(tag, SensitiveLogRedactor.redact(logMessage))
         logToFile("WTF", tag, logMessage)
@@ -156,6 +172,7 @@ object Log {
     }
 
     fun println(priority: Int, tag: String, message: String) {
+        if (!BuildConfig.DEBUG) return
         AndroidLog.println(priority, tag, SensitiveLogRedactor.redact(message))
         logToFile("P", tag, message)
     }

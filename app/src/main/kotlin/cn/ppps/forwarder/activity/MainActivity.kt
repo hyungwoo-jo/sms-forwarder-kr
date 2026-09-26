@@ -197,21 +197,8 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         mLLMenu = mSlidingRootNav.layout.findViewById(R.id.ll_menu)
         ViewUtils.setVisibility(mLLMenu, false)
         mAdapter = DrawerAdapter(
-            mutableListOf(
-                createItemFor(POS_LOG).setChecked(true),
-                createItemFor(POS_RULE),
-                createItemFor(POS_SENDER),
-                createItemFor(POS_SETTING),
-                SpaceItem(15),
-                createItemFor(POS_TASK),
-                createItemFor(POS_SERVER),
-                createItemFor(POS_CLIENT),
-                createItemFor(POS_FRPC),
-                createItemFor(POS_APPS),
-                SpaceItem(15),
-                createItemFor(POS_HELP),
-                createItemFor(POS_ABOUT),
-            )
+            listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_APPS, POS_HELP, POS_ABOUT)
+                .map { createItemFor(it) }
         )
         mAdapter.setListener(this)
         val list: RecyclerView = findViewById(R.id.list)
@@ -233,9 +220,10 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
 
     override fun onItemSelected(position: Int) {
         needToAppListFragment = false
-        when (position) {
+        val menuPosition = listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_APPS, POS_HELP, POS_ABOUT).getOrNull(position) ?: return
+        when (menuPosition) {
             POS_LOG, POS_RULE, POS_SENDER, POS_SETTING -> {
-                val tab = mTabLayout.getTabAt(position)
+                val tab = mTabLayout.getTabAt(menuPosition)
                 tab?.select()
                 mSlidingRootNav.closeMenu()
             }
@@ -252,33 +240,13 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
             }
 
             POS_APPS -> {
-                //检查读取应用列表权限是否获取
-                XXPermissions.with(this)
-                    .permission(PermissionLists.getGetInstalledAppsPermission())
-                    .request(object : OnPermissionCallback {
-                        override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
-                            val allGranted = deniedList.isEmpty()
-                            if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
-                                val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(getTopActivity(), deniedList)
-                                if (doNotAskAgain) {
-                                    XXPermissions.startPermissionActivity(getContext(), deniedList)
-                                }
-                                // 处理权限请求失败的逻辑
-                                XToastUtils.error(R.string.tips_get_installed_apps)
-                                return
-                            }
-                            // 处理权限请求成功的逻辑
-                            if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
-                                XToastUtils.info(getString(R.string.loading_app_list))
-                                val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
-                                WorkManager.getInstance(getContext()).enqueue(request)
-                                needToAppListFragment = true
-                                return
-                            }
-                            openNewPage(AppListFragment::class.java)
-                        }
-                    })
+                if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
+                    needToAppListFragment = true
+                    val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
+                    WorkManager.getInstance(this).enqueue(request)
+                } else {
+                    openNewPage(AppListFragment::class.java)
+                }
             }
 
             POS_HELP -> AgentWebActivity.goWeb(this, getString(R.string.url_help))

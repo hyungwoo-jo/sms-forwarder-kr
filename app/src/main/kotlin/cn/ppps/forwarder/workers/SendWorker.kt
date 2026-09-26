@@ -53,7 +53,7 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                 val simSlot = "SIM" + (msgInfo.simSlot + 1)
 
                 //自动任务处理逻辑
-                autoTaskProcess(msgInfo, msgInfoJson, simSlot)
+                // Legacy device-control automation is intentionally not run here.
 
                 // 免打扰(禁用转发)时间段
                 var isSilentPeriod = false

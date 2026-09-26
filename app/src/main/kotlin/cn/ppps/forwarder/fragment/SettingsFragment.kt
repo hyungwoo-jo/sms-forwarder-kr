@@ -120,15 +120,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 GuideTipsDialog.showTipsForce(requireContext())
             }
         })
-        titleBar!!.addAction(object : TitleBar.ImageAction(R.drawable.ic_restore) {
-            @SingleClick
-            override fun performAction(view: View) {
-                PageOption.to(CloneFragment::class.java)
-                    .putInt(KEY_DEFAULT_SELECTION, 1) //默认离线模式
-                    .setNewActivity(true)
-                    .open(this@SettingsFragment)
-            }
-        })
         return titleBar
     }
 
@@ -306,41 +297,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 val simInfo: SimInfo? = App.SimInfoList[1]
                 binding!!.etSubidSim2.setText(simInfo?.mSubscriptionId.toString())
                 binding!!.etExtraSim2.setText(simInfo?.mCarrierName.toString() + "_" + simInfo?.mNumber.toString())
-                return
-            }
-
-            R.id.btn_export_log -> {
-                XXPermissions.with(this)
-                    // 申请储存权限
-                    .permission(PermissionLists.getManageExternalStoragePermission())
-                    .request(object : OnPermissionCallback {
-                        override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
-                            val allGranted = deniedList.isEmpty()
-                            if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
-                                val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
-                                if (doNotAskAgain) {
-                                    XToastUtils.error(R.string.toast_denied_never)
-                                    XXPermissions.startPermissionActivity(requireContext(), deniedList)
-                                }
-                                // 处理权限请求失败的逻辑
-                                XToastUtils.error(R.string.toast_denied)
-                                return
-                            }
-                            try {
-                                val srcDirPath = App.context.cacheDir.absolutePath + "/logs"
-                                val destDirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path + "/SmsForwarder"
-                                if (FileUtils.copyDir(srcDirPath, destDirPath, null)) {
-                                    XToastUtils.success(getString(R.string.log_export_success) + destDirPath)
-                                } else {
-                                    XToastUtils.error(getString(R.string.log_export_failed))
-                                }
-                            } catch (e: Exception) {
-                                XToastUtils.error(getString(R.string.log_export_failed) + e.message)
-                                e.printStackTrace()
-                            }
-                        }
-                    })
                 return
             }
 

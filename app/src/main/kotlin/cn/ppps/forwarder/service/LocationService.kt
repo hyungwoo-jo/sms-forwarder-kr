@@ -107,10 +107,7 @@ class LocationService : Service() {
                         )
 
                         //根据坐标经纬度获取位置地址信息（WGS-84坐标系）
-                        val list = App.Geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                        if (list?.isNotEmpty() == true) {
-                            locationInfoNew.address = list[0].getAddressLine(0)
-                        }
+                        locationInfoNew.address = ""
 
                         Log.d(TAG, "locationInfoNew = $locationInfoNew")
                         HttpServerUtils.apiLocationCache = locationInfoNew

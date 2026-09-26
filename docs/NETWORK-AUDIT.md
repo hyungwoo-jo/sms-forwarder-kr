@@ -1,3 +1,9 @@
+# 최신 보안 패치 통신 정책
+
+최신 배포판은 [SECURITY-PATCH.md](SECURITY-PATCH.md)를 기준으로 합니다. 자동 ipify·전화번호 지역 조회·Geocoder 역지오코딩을 제거했습니다. 원격 제어와 FRP는 비활성화했고 네이티브 libgojni.so를 APK에서 제외합니다. HTTP 기반 전송은 HTTPS 및 인증서 검증을 사용하고 자동 리다이렉트를 따르지 않습니다. 문자·이메일 전송은 해당 프로토콜 정책이 별도로 적용됩니다. 전체 의존성 전수 감사나 실제 기기 트래픽 검증은 수행하지 않았습니다.
+
+## 과거 기록 (초기 APK 전용)
+
 # Network audit
 
 This document records the upstream baseline and the Stage C result. It

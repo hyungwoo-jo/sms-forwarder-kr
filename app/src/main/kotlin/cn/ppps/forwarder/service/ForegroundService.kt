@@ -275,15 +275,7 @@ class ForegroundService : Service() {
                 CommonUtils.toggleNotificationListenerService(this)
             }
 
-            //启动定时任务
-            GlobalScope.async(Dispatchers.IO) {
-                val taskList = Core.task.getByType(TASK_CONDITION_CRON)
-                taskList.forEach { task ->
-                    Log.d(TAG, "task = $task")
-                    CronJobScheduler.cancelTask(task.id)
-                    CronJobScheduler.scheduleTask(task)
-                }
-            }
+            // Automated device tasks are disabled in this edition.
 
             //异步获取所有已安装 App 信息
             if (SettingUtils.enableLoadAppList) {

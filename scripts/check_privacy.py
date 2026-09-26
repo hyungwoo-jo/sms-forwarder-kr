@@ -9,7 +9,7 @@ BASE = "a3d23026f0058420869163c1d5dfb463ce52fc15"
 errors = []
 for path in (ROOT / "app/src/main/kotlin").rglob("*.kt"):
     source = path.read_text(encoding="utf-8")
-    for forbidden in (".ignoreHttpsCert(", "com.umeng", "UMengInit", "XUpdateInit"):
+    for forbidden in (".ignoreHttpsCert(", "com.umeng", "UMengInit", "XUpdateInit", "api.ipify.org", "api6.ipify.org", "getFromLocation("):
         if forbidden in source:
             errors.append(f"{path.relative_to(ROOT)}: {forbidden}")
 expected_tags = json.loads((ROOT / "docs/canonical-tags.json").read_text())
@@ -26,8 +26,8 @@ settings = (ROOT / "app/src/main/kotlin/cn/ppps/forwarder/utils/SettingUtils.kt"
 http_init = (ROOT / "app/src/main/kotlin/cn/ppps/forwarder/utils/sdkinit/XBasicLibInit.kt").read_text()
 if "XHttpSDK.debug()" in http_init or ".debug(false)" not in http_init:
     errors.append("Unredacted XHttp diagnostics were enabled")
-if "SharedPreference(SP_ENABLE_PHONE_AREA_LOOKUP, false)" not in settings:
-    errors.append("Phone-area lookup default is no longer OFF")
+if "var enablePhoneAreaLookup: Boolean" not in settings or "lookup.360.cn" in (ROOT / "app/src/main/kotlin/cn/ppps/forwarder/utils/PhoneUtils.kt").read_text():
+    errors.append("Phone-area lookup removal regressed")
 manifest = (ROOT / "app/src/main/AndroidManifest.xml").read_text()
 if "UpdateTipDialog" in manifest or "umeng" in manifest.lower():
     errors.append("Removed SDK/update manifest entry returned")

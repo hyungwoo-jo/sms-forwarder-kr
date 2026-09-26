@@ -36,12 +36,11 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
     override suspend fun doWork(): Result {
         try {
-            //获取公网IP地址
-            val ipv4 = getPublicIP(false)
-            TaskUtils.ipv4 = if (ipv4Pattern.matches(ipv4)) ipv4 else ""
-            val ipv6 = getPublicIP(true)
-            TaskUtils.ipv6 = if (ipv6Pattern.matches(ipv6)) ipv6 else ""
-            Log.d(TAG, "ipv4 = $ipv4, ipv6 = $ipv6")
+            // Public-IP discovery through third parties was removed.
+            TaskUtils.ipv4 = ""
+            TaskUtils.ipv6 = ""
+            val ipv4 = ""
+            val ipv6 = ""
             //获取所有IP地址
             val ipList = CommonUtils.getIPAddresses().filter { !isLocalAddress(it) }
             TaskUtils.ipList = if (ipList.isNotEmpty()) ipList.joinToString("\n") else ""
@@ -151,22 +150,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         } catch (e: Exception) {
             Log.e(TAG, "Error running worker: ${e.message}", e)
             return Result.failure()
-        }
-    }
-
-    //获取公网IP地址
-    private fun getPublicIP(ipv6: Boolean = false): String {
-        if (TaskUtils.networkState == 0) return ""
-
-        return try {
-            val url = if (ipv6) URL("https://api6.ipify.org/") else URL("https://api.ipify.org/")
-            val urlConnection = url.openConnection() as HttpURLConnection
-            urlConnection.requestMethod = "GET"
-            val inputStream = urlConnection.inputStream
-            inputStream.bufferedReader().use { it.readText() }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error running worker: ${e.message}", e)
-            ""
         }
     }
 

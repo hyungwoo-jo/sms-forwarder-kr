@@ -14,7 +14,9 @@ class SettingUtils private constructor() {
         var enableSms: Boolean by SharedPreference(SP_ENABLE_SMS, false)
 
         //是否转发通话
-        var enablePhone: Boolean by SharedPreference(SP_ENABLE_PHONE, false)
+        var enablePhone: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
 
         //是否转发通话——来电挂机
         var enableCallType1: Boolean by SharedPreference(SP_ENABLE_CALL_TYPE_1, false)
@@ -38,7 +40,9 @@ class SettingUtils private constructor() {
         var enableAppNotify: Boolean by SharedPreference(SP_ENABLE_APP_NOTIFY, false)
 
         //是否接受短信指令
-        var enableSmsCommand: Boolean by SharedPreference(SP_ENABLE_SMS_COMMAND, false)
+        var enableSmsCommand: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
         var smsCommandSafePhone: String by SharedPreference(SP_SMS_COMMAND_SAFE_PHONE, "")
 
         //是否靠近听筒关屏
@@ -57,10 +61,10 @@ class SettingUtils private constructor() {
         var enableNotUserPresent: Boolean by SharedPreference(SP_ENABLE_NOT_USER_PRESENT, false)
 
         //是否加载应用列表
-        var enableLoadAppList: Boolean by SharedPreference(ENABLE_LOAD_APP_LIST, false)
+        var enableLoadAppList: Boolean by SharedPreference(ENABLE_LOAD_APP_LIST, true)
 
         //是否加载应用列表——用户应用
-        var enableLoadUserAppList: Boolean by SharedPreference(ENABLE_LOAD_USER_APP_LIST, false)
+        var enableLoadUserAppList: Boolean by SharedPreference(ENABLE_LOAD_USER_APP_LIST, true)
 
         //是否加载应用列表——系统应用
         var enableLoadSystemAppList: Boolean by SharedPreference(ENABLE_LOAD_SYSTEM_APP_LIST, false)
@@ -84,7 +88,9 @@ class SettingUtils private constructor() {
         var enableCactus: Boolean by SharedPreference(SP_ENABLE_CACTUS, false)
 
         // Phone-number region lookup contacts a third-party service and is off by default.
-        var enablePhoneAreaLookup: Boolean by SharedPreference(SP_ENABLE_PHONE_AREA_LOOKUP, false)
+        var enablePhoneAreaLookup: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
 
         //是否播放静音音乐
         var enablePlaySilenceMusic: Boolean by SharedPreference(SP_ENABLE_PLAY_SILENCE_MUSIC, false)
@@ -129,7 +135,9 @@ class SettingUtils private constructor() {
         var smsTemplate: String by SharedPreference(SP_SMS_TEMPLATE, "")
 
         //是否纯客户端模式
-        var enablePureClientMode: Boolean by SharedPreference(SP_PURE_CLIENT_MODE, false)
+        var enablePureClientMode: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
 
         //是否纯任务模式
         var enablePureTaskMode: Boolean by SharedPreference(SP_PURE_TASK_MODE, false)
@@ -138,7 +146,9 @@ class SettingUtils private constructor() {
         var enableDebugMode: Boolean by SharedPreference(SP_DEBUG_MODE, false)
 
         //是否启用定位功能
-        var enableLocation: Boolean by SharedPreference(SP_LOCATION, false)
+        var enableLocation: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
 
         //设置位置精度：高精度
         var locationAccuracy: Int by SharedPreference(SP_LOCATION_ACCURACY, Criteria.ACCURACY_FINE)
@@ -156,7 +166,9 @@ class SettingUtils private constructor() {
         //var isFlowSystemLanguage: Boolean by SharedPreference(SP_IS_FLOW_SYSTEM_LANGUAGE, false)
 
         //是否启用发现蓝牙设备服务
-        var enableBluetooth: Boolean by SharedPreference(SP_BLUETOOTH, false)
+        var enableBluetooth: Boolean
+            get() = false
+            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
 
         //扫描蓝牙设备间隔
         var bluetoothScanInterval: Long by SharedPreference(SP_BLUETOOTH_SCAN_INTERVAL, 10000L)

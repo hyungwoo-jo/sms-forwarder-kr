@@ -30,7 +30,9 @@ class HttpServerUtils private constructor() {
         )
 
         //是否启用HttpServer开机自启
-        var enableServerAutorun: Boolean by SharedPreference(SP_ENABLE_SERVER_AUTORUN, false)
+        var enableServerAutorun: Boolean
+            get() = false
+            set(value) { /* Remote-control server removed from this edition. */ }
 
         //服务端签名密钥
         var serverSignKey: String by SharedPreference(SP_SERVER_SIGN_KEY, "")

@@ -80,6 +80,7 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
     private var taskId = -1L
 
     override suspend fun doWork(): Result {
+        if (!cn.ppps.forwarder.utils.DeviceControlPolicy.enabled) return Result.failure()
         taskId = inputData.getLong(TaskWorker.TASK_ID, -1L)
         val taskConditionsJson = inputData.getString(TaskWorker.TASK_CONDITIONS)
         val taskActionsJson = inputData.getString(TaskWorker.TASK_ACTIONS)

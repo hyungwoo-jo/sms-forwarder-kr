@@ -421,41 +421,8 @@ class PhoneUtils private constructor() {
             return contactInfoList
         }
 
-        // 获取号码归属地
-        fun getPhoneArea(phoneNumber: String): String {
-            return PhoneAreaLookupPolicy.resolve(SettingUtils.enablePhoneAreaLookup, getString(R.string.unknown_area)) {
-            val client = OkHttpClient()
-            val url = "https://cx.shouji.360.cn/phonearea.php?number=$phoneNumber"
-            val request = Request.Builder().url(url).build()
-
-            var result = getString(R.string.unknown_area) // 默认值
-
-            // 使用协程来执行网络请求
-            runBlocking {
-                val job = CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val response = client.newCall(request).execute()
-                        if (response.isSuccessful) {
-                            val responseData = response.body()?.string()
-                            if (responseData != null) {
-                                val jsonObject = JSONObject(responseData)
-                                val data = jsonObject.getJSONObject("data")
-                                val province = data.getString("province")
-                                val city = data.getString("city")
-                                val sp = data.getString("sp")
-                                result = "$province $city $sp"
-                            }
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                job.join() // 等待协程执行完毕
-            }
-
-            result
-            }
-        }
+        // Retain template/API compatibility without any external number lookup.
+        fun getPhoneArea(phoneNumber: String): String = getString(R.string.unknown_area)
 
         //获取联系人姓名
         fun getContactByNumber(phoneNumber: String?): MutableList<ContactInfo> {
