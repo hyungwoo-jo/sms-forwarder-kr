@@ -82,7 +82,8 @@ class RulesFragment : BaseFragment<FragmentRulesBinding?>(), RulePagingAdapter.O
         binding!!.tabBar.setOnTabClickListener { _, position ->
             //XToastUtils.toast("点击了$title--$position")
             currentType = when (position) {
-                1 -> "app"
+                1 -> "call"
+                2 -> "app"
                 else -> "sms"
             }
             viewModel.setType(currentType)

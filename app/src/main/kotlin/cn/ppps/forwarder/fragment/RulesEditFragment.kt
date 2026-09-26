@@ -164,6 +164,14 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
      * 初始化控件
      */
     override fun initViews() {
+        binding!!.btnChooseApp.setOnClickListener {
+            if (appListSpinnerList.isEmpty()) initAppSpinner()
+            if (appListSpinnerList.isNotEmpty()) cn.ppps.forwarder.widget.AppPickerDialog.show(requireContext(), appListSpinnerList) { item ->
+                binding!!.etValue.setText(item.packageName)
+                binding!!.etValue.setSelection(binding!!.etValue.text?.length ?: 0)
+                binding!!.btnChooseApp.text = item.name
+            }
+        }
         when (ruleType) {
             "app" -> {
                 titleBar?.setTitle(R.string.app_rule)

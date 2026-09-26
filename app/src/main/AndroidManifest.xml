@@ -74,7 +74,7 @@
         <action android:name="android.intent.action.PACKAGE_RESTARTED" />
       </intent-filter>
     </receiver>
-    <receiver android:name=".receiver.CallReceiver" android:exported="false" tools:ignore="IntentFilterExportedReceiver" android:enabled="false">
+    <receiver android:name=".receiver.CallReceiver" android:exported="false" tools:ignore="IntentFilterExportedReceiver" android:enabled="true">
       <intent-filter>
         <action android:name="android.intent.action.PHONE_STATE" />
         <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
@@ -114,6 +114,7 @@
     <provider android:name="androidx.startup.InitializationProvider" android:authorities="${applicationId}.androidx-startup" android:exported="false" tools:node="merge">
       <meta-data android:name="androidx.work.WorkManagerInitializer" android:value="androidx.startup" tools:node="remove" />
     </provider>
+    <activity android:name=".activity.ConfigurationBackupActivity" android:exported="false" android:label="설정 백업 · 복원" />
   </application>
   <uses-permission android:name="android.permission.GET_TASKS" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" tools:ignore="ProtectedPermissions" />
@@ -130,7 +131,6 @@
   <uses-permission android:name="android.permission.INSTALL_PACKAGES" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.CALL_PHONE" tools:node="remove" tools:ignore="ProtectedPermissions" />
-  <uses-permission android:name="android.permission.READ_CONTACTS" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.READ_CALENDAR" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" tools:node="remove" tools:ignore="ProtectedPermissions" />
@@ -139,4 +139,7 @@
   <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+  <uses-permission android:name="android.permission.READ_CONTACTS" />
+  <uses-permission android:name="android.permission.READ_CALL_LOG" />
 </manifest>

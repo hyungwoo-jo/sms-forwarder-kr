@@ -5,12 +5,12 @@
     style="@style/XUILayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/config_margin_5dp"
-    android:layout_marginTop="@dimen/config_margin_5dp"
-    android:layout_marginEnd="@dimen/config_margin_5dp"
-    android:paddingStart="@dimen/config_padding_10dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginEnd="12dp"
+    android:paddingStart="16dp"
     android:paddingTop="@dimen/config_padding_5dp"
-    android:paddingEnd="@dimen/config_padding_10dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="@dimen/config_padding_5dp">
 
     <LinearLayout

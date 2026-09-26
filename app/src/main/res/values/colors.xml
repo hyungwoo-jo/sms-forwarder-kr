@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="colorPrimary">#299EE3</color>
-    <color name="colorPrimaryDark">#299EE3</color>
-    <color name="colorAccent">#299EE3</color>
+    <color name="colorPrimary">#102B3F</color>
+    <color name="colorPrimaryDark">#102B3F</color>
+    <color name="colorAccent">#087F82</color>
 
     <color name="config_color_select_bg">#FFF1F1F1</color>
 
@@ -21,8 +21,8 @@
 
     <color name="setting_bar_color">#ffffff</color>
 
-    <color name="colorStart">#03DAC5</color>
-    <color name="colorStop">#E91E63</color>
+    <color name="colorStart">#087F82</color>
+    <color name="colorStop">#B33C52</color>
 
 
     <color name="abc_decor_view_status_guard">#ff000000</color>
@@ -146,4 +146,7 @@
     <color name="tooltip_background_light">#e6ffffff</color>
     <color name="white">#ffffffff</color>
     <color name="launcher_background">#102B3F</color>
+<color name="ui_background">#F3F6F9</color>
+<color name="ui_text">#102B3F</color>
+<color name="ui_secondary">#546878</color>
 </resources>

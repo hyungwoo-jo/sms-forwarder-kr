@@ -14,9 +14,10 @@ class SettingUtils private constructor() {
         var enableSms: Boolean by SharedPreference(SP_ENABLE_SMS, false)
 
         //是否转发通话
-        var enablePhone: Boolean
-            get() = false
-            set(value) { /* Removed feature: old backups cannot re-enable it. */ }
+        var enablePhone: Boolean by SharedPreference(SP_ENABLE_PHONE, false)
+
+        var enableContactNames: Boolean by SharedPreference("enable_contact_names", false)
+        var enableAutomation: Boolean by SharedPreference("enable_safe_automation", false)
 
         //是否转发通话——来电挂机
         var enableCallType1: Boolean by SharedPreference(SP_ENABLE_CALL_TYPE_1, false)

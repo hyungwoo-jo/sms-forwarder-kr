@@ -80,7 +80,7 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
     private var taskId = -1L
 
     override suspend fun doWork(): Result {
-        if (!cn.ppps.forwarder.utils.DeviceControlPolicy.enabled) return Result.failure()
+        if (!SettingUtils.enableAutomation) return Result.failure()
         taskId = inputData.getLong(TaskWorker.TASK_ID, -1L)
         val taskConditionsJson = inputData.getString(TaskWorker.TASK_CONDITIONS)
         val taskActionsJson = inputData.getString(TaskWorker.TASK_ACTIONS)
@@ -110,6 +110,10 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
             return Result.failure()
         }
 
+        if (actionList.any { !cn.ppps.forwarder.utils.DeviceControlPolicy.allowsAction(it.type) }) {
+            writeLog("지원하지 않는 민감한 자동 동작이 포함되어 있습니다.", "WARN")
+            return Result.failure()
+        }
         val msgInfo = Gson().fromJson(msgInfoJson, MsgInfo::class.java)
         if (msgInfo == null) {
             writeLog("msgInfo is null")

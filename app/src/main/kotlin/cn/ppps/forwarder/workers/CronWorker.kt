@@ -24,6 +24,7 @@ class CronWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
     private val TAG: String = CronWorker::class.java.simpleName
 
     override suspend fun doWork(): Result {
+        if (!cn.ppps.forwarder.utils.SettingUtils.enableAutomation) return Result.success()
         try {
             val taskId = inputData.getLong(TaskWorker.TASK_ID, -1L)
             if (taskId == -1L) {

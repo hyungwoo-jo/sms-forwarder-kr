@@ -427,6 +427,7 @@ class PhoneUtils private constructor() {
         //获取联系人姓名
         fun getContactByNumber(phoneNumber: String?): MutableList<ContactInfo> {
             val contactInfoList = mutableListOf<ContactInfo>()
+            if (!SettingUtils.enableContactNames || ActivityCompat.checkSelfPermission(Core.app, permission.READ_CONTACTS) != android.content.pm.PackageManager.PERMISSION_GRANTED) return contactInfoList
             if (TextUtils.isEmpty(phoneNumber)) return contactInfoList
 
             // 去除国际区号、空格、括号、横线等字符

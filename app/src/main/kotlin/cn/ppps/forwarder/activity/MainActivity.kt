@@ -133,6 +133,18 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
     override val isSupportSlideBack: Boolean
         get() = false
 
+    override fun onResume() {
+        super.onResume()
+        refreshForwardingStatus()
+    }
+
+    fun refreshForwardingStatus() {
+        val sms = if (SettingUtils.enableSms) "켜짐" else "꺼짐"
+        val app = if (!SettingUtils.enableAppNotify) "꺼짐" else if (cn.ppps.forwarder.utils.CommonUtils.isNotificationListenerServiceEnabled(this)) "권한 허용" else "권한 필요"
+        binding?.forwardingStatus?.text = "문자 $sms · 앱 알림 $app · 통화 ${if (SettingUtils.enablePhone) "켜짐" else "꺼짐"}"
+        binding?.statusCard?.setOnClickListener { binding?.tabs?.getTabAt(POS_SETTING)?.select() }
+    }
+
     private fun initViews() {
         WidgetUtils.clearActivityBackground(this)
         initTab()
@@ -197,7 +209,7 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         mLLMenu = mSlidingRootNav.layout.findViewById(R.id.ll_menu)
         ViewUtils.setVisibility(mLLMenu, false)
         mAdapter = DrawerAdapter(
-            listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_APPS, POS_HELP, POS_ABOUT)
+            listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_TASK, POS_APPS, POS_HELP, POS_ABOUT)
                 .map { createItemFor(it) }
         )
         mAdapter.setListener(this)
@@ -220,7 +232,7 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
 
     override fun onItemSelected(position: Int) {
         needToAppListFragment = false
-        val menuPosition = listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_APPS, POS_HELP, POS_ABOUT).getOrNull(position) ?: return
+        val menuPosition = listOf(POS_LOG, POS_RULE, POS_SENDER, POS_SETTING, POS_TASK, POS_APPS, POS_HELP, POS_ABOUT).getOrNull(position) ?: return
         when (menuPosition) {
             POS_LOG, POS_RULE, POS_SENDER, POS_SETTING -> {
                 val tab = mTabLayout.getTabAt(menuPosition)

@@ -18,6 +18,7 @@ class CronJobScheduler {
         private val TAG: String = CronJobScheduler::class.java.simpleName
 
         fun scheduleTask(task: Task) {
+            if (!cn.ppps.forwarder.utils.SettingUtils.enableAutomation) return
             val currentTimeMillis = System.currentTimeMillis()
             val delayInMillis = task.nextExecTime.time / 1000 * 1000 - currentTimeMillis
             val inputData = Data.Builder().putLong(TaskWorker.TASK_ID, task.id).build()

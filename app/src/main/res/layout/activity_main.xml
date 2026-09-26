@@ -1,35 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/xui_config_color_white"
-    android:orientation="vertical"
-    tools:ignore="Overdraw">
-
-    <FrameLayout
-        android:id="@id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/ui_background" android:orientation="vertical" tools:ignore="Overdraw">
+  <LinearLayout android:id="@+id/status_card" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="12dp" android:padding="16dp" android:orientation="horizontal" android:gravity="center_vertical" android:background="@drawable/rounded_background" android:clickable="true" android:focusable="true">
+    <ImageView android:layout_width="40dp" android:layout_height="40dp" android:src="@mipmap/ic_launcher" android:contentDescription="@string/app_name" />
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="메시지 자동전달" android:textColor="@color/ui_text" android:textSize="18sp" android:textStyle="bold" />
+      <TextView android:id="@+id/forwarding_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="전달 설정 확인" android:textColor="@color/ui_secondary" android:textSize="14sp" />
+    </LinearLayout>
+  </LinearLayout>
+  <FrameLayout android:id="@id/fragment_container" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
 
     </FrameLayout>
-
-    <View style="@style/SeparatorStyle.Vertical" />
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
-        style="@style/TabLayoutStyle"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/xui_actionbar_height"
-        android:contentDescription="@string/description_navigation_main"
-        app:tabBackground="@null"
-        app:tabGravity="fill"
-        app:tabIndicatorColor="@color/xui_config_color_transparent"
-        app:tabMinWidth="300dp"
-        app:tabMode="fixed"
-        app:tabPaddingTop="2dp"
-        app:tabTextAppearance="@style/TabText.Explain" />
-
+  <View style="@style/SeparatorStyle.Vertical" />
+  <com.google.android.material.tabs.TabLayout android:id="@+id/tabs" style="@style/TabLayoutStyle" android:layout_width="match_parent" android:layout_height="72dp" android:contentDescription="@string/description_navigation_main" app:tabBackground="@null" app:tabGravity="fill" app:tabIndicatorColor="@color/xui_config_color_transparent" app:tabMinWidth="0dp" app:tabMode="fixed" app:tabPaddingTop="8dp" app:tabTextAppearance="@style/TabText.Explain" android:background="@color/white" />
 </LinearLayout>

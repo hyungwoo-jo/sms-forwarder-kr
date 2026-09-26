@@ -82,6 +82,8 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                     timestampPrev = timestamp
                 }
 
+                if (SettingUtils.enableAutomation) autoTaskProcess(msgInfo, msgInfoJson, simSlot)
+
                 val ruleList: List<Rule> = Core.rule.getRuleList(msgInfo.type, 1, simSlot)
                 if (ruleList.isEmpty()) {
                     return@withContext Result.failure(workDataOf("send" to "failed"))

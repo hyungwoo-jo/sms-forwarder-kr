@@ -1,5 +1,7 @@
 package cn.ppps.forwarder.fragment
 
+import kotlinx.coroutines.launch
+
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.ComponentName
@@ -130,6 +132,30 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
     @SuppressLint("NewApi", "SetTextI18n")
     override fun initViews() {
 
+        binding!!.btnConfigurationBackup.setOnClickListener {
+            startActivity(Intent(requireContext(), cn.ppps.forwarder.activity.ConfigurationBackupActivity::class.java))
+        }
+        binding!!.sbContactNames.isChecked = SettingUtils.enableContactNames
+        binding!!.sbContactNames.setOnCheckedChangeListener { _, checked ->
+            if (!checked) SettingUtils.enableContactNames = false
+            else XXPermissions.with(this).permission(PermissionLists.getReadContactsPermission())
+                .request(object : OnPermissionCallback {
+                    override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
+                        SettingUtils.enableContactNames = deniedList.isEmpty()
+                        binding?.sbContactNames?.isChecked = SettingUtils.enableContactNames
+                    }
+                })
+        }
+        binding!!.sbAutomation.isChecked = SettingUtils.enableAutomation
+        binding!!.sbAutomation.setOnCheckedChangeListener { _, checked ->
+            SettingUtils.enableAutomation = checked
+            kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                cn.ppps.forwarder.core.Core.task.getByType(cn.ppps.forwarder.utils.TASK_CONDITION_CRON).forEach { task ->
+                    cn.ppps.forwarder.utils.task.CronJobScheduler.cancelTask(task.id)
+                    if (checked) cn.ppps.forwarder.utils.task.CronJobScheduler.scheduleTask(task)
+                }
+            }
+        }
         //转发短信广播
         switchEnableSms(binding!!.sbEnableSms)
         //转发通话记录
@@ -309,6 +335,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
     private fun switchEnableSms(sbEnableSms: SwitchButton) {
         sbEnableSms.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             SettingUtils.enableSms = isChecked
+            getContainer()?.refreshForwardingStatus()
             if (isChecked) {
                 XXPermissions.with(this)
                     // 接收 WAP 推送消息
@@ -364,6 +391,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 return@setOnCheckedChangeListener
             }
             SettingUtils.enablePhone = isChecked
+            getContainer()?.refreshForwardingStatus()
             if (isChecked) {
                 XXPermissions.with(this)
                     // 读取电话状态
@@ -372,8 +400,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                     .permission(PermissionLists.getReadPhoneNumbersPermission())
                     // 读取通话记录
                     .permission(PermissionLists.getReadCallLogPermission())
-                    // 读取联系人
-                    .permission(PermissionLists.getReadContactsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
@@ -451,6 +477,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         sbEnableAppNotify.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             binding!!.layoutOptionalAction.visibility = if (isChecked) View.VISIBLE else View.GONE
             SettingUtils.enableAppNotify = isChecked
+            getContainer()?.refreshForwardingStatus()
             if (isChecked) {
                 XXPermissions.with(this)
                     .permission(

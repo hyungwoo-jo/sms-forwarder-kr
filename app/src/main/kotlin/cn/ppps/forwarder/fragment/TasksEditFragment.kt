@@ -347,7 +347,7 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
 
                     val recyclerView: RecyclerView = bottomSheet.findViewById(R.id.recyclerView)
                     WidgetUtils.initGridRecyclerView(recyclerView, 4, DensityUtils.dp2px(1f))
-                    val widgetItemAdapter = WidgetItemAdapter(TASK_CONDITION_FRAGMENT_LIST)
+                    val widgetItemAdapter = WidgetItemAdapter(TASK_CONDITION_FRAGMENT_LIST.filterIndexed { index, _ -> cn.ppps.forwarder.utils.DeviceControlPolicy.allowsCondition(index + KEY_BACK_CODE_CONDITION) })
                     widgetItemAdapter.setOnItemClickListener(that)
                     recyclerView.adapter = widgetItemAdapter
 
@@ -366,7 +366,7 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                     val recyclerView: RecyclerView = bottomSheet.findViewById(R.id.recyclerView)
 
                     WidgetUtils.initGridRecyclerView(recyclerView, 4, DensityUtils.dp2px(1f))
-                    val widgetItemAdapter = WidgetItemAdapter(TASK_ACTION_FRAGMENT_LIST)
+                    val widgetItemAdapter = WidgetItemAdapter(TASK_ACTION_FRAGMENT_LIST.filterIndexed { index, _ -> cn.ppps.forwarder.utils.DeviceControlPolicy.allowsAction(index + KEY_BACK_CODE_ACTION) })
                     widgetItemAdapter.setOnItemClickListener(that)
                     recyclerView.adapter = widgetItemAdapter
 
@@ -545,7 +545,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             Log.d(TAG, "onItemClick: $widgetInfo")
             //判断点击的是条件还是动作
             if (widgetInfo.classPath.contains(".condition.")) {
-                val typeCondition = pos + KEY_BACK_CODE_CONDITION
+                val typeCondition = TASK_CONDITION_FRAGMENT_LIST.indexOf(widgetInfo) + KEY_BACK_CODE_CONDITION
+                if (!cn.ppps.forwarder.utils.DeviceControlPolicy.allowsCondition(typeCondition)) {
+                    XToastUtils.error("예약·문자·통화·앱 알림 조건을 선택하세요.")
+                    return
+                }
                 //短信广播、通话广播、APP通知 类型条件必须作为触发提交
                 if ((typeCondition == TASK_CONDITION_SMS || typeCondition == TASK_CONDITION_CALL || typeCondition == TASK_CONDITION_APP) && actionsList.isNotEmpty()) {
                     XToastUtils.error(getString(R.string.msg_condition_must_be_trigger))
@@ -589,7 +593,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                     }
                 }
             } else {
-                val typeAction = pos + KEY_BACK_CODE_ACTION
+                val typeAction = TASK_ACTION_FRAGMENT_LIST.indexOf(widgetInfo) + KEY_BACK_CODE_ACTION
+                if (!cn.ppps.forwarder.utils.DeviceControlPolicy.allowsAction(typeAction)) {
+                    XToastUtils.error("이 동작은 현재 지원하지 않습니다. 전달·규칙·알림 동작을 선택하세요.")
+                    return
+                }
                 //判断是否已经添加过该类型动作
                 for (item in actionsList) {
                     //注意：TASK_ACTION_XXX 枚举值 等于 TASK_ACTION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_ACTION，不可改变

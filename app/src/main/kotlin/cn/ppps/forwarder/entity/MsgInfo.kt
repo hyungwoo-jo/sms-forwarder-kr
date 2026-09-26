@@ -194,7 +194,8 @@ data class MsgInfo(
         if (TextUtils.isEmpty(this)) return this
         if (this.indexOf(getString(R.string.tag_contact_name)) == -1) return this
 
-        var contactName = getString(R.string.unknown_number)
+        val contacts = if (SettingUtils.enableContactNames) PhoneUtils.getContactByNumber(from) else emptyList()
+        var contactName = contacts.firstOrNull()?.name ?: getString(R.string.unknown_number)
         when (encoderName) {
             "Gson" -> contactName = toJsonStr(contactName)
             "URLEncoder" -> contactName = URLEncoder.encode(contactName, "UTF-8")

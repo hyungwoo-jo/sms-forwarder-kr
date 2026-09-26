@@ -275,7 +275,15 @@ class ForegroundService : Service() {
                 CommonUtils.toggleNotificationListenerService(this)
             }
 
-            // Automated device tasks are disabled in this edition.
+            // Schedule only after the user explicitly enables local automation.
+            if (SettingUtils.enableAutomation) {
+                GlobalScope.async(Dispatchers.IO) {
+                    Core.task.getByType(TASK_CONDITION_CRON).forEach { task ->
+                        CronJobScheduler.cancelTask(task.id)
+                        CronJobScheduler.scheduleTask(task)
+                    }
+                }
+            }
 
             //异步获取所有已安装 App 信息
             if (SettingUtils.enableLoadAppList) {
