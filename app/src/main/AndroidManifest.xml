@@ -34,29 +34,7 @@
     <activity android:name=".activity.ClientActivity" android:configChanges="screenSize|keyboardHidden|orientation|keyboard" android:exported="false" android:launchMode="singleInstance" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan|stateHidden" tools:ignore="DiscouragedApi" />
     <activity android:name=".activity.TaskActivity" android:configChanges="screenSize|keyboardHidden|orientation|keyboard" android:exported="false" android:launchMode="singleInstance" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan|stateHidden" tools:ignore="DiscouragedApi" />
     <activity android:name=".core.webview.AgentWebActivity" android:configChanges="screenSize|keyboardHidden|orientation|keyboard" android:exported="false" android:hardwareAccelerated="true" android:label="@string/app_browser_name" android:theme="@style/AppTheme">
-      <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <action android:name="com.xuexiang.xui.applink" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="http" />
-        <data android:scheme="https" />
-        <data android:scheme="about" />
-        <data android:scheme="javascript" />
-      </intent-filter>
-      <intent-filter android:autoVerify="true" tools:targetApi="m">
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="http" />
-        <data android:scheme="https" />
-        <data android:scheme="inline" />
-        <data android:mimeType="text/html" />
-        <data android:mimeType="text/plain" />
-        <data android:mimeType="application/xhtml+xml" />
-        <data android:mimeType="application/vnd.wap.xhtml+xml" />
-      </intent-filter>
-    </activity>
+      </activity>
     <activity android:name=".core.BaseActivity" android:configChanges="screenSize|keyboardHidden|orientation|keyboard" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan|stateHidden" tools:ignore="DiscouragedApi" />
     <activity android:name=".core.webview.WebViewInterceptDialog" android:exported="false" android:screenOrientation="portrait" android:theme="@style/DialogTheme" tools:ignore="DiscouragedApi" />
     <activity android:name=".core.XPageTransferActivity" android:configChanges="screenSize|keyboardHidden|orientation|keyboard" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan|stateHidden" tools:ignore="DiscouragedApi" />
@@ -137,28 +115,28 @@
       <meta-data android:name="androidx.work.WorkManagerInitializer" android:value="androidx.startup" tools:node="remove" />
     </provider>
   </application>
-  <uses-permission android:name="android.permission.GET_TASKS" tools:node="remove" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
-  <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" tools:node="remove" />
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
-  <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" tools:node="remove" />
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove" />
-  <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" tools:node="remove" />
-  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" tools:node="remove" />
-  <uses-permission android:name="android.permission.BLUETOOTH" tools:node="remove" />
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
-  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove" />
-  <uses-permission android:name="android.permission.INSTALL_PACKAGES" tools:node="remove" />
-  <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove" />
-  <uses-permission android:name="android.permission.CALL_PHONE" tools:node="remove" />
-  <uses-permission android:name="android.permission.READ_CONTACTS" tools:node="remove" />
-  <uses-permission android:name="android.permission.READ_CALENDAR" tools:node="remove" />
-  <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
-  <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" tools:node="remove" />
-  <uses-permission android:name="android.permission.CAMERA" tools:node="remove" />
-  <uses-permission android:name="android.permission.FLASHLIGHT" tools:node="remove" />
-  <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" tools:node="remove" />
-  <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:node="remove" />
+  <uses-permission android:name="android.permission.GET_TASKS" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.BLUETOOTH" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.INSTALL_PACKAGES" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.CALL_PHONE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.READ_CONTACTS" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.READ_CALENDAR" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.CAMERA" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.FLASHLIGHT" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" tools:node="remove" tools:ignore="ProtectedPermissions" />
+  <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:node="remove" tools:ignore="ProtectedPermissions" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest>
