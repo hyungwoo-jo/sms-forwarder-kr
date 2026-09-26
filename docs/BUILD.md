@@ -1,6 +1,6 @@
 # 로컬 빌드
 
-작업 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr  
+작업 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr
 작업 폴더: /home/hyungwoo/codespace/sms-forwarder-kr
 
 ## 도구
