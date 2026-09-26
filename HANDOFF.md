@@ -1,32 +1,17 @@
 # 다음 작업 인계
 
-## 현재 작업 위치
+현재 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr
+폴더: /home/hyungwoo/codespace/sms-forwarder-kr
+브랜치: main
+앱 소스: `e5570f590fdc235a0eb9045771651e7bec30d14b`. 빌드 시 clean.
 
-- 저장소: https://github.com/hyungwoo-jo/sms-forwarder-kr (공개)
-- 폴더: /home/hyungwoo/codespace/sms-forwarder-kr
-- 브랜치: main
-- 기존 smsforwarder-ko 폴더/포크는 이전 기록이며 다음 변경을 거기서 시작하지 않는다.
-- 이관 및 서버 빌드·서명·자동 검증은 완료됐다. 새로운 기능을 임의로 추가하지 않는다.
+## 완료
 
-## 확인한 결과
+사용자 요청 보안 패치 완료: 문자·앱 알림·Webhook·Telegram 유지, 앱 선택 수정, 자동 외부 조회 제거, 위치/통화/블루투스/원격 제어/자동 작업 비활성화, FRP 네이티브 제외, 권한 축소, 외부 HTTP/리다이렉트 차단, 자동 백업/릴리스 자체 로그 중지, 새 아이콘.
+12개 테스트 통과, debug/release lint 오류 0개, 서명·권한·리소스·LICENSE 검증 통과.
+릴리스: https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260926-kr-e5570f5
 
-- 앱 소스 1581e5abead018cde410bba6b974176927b1d035에서 clean build.
-- JVM 테스트 10개, debug/release lint 오류 0개(경고 각 268개).
-- arm64/universal 개인 서명 APK와 LICENSE·해시·리소스·서명 보고서는 dist/.
-- 중국어 화면 리소스와 직접 코드 출력은 한국어로 변경했다.
-- 저장 설정의 옛 템플릿/OTP 호환 입력·원본 개발자 주석은 보존했다.
-- 개인 키·암호는 기존 .smsforwarder-local/signing 및 무시된 signing.properties를 사용한다. 출력하거나 커밋하지 않는다.
+## 남은 작업
 
-## 실제 남은 작업
-
-DEVICE_PENDING: 사용자가 기기 연결 및 설치를 요청하면 다음을 검증한다.
-
-1. 동일 ABI APK로 기존 개인판 업데이트 및 규칙·채널 유지.
-2. 메인·설정·약관·권한·FRP 화면의 한국어 표시와 배치.
-3. 알림 접근 권한 설정 후 NAVER WORKS A/B 알림과 Telegram/Webhook 전달.
-4. 화면 OFF·재부팅·절전·네트워크 복구.
-5. Galaxy Watch 알림 도착과 누적.
-
-기기 미연결 상태를 완료로 표시하지 않는다. 실제 업무 메시지·토큰을 테스트 로그에 남기지 않는다.
-검증과 설치 안내는 docs/VALIDATION.md 및 docs/README-install-ko.md에 있다.
-필요한 재빌드는 bash scripts/build-local.sh. 자동 CI는 현재 범위에 없다. 사용자의 추가 요청에 따라 GitHub 공개 릴리스와 APK 다운로드를 제공한다.
+DEVICE_PENDING: 기기를 연결하거나 사용자가 설치 결과를 제공하면 기존 개인판 업데이트/규칙 유지, WORKS 앱 선택과 실제 알림·SMS 전달, 절전·재부팅, Play Protect 경고 유형을 확인한다. 워치를 쓰는 경우만 워치 전달을 확인한다. 기기 미연결을 완료로 표시하지 않는다.
+새로운 기능을 임의로 시작하지 않는다. 서명 키/비밀번호를 출력하거나 커밋하지 않는다. 재빌드는 bash scripts/build-local.sh.
