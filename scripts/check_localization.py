@@ -27,6 +27,13 @@ for path in (ROOT / "app/src").rglob("*"):
     if path.is_file() and path.suffix in (".kt", ".java", ".xml", ".json", ".txt"):
         if HAN.search(path.read_text(encoding="utf-8")):
             errors.append(f"Chinese source text remains: {path.relative_to(ROOT)}")
+for relative in (
+    "build.gradle", "versions.gradle", "gradle.properties", "app/build.gradle",
+    "app/channel", "app/multiple-channel.gradle", "app/proguard-rules.pro", "app/x-library.gradle",
+):
+    path = ROOT / relative
+    if HAN.search(path.read_text(encoding="utf-8")):
+        errors.append(f"Chinese build text remains: {relative}")
 # Third-party methods can return Chinese even when all XML resources are Korean.
 for path in (ROOT / "app/src/main/kotlin").rglob("*.kt"):
     if "DateUtils.getFriendlyTimeSpanByNow(" in path.read_text():

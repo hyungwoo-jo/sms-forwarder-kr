@@ -70,6 +70,8 @@ for element in metadata["elements"]:
     artifacts.append({"file": apk.name, "abi": abi, "applicationId": package[1], "versionCode": int(package[2]), "versionName": package[3], "sha256": digest, "signingCertificateSha256": certificate[1]})
 if {a["abi"] for a in artifacts} != {"arm64-v8a", "universal"}:
     raise SystemExit("Both required release APK variants were not produced")
+if len({a["versionCode"] for a in artifacts}) != 1:
+    raise SystemExit("Release APK variants must use one shared versionCode for safe cross-ABI updates")
 info = {
     "upstreamCommit": "a3d23026f0058420869163c1d5dfb463ce52fc15",
     "forkCommit": run("git", "rev-parse", "HEAD"),
