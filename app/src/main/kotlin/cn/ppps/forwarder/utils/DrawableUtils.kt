@@ -4,13 +4,11 @@ import android.graphics.drawable.GradientDrawable
 
 /**
  * @author xuexiang
- * @since 2019/4/7 下午12:57
  */
 @Suppress("unused")
 class DrawableUtils private constructor() {
     companion object {
         /**
-         * 矩形
          */
         fun createRectangleDrawable(color: Int, cornerRadius: Float): GradientDrawable {
             val gradientDrawable = GradientDrawable()
@@ -21,7 +19,6 @@ class DrawableUtils private constructor() {
         }
 
         /**
-         * 矩形
          */
         fun createRectangleDrawable(colors: IntArray?, cornerRadius: Float): GradientDrawable {
             val gradientDrawable = GradientDrawable()
@@ -32,7 +29,6 @@ class DrawableUtils private constructor() {
         }
 
         /**
-         * 圆形
          */
         fun createOvalDrawable(color: Int): GradientDrawable {
             val gradientDrawable = GradientDrawable()
@@ -42,7 +38,6 @@ class DrawableUtils private constructor() {
         }
 
         /**
-         * 圆形
          */
         fun createOvalDrawable(colors: IntArray?): GradientDrawable {
             val gradientDrawable = GradientDrawable()

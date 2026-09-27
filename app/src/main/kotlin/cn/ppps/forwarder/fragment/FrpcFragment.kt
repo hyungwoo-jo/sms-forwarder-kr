@@ -94,7 +94,6 @@ class FrpcFragment : BaseFragment<FragmentFrpcsBinding?>(), FrpcPagingAdapter.On
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -107,7 +106,6 @@ class FrpcFragment : BaseFragment<FragmentFrpcsBinding?>(), FrpcPagingAdapter.On
     }
 
     override fun initListeners() {
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             //adapter.refresh()
             lifecycleScope.launch {
@@ -117,23 +115,19 @@ class FrpcFragment : BaseFragment<FragmentFrpcsBinding?>(), FrpcPagingAdapter.On
         }
         binding!!.refreshLayout.autoRefresh()
 
-        //更新时间
         LiveEventBus.get(EVENT_FRPC_UPDATE_CONFIG, Frpc::class.java).observe(this) {
             adapter.refresh()
         }
 
-        //删除事件
         LiveEventBus.get(EVENT_FRPC_DELETE_CONFIG, Frpc::class.java).observe(this) {
             adapter.refresh()
         }
 
-        //运行出错时间
         LiveEventBus.get(EVENT_FRPC_RUNNING_ERROR, String::class.java).observe(this) {
             XToastUtils.error(getString(R.string.frpc_failed_to_run))
             adapter.refresh()
         }
 
-        //运行成功
         LiveEventBus.get(EVENT_FRPC_RUNNING_SUCCESS, String::class.java).observe(this) {
             adapter.refresh()
         }
@@ -202,7 +196,6 @@ class FrpcFragment : BaseFragment<FragmentFrpcsBinding?>(), FrpcPagingAdapter.On
                     return
                 }
 
-                //编辑或删除需要先停止客户端
                 if (Frpclib.isRunning(item.uid)) {
                     XToastUtils.warning(R.string.tipServiceRunning)
                     return

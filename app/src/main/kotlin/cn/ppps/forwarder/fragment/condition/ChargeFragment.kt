@@ -99,7 +99,6 @@ class ChargeFragment : BaseFragment<FragmentTasksConditionChargeBinding?>(), Vie
                 binding!!.rbMatchAll.isChecked = true
             }
         } else {
-            // 新建任务的默认值（XML 的 android:checked 对 SmoothCheckBox 不一定生效）
             binding!!.cbBatteryCharging.isChecked = true
             binding!!.cbPluggedUnlimited.isChecked = true
             binding!!.cbVoltageUnlimited.isChecked = true

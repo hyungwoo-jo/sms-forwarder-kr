@@ -60,10 +60,8 @@ class ResendFragment : BaseFragment<FragmentTasksActionResendBinding?>(), View.O
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -144,7 +142,6 @@ class ResendFragment : BaseFragment<FragmentTasksActionResendBinding?>(), View.O
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): ResendSetting {
         val hours = binding!!.xsbHours.selectedNumber

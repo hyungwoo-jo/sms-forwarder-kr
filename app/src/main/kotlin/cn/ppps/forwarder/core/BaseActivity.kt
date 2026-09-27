@@ -10,6 +10,7 @@ import cn.ppps.forwarder.utils.EVENT_TOAST_ERROR
 import cn.ppps.forwarder.utils.EVENT_TOAST_INFO
 import cn.ppps.forwarder.utils.EVENT_TOAST_SUCCESS
 import cn.ppps.forwarder.utils.EVENT_TOAST_WARNING
+import cn.ppps.forwarder.utils.interceptor.SensitiveLogRedactor
 import cn.ppps.forwarder.utils.XToastUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.xuexiang.xpage.base.XPageActivity
@@ -21,7 +22,6 @@ import com.xuexiang.xui.widget.slideback.SlideBack
 import com.xuexiang.xutil.resource.ResUtils.isRtl
 
 /**
- * 基础容器Activity
  *
  * @author XUE
  * @since 2019/3/22 11:21
@@ -29,7 +29,6 @@ import com.xuexiang.xutil.resource.ResUtils.isRtl
 @Suppress("MemberVisibilityCanBePrivate", "UNCHECKED_CAST", "DEPRECATION", "EmptyMethod")
 open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     /**
-     * 获取Binding
      *
      * @return Binding
      */
@@ -40,9 +39,7 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
         protected set
 
     override fun attachBaseContext(newBase: Context) {
-        //注入字体
         //super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase))
-        // 绑定语种
         //super.attachBaseContext(ViewPumpContextWrapper.wrap(MultiLanguages.attach(newBase)))
         super.attachBaseContext(MultiLanguages.attach(newBase))
     }
@@ -57,9 +54,8 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
         super.onCreate(savedInstanceState)
         registerSlideBack()
 
-        //用于接收各种事件的吐司
         LiveEventBus.get(EVENT_TOAST_ERROR, String::class.java).observe(this) { msg: String ->
-            XToastUtils.error(msg, 15000)
+            XToastUtils.error(SensitiveLogRedactor.redactForDisplay(msg), 15000)
         }
         LiveEventBus.get(EVENT_TOAST_SUCCESS, String::class.java).observe(this) { msg: String ->
             XToastUtils.success(msg)
@@ -73,7 +69,6 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 构建ViewBinding
      *
      * @param inflater  inflater
      * @return ViewBinding
@@ -83,16 +78,11 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 初始化状态栏的样式
      */
     protected open fun initStatusBarStyle() {}
 
     /**
-     * 打开fragment
      *
-     * @param clazz          页面类
-     * @param addToBackStack 是否添加到栈中
-     * @return 打开的fragment对象
      */
     fun <T : XPageFragment?> openPage(clazz: Class<T>?, addToBackStack: Boolean): T {
         val page = CoreSwitchBean(clazz)
@@ -101,9 +91,7 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 打开fragment
      *
-     * @return 打开的fragment对象
      */
     fun <T : XPageFragment?> openNewPage(clazz: Class<T>?): T {
         val page = CoreSwitchBean(clazz)
@@ -112,17 +100,13 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 切换fragment
      *
-     * @param clazz 页面类
-     * @return 打开的fragment对象
      */
     fun <T : XPageFragment?> switchPage(clazz: Class<T>?): T {
         return openPage(clazz, false)
     }
 
     /**
-     * 序列化对象
      *
      * @param object
      * @return
@@ -138,7 +122,6 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 注册侧滑回调
      */
     protected fun registerSlideBack() {
         if (isSupportSlideBack) {
@@ -151,7 +134,6 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * 注销侧滑回调
      */
     protected fun unregisterSlideBack() {
         if (isSupportSlideBack) {
@@ -160,7 +142,6 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
     }
 
     /**
-     * @return 是否支持侧滑返回
      */
     protected open val isSupportSlideBack: Boolean
         get() {
@@ -173,7 +154,6 @@ open class BaseActivity<Binding : ViewBinding?> : XPageActivity() {
 
     companion object {
         /**
-         * 是否支持侧滑返回
          */
         const val KEY_SUPPORT_SLIDE_BACK = "key_support_slide_back"
     }

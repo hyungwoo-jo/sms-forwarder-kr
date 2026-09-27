@@ -8,10 +8,8 @@ import com.xuexiang.xui.adapter.listview.BaseListAdapter
 import com.xuexiang.xutil.common.StringUtils
 
 /**
- * 主副标题显示适配器
  *
  * @author xuexiang
- * @since 2018/12/19 上午12:19
  */
 class SimpleListAdapter(context: Context?, data: List<Map<String?, String?>?>?) :
     BaseListAdapter<Map<String?, String?>, SimpleListAdapter.ViewHolder>(context, data) {
@@ -40,12 +38,10 @@ class SimpleListAdapter(context: Context?, data: List<Map<String?, String?>?>?) 
 
     class ViewHolder {
         /**
-         * 标题
          */
         var mTvTitle: TextView? = null
 
         /**
-         * 副标题
          */
         var mTvSubTitle: TextView? = null
     }

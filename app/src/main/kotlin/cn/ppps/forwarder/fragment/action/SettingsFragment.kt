@@ -58,7 +58,6 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
     private var titleBar: TitleBar? = null
     private var mCountDownHelper: CountDownButtonHelper? = null
 
-    //已安装App信息列表
     private val appListSpinnerList = ArrayList<AppListAdapterItem>()
     private lateinit var appListSpinnerAdapter: AppListSpinnerAdapter<*>
     private val appListObserver = Observer { it: String ->
@@ -87,10 +86,8 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -159,38 +156,28 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
         binding!!.btnDel.setOnClickListener(this)
         binding!!.btnSave.setOnClickListener(this)
 
-        //监听已安装App信息列表加载完成事件
         LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observeStickyForever(appListObserver)
 
         binding!!.sbEnableSms.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 接收 WAP 推送消息
                     .permission(PermissionLists.getReceiveWapPushPermission())
-                    // 接收彩信
                     .permission(PermissionLists.getReceiveMmsPermission())
-                    // 接收短信
                     .permission(PermissionLists.getReceiveSmsPermission())
-                    // 发送短信
                     //.permission(PermissionLists.getSendSmsPermission())
-                    // 读取短信
                     .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 binding!!.sbEnableSms.isChecked = false
                                 return
                             }
-                            // 处理权限请求成功的逻辑
                             XToastUtils.info(R.string.toast_granted_all)
                         }
                     })
@@ -200,30 +187,22 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
         binding!!.sbEnablePhone.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 读取电话状态
                     .permission(PermissionLists.getReadPhoneStatePermission())
-                    // 读取手机号码
                     .permission(PermissionLists.getReadPhoneNumbersPermission())
-                    // 读取通话记录
                     .permission(PermissionLists.getReadCallLogPermission())
-                    // 读取联系人
                     .permission(PermissionLists.getReadContactsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 binding!!.sbEnablePhone.isChecked = false
                                 return
                             }
-                            // 处理权限请求成功的逻辑
                             XToastUtils.info(R.string.toast_granted_all)
                         }
                     })
@@ -263,14 +242,11 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 binding!!.sbEnableLocation.isChecked = false
                                 return
                             }
@@ -278,23 +254,21 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
                     })
             }
         }
-        //设置位置更新最小时间间隔（单位：毫秒）； 默认间隔：10000毫秒，最小间隔：1000毫秒
         binding!!.etMinInterval.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val inputText = binding!!.etMinInterval.text.toString()
                 if (inputText.isEmpty() || inputText == "0") {
                     binding!!.etMinInterval.setText("1")
-                    binding!!.etMinInterval.setSelection(binding!!.etMinInterval.text.length) // 将光标移至文本末尾
+                    binding!!.etMinInterval.setSelection(binding!!.etMinInterval.text.length)
                 }
             }
         }
-        //设置位置更新最小距离（单位：米）；默认距离：0米
         binding!!.etMinDistance.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val inputText = binding!!.etMinDistance.text.toString()
                 if (inputText.isEmpty()) {
                     binding!!.etMinDistance.setText("0")
-                    binding!!.etMinDistance.setSelection(binding!!.etMinDistance.text.length) // 将光标移至文本末尾
+                    binding!!.etMinDistance.setSelection(binding!!.etMinDistance.text.length)
                 }
             }
         }
@@ -302,31 +276,23 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
         binding!!.sbEnableSmsCommand.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 系统设置
                     .permission(PermissionLists.getWriteSettingsPermission())
-                    // 接收短信
                     .permission(PermissionLists.getReceiveSmsPermission())
-                    // 发送短信
                     .permission(PermissionLists.getSendSmsPermission())
-                    // 读取短信
                     .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.info(R.string.toast_denied_never)
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.info(R.string.toast_denied)
                                 binding!!.sbEnableSmsCommand.isChecked = false
                                 return
                             }
-                            // 处理权限请求成功的逻辑
                             XToastUtils.info(R.string.toast_granted_all)
                         }
                     })
@@ -381,10 +347,8 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
         }
     }
 
-    //初始化APP下拉列表
     private fun initAppSpinner() {
 
-        //未开启异步获取已安装App信息开关时，不显示已安装APP下拉框
         if (!SettingUtils.enableLoadAppList) return
 
         if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
@@ -408,7 +372,6 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
             }
         }
 
-        //列表为空也不显示下拉框
         if (appListSpinnerList.isEmpty()) return
 
         appListSpinnerAdapter = AppListSpinnerAdapter(appListSpinnerList).setIsFilterKey(true).setFilterColor("#EF5362").setBackgroundSelector(R.drawable.selector_custom_spinner_bg)
@@ -425,7 +388,6 @@ class SettingsFragment : BaseFragment<FragmentTasksActionSettingsBinding?>(), Vi
 
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): SettingsSetting {
         val enableList = mutableListOf<String>()

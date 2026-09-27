@@ -41,11 +41,9 @@ class ContactAddFragment : BaseFragment<FragmentClientContactAddBinding?>(), Vie
     }
 
     /**
-     * 初始化控件
      */
     @SuppressLint("SetTextI18n")
     override fun initViews() {
-        //发送按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnSubmit, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {

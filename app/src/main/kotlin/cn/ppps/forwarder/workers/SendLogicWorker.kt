@@ -34,7 +34,6 @@ class SendLogicWorker(context: Context, params: WorkerParameters) : CoroutineWor
             val log = Logs(0, rule.type, msgId, rule.id, sender.id)
             logId = Core.logs.insert(log)
         } else if (msgId == -1L) {
-            //自动任务的不需要吐司或者更新日志，特殊处理 logId = -1，msgId = -1
             logId = -1L
         }
 

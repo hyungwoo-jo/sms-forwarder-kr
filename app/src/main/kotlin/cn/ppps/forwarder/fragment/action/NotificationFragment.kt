@@ -72,17 +72,14 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
     @AutoWired(name = KEY_EVENT_DATA_ACTION)
     var eventData: String? = null
 
-    //免打扰(禁用转发)时间段
     private val mTimeOption = DataProvider.timePeriodOption
     private var silentPeriodStart = 0
     private var silentPeriodEnd = 0
 
-    //所有发送通道下拉框
     private var senderListAll = mutableListOf<Sender>()
     private val senderSpinnerList = mutableListOf<SenderSpinnerItem>()
     private lateinit var senderSpinnerAdapter: SenderSpinnerAdapter<*>
 
-    //已选发送通道列表
     private var senderId = 0L
     private var senderListSelected = mutableListOf<Sender>()
     private lateinit var sendersRecyclerView: RecyclerView
@@ -111,10 +108,8 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 2)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -153,10 +148,8 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
             silentPeriodEnd = settingVo.silentPeriodEnd
         }
 
-        //初始化发送通道下拉框
         initSenderSpinner()
 
-        //创建标签按钮
         CommonUtils.createTagButtons(requireContext(), binding!!.glSmsTemplate, binding!!.etSmsTemplate, ruleType)
     }
 
@@ -263,13 +256,10 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
         }
     }
 
-    //初始化发送通道下拉框
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initSenderSpinner() {
-        //免打扰(禁用转发)时间段
         binding!!.tvSilentPeriod.text = mTimeOption[silentPeriodStart] + " ~ " + mTimeOption[silentPeriodEnd]
 
-        //初始化发送通道下拉框
         binding!!.spSender.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = senderSpinnerAdapter.getItemSource(position) as SenderSpinnerItem
@@ -300,12 +290,11 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
             }
         }
 
-        // 初始化已选发送通道列表 RecyclerView 和 Adapter
         sendersRecyclerView = binding!!.recyclerSenders
         senderRecyclerAdapter = SenderRecyclerAdapter(senderListSelected, { position ->
             senderListSelected.removeAt(position)
             senderRecyclerAdapter.notifyItemRemoved(position)
-            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size) // 更新索引
+            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size)
             checkSenderLogicShow()
         })
         sendersRecyclerView.apply {
@@ -329,11 +318,9 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
         senderTouchHelper.attachToRecyclerView(sendersRecyclerView)
         senderRecyclerAdapter.setTouchHelper(senderTouchHelper)
 
-        //获取发送通道列表
         getSenderList()
     }
 
-    //获取发送通道列表
     private fun getSenderList() {
         Core.sender.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Sender>> {
             override fun onSubscribe(d: Disposable) {}
@@ -360,7 +347,6 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
                 binding!!.spSender.setAdapter(senderSpinnerAdapter)
                 //senderSpinnerAdapter.notifyDataSetChanged()
 
-                //更新senderListSelected的状态与名称
                 senderListSelected.forEach {
                     senderListAll.forEach { sender ->
                         if (it.id == sender.id) {
@@ -384,7 +370,6 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
         }
     }
 
-    //提交前检查表单
     private fun checkSetting(): Rule {
         if (senderListSelected.isEmpty() || senderId == 0L) {
             throw Exception(getString(R.string.new_sender_first))
@@ -439,7 +424,6 @@ class NotificationFragment : BaseFragment<FragmentTasksActionNotificationBinding
         return settingVo
     }
 
-    //检查正则替换填写是否正确
     private fun checkRegexReplace(regexReplace: String?): Int {
         if (TextUtils.isEmpty(regexReplace)) return 0
 

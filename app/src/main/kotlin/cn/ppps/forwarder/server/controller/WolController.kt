@@ -17,7 +17,6 @@ class WolController {
 
     private val TAG: String = WolController::class.java.simpleName
 
-    //远程WOL
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/send")
     fun send(@RequestBody bean: BaseRequest<WolData>): String {
@@ -38,12 +37,10 @@ class WolController {
             val macBytes = macAddress.replace("-", ":").split(":").map { it.uppercase(Locale.getDefault()).toInt(16).toByte() }.toByteArray()
             val magicPacket = ByteArray(102)
 
-            // 首先添加6个0xFF字节
             for (i in 0 until 6) {
                 magicPacket[i] = 0xFF.toByte()
             }
 
-            // 之后添加16次MAC地址
             for (i in 6 until magicPacket.size step macBytes.size) {
                 macBytes.copyInto(magicPacket, i, 0, macBytes.size)
             }
@@ -54,10 +51,8 @@ class WolController {
                 InetAddress.getByName("255.255.255.255")
             }
 
-            // 创建 UDP 数据包
             val packet = DatagramPacket(magicPacket, magicPacket.size, broadcastIP, port)
 
-            // 发送数据包
             val socket = DatagramSocket()
             socket.send(packet)
             socket.close()

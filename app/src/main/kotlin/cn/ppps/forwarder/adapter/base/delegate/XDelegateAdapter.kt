@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.vlayout.DelegateAdapter
 
 /**
- * 基础DelegateAdapter
  *
  * @author xuexiang
  * @since 2020/3/20 12:17 AM
@@ -17,14 +16,11 @@ import com.alibaba.android.vlayout.DelegateAdapter
 @Suppress("unused")
 abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapter.Adapter<V> {
     /**
-     * 数据源
      */
     private val mData: MutableList<T> = ArrayList()
     /**
-     * @return 当前列表的选中项
      */
     /**
-     * 当前点击的条目
      */
     private var selectPosition = -1
 
@@ -42,7 +38,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 构建自定义的ViewHolder
      *
      * @param parent
      * @param viewType
@@ -51,19 +46,13 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     protected abstract fun getViewHolder(parent: ViewGroup, viewType: Int): V
 
     /**
-     * 绑定数据
      *
      * @param holder
-     * @param position 索引
-     * @param item     列表项
      */
     protected abstract fun bindData(holder: V, position: Int, item: T)
 
     /**
-     * 加载布局获取控件
      *
-     * @param parent   父布局
-     * @param layoutId 布局ID
      * @return
      */
     protected fun inflateView(parent: ViewGroup, @LayoutRes layoutId: Int): View {
@@ -79,7 +68,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 获取列表项
      *
      * @param position
      * @return
@@ -100,13 +88,11 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * @return 数据源
      */
     val data: List<T>
         get() = mData
 
     /**
-     * 给指定位置添加一项
      *
      * @param pos
      * @param item
@@ -119,7 +105,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 在列表末端增加一项
      *
      * @param item
      * @return
@@ -131,7 +116,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 删除列表中指定索引的数据
      *
      * @param pos
      * @return
@@ -143,7 +127,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 刷新列表中指定位置的数据
      *
      * @param pos
      * @param item
@@ -156,7 +139,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 刷新列表数据
      *
      * @param collection
      * @return
@@ -173,7 +155,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 刷新列表数据
      *
      * @param array
      * @return
@@ -190,7 +171,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 加载更多
      *
      * @param collection
      * @return
@@ -205,7 +185,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 加载更多
      *
      * @param array
      * @return
@@ -220,7 +199,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 添加一个
      *
      * @param item
      * @return
@@ -235,7 +213,6 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 设置当前列表的选中项
      *
      * @param selectPosition
      * @return
@@ -248,15 +225,12 @@ abstract class XDelegateAdapter<T, V : RecyclerView.ViewHolder> : DelegateAdapte
     }
 
     /**
-     * 获取当前列表选中项
      *
-     * @return 当前列表选中项
      */
     val selectItem: T?
         get() = getItem(selectPosition)
 
     /**
-     * 清除数据
      */
     @SuppressLint("NotifyDataSetChanged")
     fun clear() {

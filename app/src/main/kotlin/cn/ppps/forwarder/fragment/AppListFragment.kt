@@ -67,7 +67,6 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         WidgetUtils.initRecyclerView(binding!!.recyclerView, DensityUtils.dp2px(5f), ThemeUtils.resolveColor(context, R.attr.xui_config_color_background))
@@ -75,7 +74,6 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.app_type_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             currentType = when (position) {
                 1 -> "system"
                 else -> "user"
@@ -108,12 +106,10 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
             XToastUtils.toast(getString(R.string.package_name_copied) + item?.packageName, 2000)
         }
 
-        //设置刷新加载时禁止所有列表操作
         binding!!.refreshLayout.setDisableContentWhenRefresh(true)
         binding!!.refreshLayout.setDisableContentWhenLoading(true)
         appListAdapter?.refresh(getAppsList(false))
         binding!!.refreshLayout.finishRefresh()
-        //监听已安装App信息列表加载完成事件
         LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observeStickyForever(appListObserver)
     }
 
@@ -124,14 +120,12 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
 
     private fun getAppsList(refresh: Boolean): MutableList<AppInfo> {
         if (refresh || (currentType == "user" && App.UserAppList.isEmpty()) || (currentType == "system" && App.SystemAppList.isEmpty())) {
-            //检查读取应用列表权限是否获取
             XXPermissions.with(this)
                 .permission(PermissionLists.getGetInstalledAppsPermission())
                 .request(object : OnPermissionCallback {
                     override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                         val allGranted = deniedList.isEmpty()
                         if (!allGranted) {
-                            // 判断请求失败的权限是否被用户勾选了不再询问的选项
                             val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                             if (doNotAskAgain) {
                                 XXPermissions.startPermissionActivity(XUI.getContext(), deniedList)
@@ -139,7 +133,6 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
                             XToastUtils.error(R.string.tips_get_installed_apps)
                             return
                         }
-                        // 处理权限请求成功的逻辑
                         XToastUtils.info(getString(R.string.loading_app_list))
                         val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
                         WorkManager.getInstance(XUI.getContext()).enqueue(request)

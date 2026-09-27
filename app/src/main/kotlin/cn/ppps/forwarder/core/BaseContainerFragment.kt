@@ -10,10 +10,8 @@ import com.xuexiang.xui.widget.actionbar.TitleBar
 import com.xuexiang.xui.widget.actionbar.TitleUtils
 
 /**
- * 修改列表样式为主副标题显示
  *
  * @author xuexiang
- * @since 2018/11/22 上午11:26
  */
 @Suppress("UNUSED_PARAMETER")
 abstract class BaseContainerFragment : XPageContainerListFragment() {
@@ -65,7 +63,6 @@ abstract class BaseContainerFragment : XPageContainerListFragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        //屏幕旋转时刷新一下title
         super.onConfigurationChanged(newConfig)
         val root = rootView as ViewGroup
         if (root.getChildAt(0) is TitleBar) {

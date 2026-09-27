@@ -17,7 +17,6 @@ class BatteryController {
 
     private val TAG: String = BatteryController::class.java.simpleName
 
-    //远程查电量
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/query")
     fun query(@RequestBody bean: BaseRequest<EmptyData>): BatteryInfo {

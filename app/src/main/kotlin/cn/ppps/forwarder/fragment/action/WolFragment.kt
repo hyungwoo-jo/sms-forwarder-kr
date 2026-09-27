@@ -47,7 +47,7 @@ class WolFragment : BaseFragment<FragmentTasksActionWolBinding?>(), View.OnClick
     private var mac = ""
     private var ip = ""
     private var port = ""
-    private var wakeMethod = 0 // 0: 通过本地服务API, 1: 直接发送幻数据包
+    private var wakeMethod = 0
 
     override fun initArgs() {
         XRouter.getInstance().inject(this)
@@ -66,11 +66,9 @@ class WolFragment : BaseFragment<FragmentTasksActionWolBinding?>(), View.OnClick
     }
 
     /**
-     * 初始化控件
      */
     @SuppressLint("SetTextI18n")
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object :
             CountDownButtonHelper.OnCountDownListener {
@@ -97,7 +95,6 @@ class WolFragment : BaseFragment<FragmentTasksActionWolBinding?>(), View.OnClick
         binding!!.etMac.setText(mac)
         binding!!.etIp.setText(ip)
         binding!!.etPort.setText(port)
-        // 设置唤醒方式
         if (wakeMethod == 1) {
             binding!!.rbDirect.isChecked = true
         } else {
@@ -179,7 +176,6 @@ class WolFragment : BaseFragment<FragmentTasksActionWolBinding?>(), View.OnClick
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): WolSetting {
         mac = binding!!.etMac.text.toString().trim()
@@ -200,7 +196,6 @@ class WolFragment : BaseFragment<FragmentTasksActionWolBinding?>(), View.OnClick
             throw Exception(getString(R.string.wol_port_error))
         }
 
-        // 获取唤醒方式
         wakeMethod = if (binding!!.rbDirect.isChecked) 1 else 0
 
         description = String.format(getString(R.string.wol_description), mac)

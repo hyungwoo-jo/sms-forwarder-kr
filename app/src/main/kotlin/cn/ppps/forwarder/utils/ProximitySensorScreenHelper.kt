@@ -47,17 +47,16 @@ object ProximitySensorScreenHelper {
                 override fun onSensorChanged(event: SensorEvent?) {
                     val its = event?.values ?: return
                     if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-                        //经过测试，当手贴近距离感应器的时候its[0]返回值为0.0，当手离开时返回1.0
-                        if (its[0] == 0.0f) { // 贴近手机
+                        if (its[0] == 0.0f) {
                             if (wakeLock.isHeld) {
                                 return
                             }
-                            wakeLock.acquire() // 申请设备电源锁
-                        } else { // 远离手机
+                            wakeLock.acquire()
+                        } else {
                             if (!wakeLock.isHeld) {
                                 return
                             }
-                            wakeLock.release() // 释放设备电源锁
+                            wakeLock.release()
                         }
                     }
                 }

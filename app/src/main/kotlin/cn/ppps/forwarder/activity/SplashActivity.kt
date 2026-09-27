@@ -24,7 +24,6 @@ class SplashActivity : BaseSplashActivity(), CancelAdapt {
     }
 
     /**
-     * activity启动后的初始化
      */
     override fun onCreateActivity() {
         initSplashView(R.drawable.xui_config_bg_splash)
@@ -32,7 +31,6 @@ class SplashActivity : BaseSplashActivity(), CancelAdapt {
     }
 
     /**
-     * 启动页结束后的动作
      */
     override fun onSplashFinished() {
         if (isAgreePrivacy) {
@@ -58,7 +56,6 @@ class SplashActivity : BaseSplashActivity(), CancelAdapt {
     }
 
     /**
-     * 菜单、返回键响应
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return KeyboardUtils.onDisableBackKeyDown(keyCode) && super.onKeyDown(keyCode, event)

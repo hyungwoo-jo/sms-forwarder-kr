@@ -53,7 +53,6 @@ class NetworkFragment : BaseFragment<FragmentTasksConditionNetworkBinding?>(), V
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
 
@@ -118,7 +117,6 @@ class NetworkFragment : BaseFragment<FragmentTasksConditionNetworkBinding?>(), V
         }
     }
 
-    //检查设置
     private fun checkSetting(updateView: Boolean = false): NetworkSetting {
         val networkStateCheckId = binding!!.rgNetworkState.checkedRadioButtonId
         val dataSimSlotCheckId = binding!!.rgDataSimSlot.checkedRadioButtonId

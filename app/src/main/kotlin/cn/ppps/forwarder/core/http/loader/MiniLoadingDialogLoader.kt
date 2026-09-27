@@ -6,7 +6,6 @@ import com.xuexiang.xhttp2.subsciber.impl.OnProgressCancelListener
 import com.xuexiang.xui.widget.dialog.MiniLoadingDialog
 
 /**
- * 默认进度加载
  *
  * @author xuexiang
  * @since 2019-11-18 23:07
@@ -16,12 +15,10 @@ class MiniLoadingDialogLoader @JvmOverloads constructor(
     msg: String? = "Loading...",
 ) : IProgressLoader {
     /**
-     * 进度loading弹窗
      */
     private val mDialog: MiniLoadingDialog?
 
     /**
-     * 进度框取消监听
      */
     private var mOnProgressCancelListener: OnProgressCancelListener? = null
     override fun isLoading(): Boolean {

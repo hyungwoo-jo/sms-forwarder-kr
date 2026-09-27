@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 object BluetoothUtils {
 
     /**
-     * 检查应用是否具有蓝牙权限
      */
     fun hasBluetoothPermission(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(context, android.Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
@@ -17,7 +16,6 @@ object BluetoothUtils {
     }
 
     /**
-     * 检查蓝牙是否已启用
      */
     fun isBluetoothEnabled(): Boolean {
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -25,7 +23,6 @@ object BluetoothUtils {
     }
 
     /**
-     * 检查设备是否支持蓝牙功能
      */
     fun hasBluetoothCapability(context: Context): Boolean {
         if (!hasBluetoothPermission(context)) {

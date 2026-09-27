@@ -26,7 +26,6 @@ class HttpServerService : Service(), Server.ServerListener {
     override fun onCreate() {
         super.onCreate()
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
         Log.i(TAG, "onCreate: ")
@@ -41,7 +40,6 @@ class HttpServerService : Service(), Server.ServerListener {
     override fun onDestroy() {
         super.onDestroy()
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
         Log.i(TAG, "onDestroy: ")

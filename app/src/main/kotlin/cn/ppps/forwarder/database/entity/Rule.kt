@@ -52,8 +52,8 @@ import java.util.regex.PatternSyntaxException
             entity = Sender::class,
             parentColumns = ["id"],
             childColumns = ["sender_id"],
-            onDelete = ForeignKey.CASCADE, //级联操作
-            onUpdate = ForeignKey.CASCADE //级联操作
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         )
     ],
     indices = [
@@ -78,7 +78,6 @@ data class Rule(
     @ColumnInfo(name = "time") var time: Date = Date(),
     @ColumnInfo(name = "sender_list", defaultValue = "") var senderList: List<Sender>,
     @ColumnInfo(name = "sender_logic", defaultValue = "ALL") var senderLogic: String = "ALL",
-    //免打扰(禁用转发)时间段
     @ColumnInfo(name = "silent_period_start", defaultValue = "0") var silentPeriodStart: Int = 0,
     @ColumnInfo(name = "silent_period_end", defaultValue = "0") var silentPeriodEnd: Int = 0,
     @ColumnInfo(name = "silent_day_of_week", defaultValue = "") var silentDayOfWeek: String = "",
@@ -219,14 +218,11 @@ data class Rule(
         }
     }
 
-    //字段分支
     @Throws(Exception::class)
     fun checkMsg(msg: MsgInfo?): Boolean {
 
-        //检查这一行和上一行合并的结果是否命中
         var mixChecked = false
         if (msg != null) {
-            //先检查规则是否命中
             when (this.filed) {
                 FILED_TRANSPOND_ALL -> mixChecked = true
                 FILED_PHONE_NUM, FILED_PACKAGE_NAME -> mixChecked = checkValue(msg.from)
@@ -241,7 +237,6 @@ data class Rule(
         return mixChecked
     }
 
-    //内容分支
     private fun checkValue(msgValue: String?): Boolean {
         if (msgValue == null) return false
 

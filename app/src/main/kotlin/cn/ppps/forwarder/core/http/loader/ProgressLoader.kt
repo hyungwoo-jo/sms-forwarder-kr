@@ -4,7 +4,6 @@ import android.content.Context
 import com.xuexiang.xhttp2.subsciber.impl.IProgressLoader
 
 /**
- * 创建进度加载者
  *
  * @author xuexiang
  * @since 2019-07-02 12:51
@@ -18,7 +17,6 @@ class ProgressLoader private constructor() {
         }
 
         /**
-         * 创建进度加载者
          *
          * @param context
          * @return
@@ -28,10 +26,8 @@ class ProgressLoader private constructor() {
         }
 
         /**
-         * 创建进度加载者
          *
          * @param context
-         * @param message 默认提示信息
          * @return
          */
         fun create(context: Context?, message: String?): IProgressLoader? {

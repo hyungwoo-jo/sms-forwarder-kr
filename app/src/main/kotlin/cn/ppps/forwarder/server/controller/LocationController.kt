@@ -21,7 +21,6 @@ class LocationController {
 
     private val TAG: String = LocationController::class.java.simpleName
 
-    //远程找手机
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/query")
     fun query(@RequestBody bean: BaseRequest<EmptyData>): LocationInfo {

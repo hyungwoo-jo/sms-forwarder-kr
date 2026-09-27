@@ -35,7 +35,6 @@ class SimWorker(context: Context, params: WorkerParameters) : CoroutineWorker(co
             for (task in taskList) {
                 Log.d(TAG, "task = $task")
 
-                // 根据任务信息执行相应操作
                 val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                 if (conditionList.isEmpty()) {
                     Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -58,7 +57,6 @@ class SimWorker(context: Context, params: WorkerParameters) : CoroutineWorker(co
                     continue
                 }
 
-                //TODO：判断其他条件是否满足，注意：SIM卡已准备就绪时，延迟5秒（给够搜索信号时间）才执行任务
                 if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                     Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                     continue
@@ -67,7 +65,6 @@ class SimWorker(context: Context, params: WorkerParameters) : CoroutineWorker(co
                 val msg = StringBuilder()
                 msg.append(String.format(getString(R.string.sim_state), simStateStr)).append("\n")
                 if (TaskUtils.simState == TelephonyManager.SIM_STATE_READY) {
-                    // 获取 SIM 卡信息
                     App.SimInfoList = PhoneUtils.getSimMultiInfo()
                     //Log.d(TAG, App.SimInfoList.toString())
                     App.SimInfoList.forEach {
@@ -81,7 +78,6 @@ class SimWorker(context: Context, params: WorkerParameters) : CoroutineWorker(co
                     }
                 }
 
-                //TODO: 组装消息体 && 执行具体任务
                 val msgInfo = MsgInfo("task", task.name, msg.toString().trimEnd(), Date(), task.description)
                 val actionData = Data.Builder().putLong(TaskWorker.TASK_ID, task.id).putString(TaskWorker.TASK_ACTIONS, task.actions).putString(TaskWorker.MSG_INFO, Gson().toJson(msgInfo)).build()
                 val actionRequest = OneTimeWorkRequestBuilder<ActionWorker>().setInputData(actionData).build()

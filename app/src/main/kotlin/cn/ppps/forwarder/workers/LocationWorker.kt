@@ -48,13 +48,11 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
 
             when (conditionType) {
 
-                //到达地点
                 TASK_CONDITION_TO_ADDRESS -> {
                     val taskList = Core.task.getByType(conditionType)
                     for (task in taskList) {
                         Log.d(TAG, "task = $task")
 
-                        // 根据任务信息执行相应操作
                         val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                         if (conditionList.isEmpty()) {
                             Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -72,7 +70,6 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
                             continue
                         }
 
-                        //TODO：判断条件是否满足
                         var description = locationSetting.description
                         val isMatchCondition = when (locationSetting.calcType) {
                             "distance" -> {
@@ -95,13 +92,11 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
                             continue
                         }
 
-                        //TODO：判断其他条件是否满足
                         if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                             Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                             continue
                         }
 
-                        //TODO: 组装消息体 && 执行具体任务
                         val msgInfo = MsgInfo("task", task.name, locationNew.toString(), Date(), description)
                         val actionData = Data.Builder().putLong(TaskWorker.TASK_ID, task.id).putString(TaskWorker.TASK_ACTIONS, task.actions).putString(TaskWorker.MSG_INFO, Gson().toJson(msgInfo)).build()
                         val actionRequest = OneTimeWorkRequestBuilder<ActionWorker>().setInputData(actionData).build()
@@ -111,13 +106,11 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
                     return Result.success()
                 }
 
-                //离开地点
                 TASK_CONDITION_LEAVE_ADDRESS -> {
                     val taskList = Core.task.getByType(conditionType)
                     for (task in taskList) {
                         Log.d(TAG, "task = $task")
 
-                        // 根据任务信息执行相应操作
                         val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                         if (conditionList.isEmpty()) {
                             Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -135,7 +128,6 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
                             continue
                         }
 
-                        //TODO：判断条件是否满足
                         var description = locationSetting.description
                         val isMatchCondition = when (locationSetting.calcType) {
                             "distance" -> {
@@ -158,13 +150,11 @@ class LocationWorker(context: Context, params: WorkerParameters) : CoroutineWork
                             continue
                         }
 
-                        //TODO：判断其他条件是否满足
                         if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                             Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                             continue
                         }
 
-                        //TODO: 组装消息体 && 执行具体任务
                         val msgInfo = MsgInfo("task", task.name, locationNew.toString(), Date(), description)
                         val actionData = Data.Builder().putLong(TaskWorker.TASK_ID, task.id).putString(TaskWorker.TASK_ACTIONS, task.actions).putString(TaskWorker.MSG_INFO, Gson().toJson(msgInfo)).build()
                         val actionRequest = OneTimeWorkRequestBuilder<ActionWorker>().setInputData(actionData).build()

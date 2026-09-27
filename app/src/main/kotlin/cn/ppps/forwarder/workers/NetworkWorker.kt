@@ -41,7 +41,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             TaskUtils.ipv6 = ""
             val ipv4 = ""
             val ipv6 = ""
-            //获取所有IP地址
             val ipList = CommonUtils.getIPAddresses().filter { !isLocalAddress(it) }
             TaskUtils.ipList = if (ipList.isNotEmpty()) ipList.joinToString("\n") else ""
 
@@ -50,7 +49,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
             for (task in taskList) {
                 Log.d(TAG, "task = $task")
 
-                // 根据任务信息执行相应操作
                 val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                 if (conditionList.isEmpty()) {
                     Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -73,7 +71,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                     continue
                 }
 
-                //TODO：判断其他条件是否满足，注意：延迟5秒（给够搜索信号时间）才执行任务
                 if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                     Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                     continue
@@ -82,7 +79,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                 val msg = StringBuilder()
                 msg.append(getString(R.string.network_type)).append(": ")
                 when (networkSetting.networkState) {
-                    //移动网络
                     1 -> {
                         val dataSimSlot = TaskUtils.dataSimSlot
                         if (networkSetting.dataSimSlot != 0 && dataSimSlot != networkSetting.dataSimSlot) {
@@ -93,11 +89,9 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
                         if (dataSimSlot != 0) {
                             msg.append(getString(R.string.data_sim_index)).append(": SIM-").append(dataSimSlot).append("\n")
-                            // 获取 SIM 卡信息
                             val simIndex = dataSimSlot - 1
                             App.SimInfoList = PhoneUtils.getSimMultiInfo()
                             if (App.SimInfoList[simIndex]?.mCarrierName != null) {
-                                //获取网络运营商名称：中国移动、中国联通、中国电信
                                 msg.append(getString(R.string.carrier_name)).append(": ").append(App.SimInfoList[simIndex]?.mCarrierName).append("\n")
                             }
                         }
@@ -105,7 +99,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
 
                     //WiFi
                     2 -> {
-                        //获取WiFi名称
                         val wifiManager = App.context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
                         val wifiInfo = wifiManager.connectionInfo
                         TaskUtils.wifiSsid = wifiInfo.ssid.replace("\"", "")
@@ -118,7 +111,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                         msg.append(getString(R.string.wifi_ssid)).append(": ").append(TaskUtils.wifiSsid).append("\n")
                     }
 
-                    //未知 && 没有网络
                     else -> {
                         msg.append(getString(R.string.no_network)).append("\n")
                     }
@@ -139,7 +131,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                     }
                 }
 
-                //TODO: 组装消息体 && 执行具体任务
                 val msgInfo = MsgInfo("task", task.name, msg.toString().trimEnd(), Date(), task.description)
                 val actionData = Data.Builder().putLong(TaskWorker.TASK_ID, task.id).putString(TaskWorker.TASK_ACTIONS, task.actions).putString(TaskWorker.MSG_INFO, Gson().toJson(msgInfo)).build()
                 val actionRequest = OneTimeWorkRequestBuilder<ActionWorker>().setInputData(actionData).build()
@@ -153,7 +144,6 @@ class NetworkWorker(context: Context, params: WorkerParameters) : CoroutineWorke
         }
     }
 
-    //检查IP地址是否为本地地址
     private fun isLocalAddress(ip: String): Boolean {
         return ip == "127.0.0.1" || ip == "::1" || ip.startsWith("fe80:") || ip.startsWith("fec0:")
     }

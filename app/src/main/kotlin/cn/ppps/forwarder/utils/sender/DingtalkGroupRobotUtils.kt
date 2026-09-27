@@ -19,7 +19,6 @@ import java.nio.charset.StandardCharsets
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-//钉钉群自定义机器人
 class DingtalkGroupRobotUtils private constructor() {
     companion object {
 
@@ -100,11 +99,11 @@ class DingtalkGroupRobotUtils private constructor() {
             XHttp.post(requestUrl)
                 .upJson(requestMsg)
                 .keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

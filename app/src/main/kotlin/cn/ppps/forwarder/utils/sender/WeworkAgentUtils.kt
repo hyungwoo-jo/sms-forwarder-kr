@@ -52,22 +52,18 @@ class WeworkAgentUtils private constructor() {
 
             val request = XHttp.get(getTokenUrl)
 
-            //设置代理
             if ((setting.proxyType == Proxy.Type.HTTP || setting.proxyType == Proxy.Type.SOCKS) && !TextUtils.isEmpty(setting.proxyHost) && !TextUtils.isEmpty(setting.proxyPort)) {
-                //代理服务器的IP和端口号
                 val proxyPort = setting.proxyPort.toIntOrNull()
                     ?: throw IllegalArgumentException("Invalid proxy port")
 
                 Log.d(TAG, "proxyHost = ${setting.proxyHost}, proxyPort = $proxyPort")
                 request.okproxy(Proxy(setting.proxyType, InetSocketAddress(setting.proxyHost, proxyPort)))
 
-                //代理的鉴权账号密码
                 if (setting.proxyAuthenticator && (!TextUtils.isEmpty(setting.proxyUsername) || !TextUtils.isEmpty(setting.proxyPassword))) {
                     Log.i(TAG, "proxyUsername = ${setting.proxyUsername}, proxyPassword = ${setting.proxyPassword}")
 
                     if (setting.proxyType == Proxy.Type.HTTP) {
                         request.okproxyAuthenticator { _: Route?, response: Response ->
-                            //设置代理服务器账号密码
                             val credential = Credentials.basic(setting.proxyUsername, setting.proxyPassword)
                             response.request().newBuilder().header("Proxy-Authorization", credential).build()
                         }
@@ -82,11 +78,11 @@ class WeworkAgentUtils private constructor() {
             }
 
             request.keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {
@@ -102,7 +98,7 @@ class WeworkAgentUtils private constructor() {
                         val resp = Gson().fromJson(response, WeworkAgentResult::class.java)
                         if (resp?.errcode == 0L) {
                             accessToken = resp.access_token.toString()
-                            expiresIn = System.currentTimeMillis() + ((resp.expires_in ?: 7200) - 120) * 1000L //提前2分钟过期
+                            expiresIn = System.currentTimeMillis() + ((resp.expires_in ?: 7200) - 120) * 1000L
                             sendTextMsg(setting, msgInfo, rule, senderIndex, logId, msgId)
                         } else {
                             SendUtils.updateLogs(logId, 0, String.format(getString(R.string.request_failed_tips), response))
@@ -114,7 +110,6 @@ class WeworkAgentUtils private constructor() {
 
         }
 
-        //发送文本消息
         private fun sendTextMsg(
             setting: WeworkAgentSetting,
             msgInfo: MsgInfo,
@@ -147,22 +142,18 @@ class WeworkAgentUtils private constructor() {
 
             val request = XHttp.post(requestUrl)
 
-            //设置代理
             if ((setting.proxyType == Proxy.Type.HTTP || setting.proxyType == Proxy.Type.SOCKS) && !TextUtils.isEmpty(setting.proxyHost) && !TextUtils.isEmpty(setting.proxyPort)) {
-                //代理服务器的IP和端口号
                 val proxyPort = setting.proxyPort.toIntOrNull()
                     ?: throw IllegalArgumentException("Invalid proxy port")
 
                 Log.d(TAG, "proxyHost = ${setting.proxyHost}, proxyPort = $proxyPort")
                 request.okproxy(Proxy(setting.proxyType, InetSocketAddress(setting.proxyHost, proxyPort)))
 
-                //代理的鉴权账号密码
                 if (setting.proxyAuthenticator && (!TextUtils.isEmpty(setting.proxyUsername) || !TextUtils.isEmpty(setting.proxyPassword))) {
                     Log.i(TAG, "proxyUsername = ${setting.proxyUsername}, proxyPassword = ${setting.proxyPassword}")
 
                     if (setting.proxyType == Proxy.Type.HTTP) {
                         request.okproxyAuthenticator { _: Route?, response: Response ->
-                            //设置代理服务器账号密码
                             val credential = Credentials.basic(setting.proxyUsername, setting.proxyPassword)
                             response.request().newBuilder().header("Proxy-Authorization", credential).build()
                         }
@@ -178,11 +169,11 @@ class WeworkAgentUtils private constructor() {
 
             request.upJson(requestMsg)
                 .keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

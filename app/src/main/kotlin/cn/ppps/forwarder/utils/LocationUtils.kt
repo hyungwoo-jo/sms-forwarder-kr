@@ -43,13 +43,11 @@ object LocationUtils {
     fun hasLocationCapability(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
-        // 检查是否有位置权限
         if (!hasLocationPermission(context)) {
             Log.e("LocationUtils", "hasLocationCapability: no location permission")
             return false
         }
 
-        // 检查是否有定位能力
         val hasGpsProvider = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
         val hasNetworkProvider = locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true
         val hasPassiveProvider = locationManager?.isProviderEnabled(LocationManager.PASSIVE_PROVIDER) == true

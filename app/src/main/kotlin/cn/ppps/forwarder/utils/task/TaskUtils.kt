@@ -51,13 +51,11 @@ import cn.ppps.forwarder.utils.TASK_CONDITION_SMS
 import cn.ppps.forwarder.utils.TASK_CONDITION_TO_ADDRESS
 
 /**
- * 自动任务工具类 —— 用于存储自动任务相关的配置
  */
 class TaskUtils private constructor() {
 
     companion object {
 
-        //获取任务类型图标
         fun getTypeImageId(type: Int): Int {
             return when (type) {
                 TASK_CONDITION_CRON -> R.drawable.auto_task_icon_custom_time
@@ -87,7 +85,6 @@ class TaskUtils private constructor() {
             }
         }
 
-        //获取任务类型图标（灰色）
         fun getTypeGreyImageId(type: Int): Int {
             return when (type) {
                 TASK_CONDITION_CRON -> R.drawable.auto_task_icon_custom_time_grey
@@ -117,67 +114,46 @@ class TaskUtils private constructor() {
             }
         }
 
-        //电池信息
         var batteryInfo: String by SharedPreference(SP_BATTERY_INFO, "")
 
-        //当前电量
         var batteryLevel: Int by SharedPreference(SP_BATTERY_LEVEL, 0)
 
-        //当前电量百分比（level/scale）
         var batteryPct: Float by SharedPreference(SP_BATTERY_PCT, 0.00F)
 
-        //电池状态
         var batteryStatus: Int by SharedPreference(SP_BATTERY_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN)
 
-        //充电方式
         var batteryPlugged: Int by SharedPreference(SP_BATTERY_PLUGGED, BatteryManager.BATTERY_PLUGGED_AC)
 
-        //电池电压（mV）
         var batteryVoltage: Int by SharedPreference(SP_BATTERY_VOLTAGE, 0)
 
-        //电池健康度
         var batteryHealth: Int by SharedPreference(SP_BATTERY_HEALTH, BatteryManager.BATTERY_HEALTH_UNKNOWN)
 
-        //电池温度（℃）
         var batteryTemperature: Int by SharedPreference(SP_BATTERY_TEMPERATURE, 0)
 
-        //网络状态：0-没有网络，1-移动网络，2-WiFi，3-以太网, 4-未知
         var networkState: Int by SharedPreference(SP_NETWORK_STATE, 0)
 
-        //数据卡槽：0-未知，1-卡1，2-卡2
         var dataSimSlot: Int by SharedPreference(SP_DATA_SIM_SLOT, 0)
 
-        //WiFi名称
         var wifiSsid: String by SharedPreference(SP_WIFI_SSID, "")
 
-        //IPv4地址
         var ipv4: String by SharedPreference(SP_IPV4, "")
 
-        //IPv6地址
         var ipv6: String by SharedPreference(SP_IPV6, "")
 
-        //IP地址列表
         var ipList: String by SharedPreference(SP_IP_LIST, "")
 
-        //SIM卡状态：0-未知状态，1-卡被移除，5-卡已准备就绪
         var simState: Int by SharedPreference(SP_SIM_STATE, 0)
 
-        //上次定位信息
         var locationInfoOld: LocationInfo by SharedPreference(SP_LOCATION_INFO_OLD, LocationInfo())
 
-        //当前定位信息
         var locationInfoNew: LocationInfo by SharedPreference(SP_LOCATION_INFO_NEW, LocationInfo())
 
-        //上次锁屏广播
         var lockScreenAction: String by SharedPreference(SP_LOCK_SCREEN_ACTION, "")
 
-        //已发现的蓝牙设备
         var discoveredDevices: MutableMap<String, String> by SharedPreference(SP_DISCOVERED_DEVICES, mutableMapOf())
 
-        //已连接的蓝牙设备
         var connectedDevices: MutableMap<String, String> by SharedPreference(SP_CONNECTED_DEVICE, mutableMapOf())
 
-        //蓝牙状态
         var bluetoothState: Int by SharedPreference(SP_BLUETOOTH_STATE, BluetoothAdapter.STATE_ON)
 
     }

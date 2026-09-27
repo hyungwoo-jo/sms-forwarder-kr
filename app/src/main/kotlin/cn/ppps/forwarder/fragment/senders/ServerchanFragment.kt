@@ -77,10 +77,8 @@ class ServerchanFragment : BaseFragment<FragmentSendersServerchanBinding?>(), Vi
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -92,14 +90,12 @@ class ServerchanFragment : BaseFragment<FragmentSendersServerchanBinding?>(), Vi
             }
         })
 
-        //新增
         if (senderId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_sender))
             binding!!.btnDel.setText(R.string.discard)
             return
         }
 
-        //编辑
         binding!!.btnDel.setText(R.string.del)
         Core.sender.get(senderId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Sender> {
             override fun onSubscribe(d: Disposable) {}

@@ -42,11 +42,9 @@ class SmsSendFragment : BaseFragment<FragmentClientSmsSendBinding?>(), View.OnCl
     }
 
     /**
-     * 初始化控件
      */
     @SuppressLint("SetTextI18n")
     override fun initViews() {
-        //发送按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnSubmit, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -58,7 +56,6 @@ class SmsSendFragment : BaseFragment<FragmentClientSmsSendBinding?>(), View.OnCl
             }
         })
 
-        //卡槽信息
         val serverConfigStr = HttpServerUtils.serverConfig
         if (!TextUtils.isEmpty(serverConfigStr)) {
             val serverConfig: ConfigData = Gson().fromJson(serverConfigStr, object : TypeToken<ConfigData>() {}.type)

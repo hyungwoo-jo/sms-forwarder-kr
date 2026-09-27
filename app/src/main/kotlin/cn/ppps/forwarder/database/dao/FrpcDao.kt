@@ -33,14 +33,12 @@ interface FrpcDao {
     @Query("SELECT * FROM Frpc where uid=:uid")
     fun get(uid: String): Single<Frpc>
 
-    //TODO:允许主线程访问，后面再优化
     @Query("SELECT * FROM Frpc where uid=:uid")
     fun getOne(uid: String): Frpc
 
     @Query("SELECT * FROM Frpc where autorun=1")
     fun getAutorun(): List<Frpc>
 
-    //使用 ORDER BY 子句和 instr() 函数按照列表中 uid 的顺序返回结果
     //@Query("SELECT * FROM Frpc WHERE uid IN (:uids) ORDER BY instr(:instr, uid)")
     //fun getByUids(uids: List<String>, instr: String): List<Frpc>
     @Query("SELECT * FROM Frpc WHERE uid IN (:uids)")

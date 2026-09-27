@@ -60,12 +60,12 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
     private val POS_RULE = 1
     private val POS_SENDER = 2
     private val POS_SETTING = 3
-    private val POS_TASK = 5 //4为空行
+    private val POS_TASK = 5
     private val POS_SERVER = 6
     private val POS_CLIENT = 7
     private val POS_FRPC = 8
     private val POS_APPS = 9
-    private val POS_HELP = 11 //10为空行
+    private val POS_HELP = 11
     private val POS_ABOUT = 12
     private var needToAppListFragment = false
 
@@ -87,7 +87,6 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         initViews()
         initSlidingMenu(savedInstanceState)
 
-        //不在最近任务列表中显示
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && SettingUtils.enableExcludeFromRecents) {
             val am = App.context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             am.let {
@@ -98,7 +97,6 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
             }
         }
 
-        //检查通知权限是否获取
         XXPermissions.with(this)
             .permission(PermissionLists.getNotificationServicePermission())
             .permission(PermissionLists.getPostNotificationsPermission())
@@ -109,7 +107,6 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
                         XToastUtils.error(R.string.tips_notification)
                         return
                     }
-                    //启动前台服务
                     if (!ForegroundService.isRunning) {
                         val serviceIntent = Intent(getTopActivity(), ForegroundService::class.java)
                         serviceIntent.action = ACTION_START
@@ -122,7 +119,6 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
                 }
             })
 
-        //监听已安装App信息列表加载完成事件
         LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observe(this) {
             if (needToAppListFragment) {
                 openNewPage(AppListFragment::class.java)
@@ -183,7 +179,6 @@ class MainActivity : BaseActivity<ActivityMainBinding?>(), DrawerAdapter.OnItemS
         // from the About screen when the user chooses to do so.
     }
 
-    //按返回键不退出回到桌面
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         val intent = Intent(Intent.ACTION_MAIN)

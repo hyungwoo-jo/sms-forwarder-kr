@@ -17,7 +17,7 @@ class FlashUtils(context: Context) {
     private var legacyCamera: Camera? = null
     private var legacyParams: Camera.Parameters? = null
     private var handler: Handler? = null
-    private val duration = 100L // 闪烁持续时间
+    private val duration = 100L
     var isFlashSupported = false
         private set
     var isFlashing = false
@@ -54,9 +54,6 @@ class FlashUtils(context: Context) {
     }
 
     /**
-     * 按照模式控制闪光灯
-     * @param pattern 例如 "XXOOXXOO" （X-开，O-关）
-     * @param repeatTimes 闪烁的重复次数，0 表示无限循环
      */
     fun startFlashing(pattern: String, repeatTimes: Int) {
         if (!isFlashSupported || isFlashing || repeatTimes < 0 || pattern.isEmpty()) return
@@ -94,16 +91,14 @@ class FlashUtils(context: Context) {
     }
 
     /**
-     * 关闭闪光灯并停止模式
      */
     fun stopFlashing() {
         isFlashing = false
         handler?.removeCallbacksAndMessages(null)
-        setFlashlight(false) // 确保停止后灯是关闭的
+        setFlashlight(false)
     }
 
     /**
-     * 设置闪光灯状态，兼容 Android 4.4+
      */
     private fun setFlashlight(enable: Boolean) {
         if (!isFlashSupported) return
@@ -124,7 +119,6 @@ class FlashUtils(context: Context) {
     }
 
     /**
-     * 释放旧 API 资源
      */
     fun release() {
         stopFlashing()

@@ -32,7 +32,6 @@ class LoggerInterceptor : HandlerInterceptor {
             Log.i(TAG, "Method: " + method.value())
             Log.i(TAG, "Param: $valueMap")
 
-            //判断是否开启该功能
             if (
                 (httpPath.startsWith("/clone") && !HttpServerUtils.enableApiClone)
                 || (httpPath.startsWith("/sms/query") && !HttpServerUtils.enableApiSmsQuery)
@@ -48,7 +47,6 @@ class LoggerInterceptor : HandlerInterceptor {
             }
 
             /*
-            //注意：这里读取body会导致 MessageConverter 报错：RequestBody is missing.
             val body = request.body?.string()
             Log.i(TAG, "Body: $body")
             */

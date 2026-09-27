@@ -9,10 +9,8 @@ import cn.ppps.forwarder.R
 import me.samlss.broccoli.PlaceholderParameter
 
 /**
- * 占位控件
  *
  * @author xuexiang
- * @since 2019/4/7 下午1:02
  */
 @Suppress("SameParameterValue", "unused")
 class PlaceholderHelper private constructor() {
@@ -52,7 +50,6 @@ class PlaceholderHelper private constructor() {
         }
 
         /**
-         * 圆形的动画占位
          */
         private fun getAnimationOvalPlaceholder(view: View, animation: Animation, placeHolderColor: Int): PlaceholderParameter {
             animation.repeatMode = Animation.REVERSE
@@ -65,7 +62,6 @@ class PlaceholderHelper private constructor() {
         }
 
         /**
-         * 矩形的动画占位
          */
         private fun getAnimationRectanglePlaceholder(view: View, animation: Animation, placeHolderColor: Int, cornerRadius: Int): PlaceholderParameter {
             animation.repeatMode = Animation.REVERSE
@@ -78,14 +74,12 @@ class PlaceholderHelper private constructor() {
         }
 
         /**
-         * 圆形的占位
          */
         private fun getOvalPlaceholder(view: View, placeHolderColor: Int): PlaceholderParameter {
             return getPlaceholder(view, DrawableUtils.createOvalDrawable(placeHolderColor))
         }
 
         /**
-         * 矩形的占位
          */
         private fun getRectanglePlaceholder(view: View, placeHolderColor: Int, cornerRadius: Int): PlaceholderParameter {
             return getPlaceholder(view, DrawableUtils.createRectangleDrawable(placeHolderColor, cornerRadius.toFloat()))

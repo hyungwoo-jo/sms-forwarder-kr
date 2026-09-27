@@ -8,11 +8,11 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable
 
 data class BluetoothSetting(
-    var description: String = "", //描述
-    var action: String = BluetoothAdapter.ACTION_STATE_CHANGED, //事件
-    var state: Int = BluetoothAdapter.STATE_ON, //蓝牙状态
-    var result: Int = 1, //搜索结果：1-已发现，0-未发现
-    var device: String = "", //设备MAC地址
+    var description: String = "",
+    var action: String = BluetoothAdapter.ACTION_STATE_CHANGED,
+    var state: Int = BluetoothAdapter.STATE_ON,
+    var result: Int = 1,
+    var device: String = "",
 ) : Serializable {
 
     constructor(actionCheckId: Int, stateCheckId: Int, resultCheckId: Int, deviceAddress: String) : this() {

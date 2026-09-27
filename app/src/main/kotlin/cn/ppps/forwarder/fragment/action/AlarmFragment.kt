@@ -71,11 +71,9 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         appContext = requireActivity().application as App
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 2)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -191,26 +189,22 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
                 }
 
                 R.id.btn_file_picker -> {
-                    // 申请储存权限
                     XXPermissions.with(this)
                         .permission(PermissionLists.getManageExternalStoragePermission())
                         .request(object : OnPermissionCallback {
                             override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                                 val allGranted = deniedList.isEmpty()
                                 if (!allGranted) {
-                                    // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                     val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                     if (doNotAskAgain) {
                                         XToastUtils.error(R.string.toast_denied_never)
                                         XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                     }
-                                    // 处理权限请求失败的逻辑
                                     XToastUtils.error(R.string.toast_denied)
                                     binding!!.etMusicPath.setText(getString(R.string.storage_permission_tips))
                                     return
                                 }
 
-                                // 处理权限请求成功的逻辑
                                 val downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path
                                 val fileList = findAudioFiles(downloadPath)
                                 if (fileList.isEmpty()) {
@@ -233,26 +227,22 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
                     if (binding!!.sbEnableFlash.isChecked) {
                         permissions.add(PermissionLists.getCameraPermission())
                     }
-                    // 申请修改系统设置权限
                     XXPermissions.with(this)
                         .permissions(permissions)
                         .request(object : OnPermissionCallback {
                             override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                                 val allGranted = deniedList.isEmpty()
                                 if (!allGranted) {
-                                    // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                     val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                     if (doNotAskAgain) {
                                         XToastUtils.error(R.string.toast_denied_never)
                                         XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                     }
-                                    // 处理权限请求失败的逻辑
                                     XToastUtils.error(R.string.toast_denied)
                                     binding!!.tvDescription.text = getString(R.string.write_settings_permission_tips)
                                     return
                                 }
 
-                                // 处理权限请求成功的逻辑
                                 mCountDownHelper?.start()
                                 try {
                                     val settingVo = checkSetting()
@@ -289,25 +279,20 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
                     if (binding!!.sbEnableFlash.isChecked) {
                         permissions.add(PermissionLists.getCameraPermission())
                     }
-                    // 申请修改系统设置权限
                     XXPermissions.with(this)
                         .permissions(permissions)
                         .request(object : OnPermissionCallback {
                             override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                                 val allGranted = deniedList.isEmpty()
                                 if (!allGranted) {
-                                    // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                     val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                     if (doNotAskAgain) {
                                         XToastUtils.error(R.string.toast_denied_never)
-                                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                         XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                     }
-                                    // 处理权限请求失败的逻辑
                                     binding!!.tvDescription.text = getString(R.string.write_settings_permission_tips)
                                     return
                                 }
-                                // 处理权限请求成功的逻辑
                                 val settingVo = checkSetting()
                                 if (settingVo.playTimes < 0 && settingVo.repeatTimes < 0 && settingVo.flashTimes < 0) {
                                     XToastUtils.error(getString(R.string.alarm_settings_error))
@@ -330,7 +315,6 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
         }
     }
 
-    //检查设置
     @Suppress("SameParameterValue")
     @SuppressLint("SetTextI18n")
     private fun checkSetting(updateView: Boolean = false): AlarmSetting {
@@ -390,7 +374,6 @@ class AlarmFragment : BaseFragment<FragmentTasksActionAlarmBinding?>(), View.OnC
 
         if (directory.exists() && directory.isDirectory) {
             directory.listFiles()?.let { files ->
-                // 筛选出支持的音频文件
                 files.filter { it.isFile && isSupportedAudioFile(it) }.forEach { audioFiles.add(it.name) }
             }
         }

@@ -85,10 +85,8 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        // 申请储存权限
         XXPermissions.with(this)
             .permission(PermissionLists.getManageExternalStoragePermission())
             .request(object : OnPermissionCallback {
@@ -96,18 +94,14 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         binding!!.tvBackupPath.text = getString(R.string.storage_permission_tips)
                         return
                     }
-                    // 处理权限请求成功的逻辑
                     backupPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path
                     binding!!.tvBackupPath.text = backupPath + File.separator + backupFile
 
@@ -116,7 +110,6 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.clone_type_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             if (position == 1) {
                 binding!!.layoutNetwork.visibility = View.GONE
                 binding!!.layoutOffline.visibility = View.VISIBLE
@@ -125,14 +118,12 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                 binding!!.layoutOffline.visibility = View.GONE
             }
         }
-        //通用设置界面跳转时只使用离线模式
         if (defaultSelection == 1) {
             binding!!.tabBar.visibility = View.GONE
             binding!!.layoutNetwork.visibility = View.GONE
             binding!!.layoutOffline.visibility = View.VISIBLE
         }
 
-        //按钮增加倒计时，避免重复点击
         pushCountDownHelper = CountDownButtonHelper(binding!!.btnPush, SettingUtils.requestTimeout)
         pushCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -185,16 +176,12 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
     @SingleClick
     override fun onClick(v: View) {
         when (v.id) {
-            //推送配置
             R.id.btn_push -> pushData()
-            //拉取配置
             R.id.btn_pull -> pullData()
-            //导出配置
             R.id.btn_export -> {
                 try {
                     exportCountDownHelper?.start()
                     val file = File(backupPath + File.separator + backupFile)
-                    //判断文件是否存在，存在则在创建之前删除
                     FileUtils.createFileByDeleteOldFile(file)
                     val cloneInfo = HttpServerUtils.exportSettings()
                     val jsonStr = Gson().toJson(cloneInfo)
@@ -209,12 +196,10 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                     XToastUtils.error(String.format(getString(R.string.export_failed_tips), e.message))
                 }
             }
-            //导入配置
             R.id.btn_import -> {
                 try {
                     importCountDownHelper?.start()
                     val file = File(backupPath + File.separator + backupFile)
-                    //判断文件是否存在
                     if (!FileUtils.isFileExists(file)) {
                         XToastUtils.error(getString(R.string.import_failed_file_not_exist))
                         return
@@ -227,14 +212,12 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                         return
                     }
 
-                    //替换Date字段为当前时间
                     val builder = GsonBuilder()
                     builder.registerTypeAdapter(Date::class.java, JsonDeserializer<Any?> { _, _, _ -> Date() })
                     val gson = builder.create()
                     val cloneInfo = gson.fromJson(jsonStr, CloneInfo::class.java)
                     Log.d(TAG, "cloneInfo = $cloneInfo")
 
-                    //判断版本是否一致
                     HttpServerUtils.compareVersion(cloneInfo)
 
                     if (HttpServerUtils.restoreSettings(cloneInfo)) {
@@ -260,7 +243,6 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
         }
     }
 
-    //推送配置
     private fun pushData() {
         if (!CommonUtils.checkUrl(HttpServerUtils.serverAddress)) {
             XToastUtils.error(getString(R.string.invalid_service_address))
@@ -284,7 +266,7 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
         var requestMsg: String = Gson().toJson(msgMap)
         Log.i(TAG, "requestMsg:$requestMsg")
 
-        val postRequest = XHttp.post(requestUrl).keepJson(true).timeOut((SettingUtils.requestTimeout * 1000).toLong()) //超时时间10s
+        val postRequest = XHttp.post(requestUrl).keepJson(true).timeOut((SettingUtils.requestTimeout * 1000).toLong())
             .cacheMode(CacheMode.NO_CACHE).timeStamp(true)
 
         when (HttpServerUtils.clientSafetyMeasures) {
@@ -361,7 +343,6 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
 
     }
 
-    //拉取配置
     private fun pullData() {
         if (!CommonUtils.checkUrl(HttpServerUtils.serverAddress)) {
             XToastUtils.error(getString(R.string.invalid_service_address))
@@ -448,7 +429,6 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                         json = String(decryptCBC)
                     }
 
-                    //替换Date字段为当前时间
                     val builder = GsonBuilder()
                     builder.registerTypeAdapter(Date::class.java, JsonDeserializer<Any?> { _, _, _ -> Date() })
                     val gson = builder.create()
@@ -462,7 +442,6 @@ class CloneFragment : BaseFragment<FragmentClientCloneBinding?>(), View.OnClickL
                             return
                         }
 
-                        //判断版本是否一致
                         HttpServerUtils.compareVersion(cloneInfo)
 
                         if (HttpServerUtils.restoreSettings(cloneInfo)) {

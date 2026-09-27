@@ -55,7 +55,6 @@ import java.util.Calendar
 object SendUtils {
     private const val TAG = "SendUtils"
 
-    //重新匹配规则并发送消息
     fun rematchSendMsg(item: MsgAndLogs) {
         val msgInfo = MsgInfo(item.msg.type, item.msg.from, item.msg.content, item.msg.time, item.msg.simInfo, item.msg.simSlot, item.msg.subId)
         Log.d(TAG, "msgInfo = $msgInfo")
@@ -68,7 +67,6 @@ object SendUtils {
         WorkManager.getInstance(XUtil.getContext()).enqueue(request)
     }
 
-    //重试发送消息
     fun retrySendMsg(logId: Long) {
         val item = Core.logs.getOne(logId)
         val msgInfo = MsgInfo(item.msg.type, item.msg.from, item.msg.content, item.msg.time, item.msg.simInfo, item.msg.simSlot, item.msg.subId)
@@ -88,7 +86,6 @@ object SendUtils {
         sendMsgSender(msgInfo, rule, senderIndex, logId, item.msg.id)
     }
 
-    //匹配发送通道发送消息
     @SuppressLint("SimpleDateFormat")
     fun sendMsgSender(msgInfo: MsgInfo, rule: Rule, senderIndex: Int = 0, logId: Long = 0L, msgId: Long = 0L) {
         try {
@@ -100,8 +97,6 @@ object SendUtils {
                 return
             }
 
-            //免打扰(禁用转发)：日期段 与 时间段 为「与」关系，且至少配置一项才生效
-            //未配置星期视为「不限星期」，未配置时段视为「不限时段」，二者都命中才拦截
             Log.d(TAG, "silentDayOfWeek = ${rule.silentDayOfWeek}, silentPeriodStart = ${rule.silentPeriodStart}, silentPeriodEnd = ${rule.silentPeriodEnd}")
             val silentDayOfWeek = rule.silentDayOfWeek.split(",").mapNotNull { it.trim().toIntOrNull() }
             val dayConfigured = silentDayOfWeek.isNotEmpty()
@@ -211,7 +206,6 @@ object SendUtils {
         }
     }
 
-    //发送通道执行逻辑：ALL=全部执行, UntilFail=失败即终止, UntilSuccess=成功即终止, Retry=重试发送
     fun senderLogic(status: Int, msgInfo: MsgInfo, rule: Rule?, senderIndex: Int = 0, msgId: Long = 0L) {
         if (rule == null || rule.senderLogic == SENDER_LOGIC_RETRY) return
 
@@ -229,14 +223,11 @@ object SendUtils {
         }
     }
 
-    //更新转发日志状态
     fun updateLogs(logId: Long?, status: Int, response: String) {
-        val safeResponse = SensitiveLogRedactor.redact(response)
+        val safeResponse = SensitiveLogRedactor.redactForDisplay(response)
 
-        //自动任务的不需要吐司或者更新日志
         if (logId == -1L) return
 
-        //测试的没有记录ID，这里取巧了
         if (logId == null || logId == 0L) {
             if (status == 2) {
                 LiveEventBus.get(EVENT_TOAST_SUCCESS, String::class.java).post(getString(R.string.request_succeeded))

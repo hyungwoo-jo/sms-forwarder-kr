@@ -25,19 +25,15 @@ class SimStateReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
         if (intent.action != "android.intent.action.SIM_STATE_CHANGED") return
 
-        // 处理 SIM 卡状态变化的逻辑
         val simStateOld = TaskUtils.simState
         val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
-        // 获取当前 SIM 卡状态
         val simStateNew = telephonyManager.simState
 
-        // SIM 卡状态未发生变化，避免重复执行
         if (simStateOld == simStateNew) return
 
         var duration = 10L
@@ -63,7 +59,6 @@ class SimStateReceiver : BroadcastReceiver() {
 
         }
 
-        //注意：SIM卡已准备就绪时，延迟5秒（给够搜索信号时间）才执行任务
         val request = OneTimeWorkRequestBuilder<SimWorker>()
             .setInitialDelay(duration, TimeUnit.MILLISECONDS)
             .setInputData(

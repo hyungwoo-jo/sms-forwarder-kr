@@ -83,7 +83,6 @@ class SocketUtils {
             }
         }
 
-        //JSON需要转义的字符
         private fun escapeJson(str: String?): String {
             if (str == null) return "null"
             val jsonStr: String = Gson().toJson(str)
@@ -220,7 +219,6 @@ class SocketUtils {
                     }
                 }
 
-                // 用挂起点等 MQTT 回调，避免忙等
                 val result = kotlinx.coroutines.suspendCancellableCoroutine { cont ->
 
                     mqttClient.setCallback(object : MqttCallbackExtended {
@@ -234,7 +232,6 @@ class SocketUtils {
                                 val payload = message.toByteArray(Charset.forName(setting.outCharset))
                                 mqttClient.publish(setting.outMessageTopic, payload, setting.qos, setting.retained)
 
-                                // 没有 response 期望，直接成功
                                 if (setting.response.isEmpty() || setting.retained) {
                                     cont.resume(2 to "MQTT sent", null)
                                 }
@@ -254,7 +251,6 @@ class SocketUtils {
                         }
 
                         override fun deliveryComplete(token: IMqttDeliveryToken?) {
-                            // 如果没有订阅回包，这里兜底
                             if (setting.response.isEmpty() || setting.retained) {
                                 cont.resume(2 to "deliveryComplete", null)
                             }

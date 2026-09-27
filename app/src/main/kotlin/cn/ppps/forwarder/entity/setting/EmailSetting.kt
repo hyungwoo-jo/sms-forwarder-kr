@@ -17,10 +17,10 @@ data class EmailSetting(
     var toEmail: String = "",
     var keystore: String = "",
     var password: String = "",
-    var encryptionProtocol: String = "Plain", //加密协议: S/MIME、OpenPGP、OpenKeychain、Plain（不传证书）
-    var fromEmailAlias: String = "", //发件邮箱别名
-    var openKeychainSignKeyId: Long = 0L, //OpenKeychain签名密钥ID（0=不签名）
-    var openKeychainSignKeyDesc: String = "", //OpenKeychain签名密钥描述（仅用于界面回显）
+    var encryptionProtocol: String = "Plain",
+    var fromEmailAlias: String = "",
+    var openKeychainSignKeyId: Long = 0L,
+    var openKeychainSignKeyDesc: String = "",
 ) : Serializable {
 
     fun getEncryptionProtocolCheckId(): Int {

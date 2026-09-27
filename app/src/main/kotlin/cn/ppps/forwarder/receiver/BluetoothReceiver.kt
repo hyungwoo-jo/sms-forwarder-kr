@@ -53,22 +53,18 @@ class BluetoothReceiver : BroadcastReceiver() {
         }
     }
 
-    // 处理发现设备
     private fun handleActionFound(intent: Intent) {
         val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
         if (ActivityCompat.checkSelfPermission(App.context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) return
         if (SettingUtils.bluetoothIgnoreAnonymous && device.name.isNullOrEmpty()) return
 
-        //TODO: 实测这里一台设备会收到两次广播
         Log.d(TAG, "Discovered device: ${device.name} - ${device.address}")
         val discoveredDevices = TaskUtils.discoveredDevices
         discoveredDevices[device.address] = device.name ?: ""
         TaskUtils.discoveredDevices = discoveredDevices
     }
 
-    // 处理扫描完成
     private fun handleDiscoveryFinished(context: Context) {
-        //TODO: 放在这里去判断是否已经发现某个设备（避免 ACTION_FOUND 重复广播）
         Log.d(TAG, "Bluetooth scan finished, discoveredDevices: ${TaskUtils.discoveredDevices}")
         if (TaskUtils.discoveredDevices.isNotEmpty()) {
             handleWorkRequest(context, BluetoothAdapter.ACTION_DISCOVERY_FINISHED, Gson().toJson(TaskUtils.discoveredDevices))
@@ -83,36 +79,30 @@ class BluetoothReceiver : BroadcastReceiver() {
         }
     }
 
-    // 处理蓝牙状态变化
     private fun handleStateChanged(context: Context, intent: Intent) {
         val state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
         handleBluetoothStateChanged(state)
         handleWorkRequest(context, BluetoothAdapter.ACTION_STATE_CHANGED, state.toString())
     }
 
-    // 处理蓝牙扫描模式变化
     private fun handleScanModeChanged() {
         if (SettingUtils.enableBluetooth) {
             restartBluetoothService()
         }
     }
 
-    // 处理本地蓝牙名称变化
     private fun handleLocalNameChanged() {
         // handle local name changed logic
     }
 
-    // 处理蓝牙连接状态变化
     private fun handleConnectionStateChanged() {
         // handle connection state changed logic
     }
 
-    // 处理蓝牙设备的配对状态变化
     private fun handleBondStateChanged() {
         // handle bond state changed logic
     }
 
-    // 处理蓝牙设备连接
     private fun handleAclConnected(context: Context, intent: Intent) {
         val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
         Log.d(TAG, "Connected device: ${device.name} - ${device.address}")
@@ -120,7 +110,6 @@ class BluetoothReceiver : BroadcastReceiver() {
         handleWorkRequest(context, BluetoothDevice.ACTION_ACL_CONNECTED, Gson().toJson(mutableMapOf(device.address to device.name)))
     }
 
-    // 处理蓝牙设备断开连接
     private fun handleAclDisconnected(context: Context, intent: Intent) {
         val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
         Log.d(TAG, "Disconnected device: ${device.name} - ${device.address}")
@@ -128,19 +117,15 @@ class BluetoothReceiver : BroadcastReceiver() {
         handleWorkRequest(context, BluetoothDevice.ACTION_ACL_DISCONNECTED, Gson().toJson(mutableMapOf(device.address to device.name)))
     }
 
-    // 处理蓝牙状态变化
     private fun handleBluetoothStateChanged(state: Int) {
         when (state) {
-            // 蓝牙已关闭
             BluetoothAdapter.STATE_OFF -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_OFF")
                 TaskUtils.bluetoothState = state
-                // 停止扫描 & 删除任何挂起的延迟扫描任务
                 restartBluetoothService(ACTION_STOP)
                 handler.removeCallbacksAndMessages(null)
             }
 
-            // 蓝牙已打开
             BluetoothAdapter.STATE_ON -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_ON")
                 TaskUtils.bluetoothState = state
@@ -149,39 +134,32 @@ class BluetoothReceiver : BroadcastReceiver() {
                 }
             }
 
-            // 蓝牙正在打开
             BluetoothAdapter.STATE_TURNING_ON -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_TURNING_ON")
             }
 
-            // 蓝牙正在关闭
             BluetoothAdapter.STATE_TURNING_OFF -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_TURNING_OFF")
             }
 
-            // 蓝牙正在连接
             BluetoothAdapter.STATE_CONNECTING -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_CONNECTING")
             }
 
-            // 蓝牙已连接
             BluetoothAdapter.STATE_CONNECTED -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_CONNECTED")
             }
 
-            // 蓝牙正在断开连接
             BluetoothAdapter.STATE_DISCONNECTING -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_DISCONNECTING")
             }
 
-            // 蓝牙已断开连接
             BluetoothAdapter.STATE_DISCONNECTED -> {
                 Log.d(TAG, "BluetoothAdapter.STATE_DISCONNECTED")
             }
         }
     }
 
-    //重启蓝牙扫描服务
     private fun restartBluetoothService(action: String = ACTION_RESTART) {
         Log.d(TAG, "restartBluetoothService, action: $action")
         val serviceIntent = Intent(App.context, BluetoothScanService::class.java)
@@ -189,7 +167,6 @@ class BluetoothReceiver : BroadcastReceiver() {
         App.context.startService(serviceIntent)
     }
 
-    // 发送任务请求
     private fun handleWorkRequest(context: Context, action: String, msg: String) {
         val request = OneTimeWorkRequestBuilder<BluetoothWorker>()
             .setInputData(

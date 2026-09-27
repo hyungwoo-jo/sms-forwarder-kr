@@ -30,10 +30,10 @@ data class MsgInfo(
     var content: String,
     var date: Date,
     var simInfo: String,
-    var simSlot: Int = -1, //卡槽id：-1=获取失败、0=卡槽1、1=卡槽2
-    var subId: Int = 0, //卡槽主键
-    var callType: Int = 0, //通话类型：1.来电挂机 2.去电挂机 3.未接来电 4.来电提醒 5.来电接通 6.去电拨出
-    var uid: Int = 0, //APP通知的UID
+    var simSlot: Int = -1,
+    var subId: Int = 0,
+    var callType: Int = 0,
+    var uid: Int = 0,
 ) : Serializable {
 
     val titleForSend = getTitleForSend()
@@ -58,7 +58,6 @@ data class MsgInfo(
                 getString(R.string.tag_receive_time) + "\n" +
                 getString(R.string.tag_device_name)
 
-        //优先取转发规则的自定义模板，留空则取全局设置
         if (ruleSmsTemplate.isNotEmpty()) {
             customSmsTemplate = ruleSmsTemplate.replace("null", "")
         } else {
@@ -136,7 +135,6 @@ data class MsgInfo(
             .trim()
     }
 
-    //正则替换内容
     private fun String.regexReplace(regexReplace: String): String {
         return if (TextUtils.isEmpty(regexReplace)) this else try {
             var newContent = this
@@ -158,7 +156,6 @@ data class MsgInfo(
         }
     }
 
-    //替换标签（支持正则替换）
     private fun String.replaceTag(tag: String, info: String, encoderName: String = "", ignoreCase: Boolean = true): String {
         var result = when (encoderName) {
             "Gson" -> this.replace(tag, toJsonStr(info), ignoreCase)
@@ -167,7 +164,6 @@ data class MsgInfo(
         }
 
         val tagName = tag.removePrefix("{{").removeSuffix("}}")
-        //使用 (.+?) 而非 ([^=]+)：正则部分可能包含 "=" 字符（如 (?=...) 正向先行断言），([^=]+) 会提前截断导致标签解析失败
         val tagRegex = "\\{\\{${tagName}###(.+?)===(.*?)\\}\\}".toRegex()
         tagRegex.findAll(result).forEach {
             try {
@@ -189,7 +185,6 @@ data class MsgInfo(
         return result
     }
 
-    //替换{{CONTACT_NAME}}标签
     private fun String.replaceContactNameTag(encoderName: String = ""): String {
         if (TextUtils.isEmpty(this)) return this
         if (this.indexOf(getString(R.string.tag_contact_name)) == -1) return this
@@ -203,7 +198,6 @@ data class MsgInfo(
         return this.replaceTag(getString(R.string.tag_contact_name), contactName)
     }
 
-    //替换{{PHONE_AREA}}标签
     private fun String.replacePhoneAreaTag(encoderName: String = ""): String {
         if (TextUtils.isEmpty(this)) return this
         if (this.indexOf(getString(R.string.tag_phone_area)) == -1) return this
@@ -216,7 +210,6 @@ data class MsgInfo(
         return this.replaceTag(getString(R.string.tag_phone_area), phoneArea)
     }
 
-    //替换{{APP_NAME}}标签
     private fun String.replaceAppNameTag(packageName: String, encoderName: String = ""): String {
         if (TextUtils.isEmpty(this)) return this
         if (this.indexOf(getString(R.string.tag_app_name)) == -1) return this
@@ -247,7 +240,6 @@ data class MsgInfo(
         return this.replaceTag(getString(R.string.tag_app_name), appName)
     }
 
-    //替换{{LOCATION}}标签
     private fun String.replaceLocationTag(encoderName: String = ""): String {
         if (TextUtils.isEmpty(this)) return this
 
@@ -271,7 +263,6 @@ data class MsgInfo(
             .replaceTag(getString(R.string.tag_location_address), address)
     }
 
-    //直接插入json字符串需要转义
     private fun toJsonStr(string: String?): String {
         if (string == null) return "null"
 

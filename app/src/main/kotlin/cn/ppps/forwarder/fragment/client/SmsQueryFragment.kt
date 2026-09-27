@@ -79,7 +79,6 @@ class SmsQueryFragment : BaseFragment<FragmentClientSmsQueryBinding?>() {
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -129,13 +128,11 @@ class SmsQueryFragment : BaseFragment<FragmentClientSmsQueryBinding?>() {
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.sms_type_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             smsType = position + 1
             loadRemoteData(true)
             binding!!.recyclerView.scrollToPosition(0)
         }
 
-        //搜索框
         binding!!.searchView.findViewById<View>(com.xuexiang.xui.R.id.search_layout).visibility = View.GONE
         //binding!!.searchView.setVoiceSearch(true)
         binding!!.searchView.setEllipsize(true)
@@ -173,19 +170,17 @@ class SmsQueryFragment : BaseFragment<FragmentClientSmsQueryBinding?>() {
     }
 
     override fun initListeners() {
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             refreshLayout.layout.postDelayed({
                 loadRemoteData(true)
             }, 1000)
         }
-        //上拉加载
         binding!!.refreshLayout.setOnLoadMoreListener { refreshLayout: RefreshLayout ->
             refreshLayout.layout.postDelayed({
                 loadRemoteData(false)
             }, 1000)
         }
-        binding!!.refreshLayout.autoRefresh() //第一次进入触发自动刷新，演示效果
+        binding!!.refreshLayout.autoRefresh()
     }
 
     private fun loadRemoteData(refresh: Boolean) {

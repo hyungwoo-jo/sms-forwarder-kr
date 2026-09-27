@@ -66,10 +66,8 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -185,7 +183,6 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): HttpServerSetting {
         val enableList = mutableListOf<String>()
@@ -236,23 +233,18 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
         return HttpServerSetting(description.toString(), action, enableApiClone, enableApiSmsSend, enableApiSmsQuery, enableApiCallQuery, enableApiContactQuery, enableApiContactAdd, enableApiWol, enableApiLocation, enableApiBatteryQuery)
     }
 
-    //发送短信权限
     private fun checkSendSmsPermission() {
         XXPermissions.with(this)
-            // 发送短信
             .permission(PermissionLists.getSendSmsPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         binding!!.sbApiSendSms.isChecked = false
                         return
                     }
@@ -260,27 +252,20 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
             })
     }
 
-    //读取短信权限
     private fun checkReadSmsPermission() {
         XXPermissions.with(this)
-            // 接收短信
             .permission(PermissionLists.getReceiveSmsPermission())
-            // 发送短信
             .permission(PermissionLists.getSendSmsPermission())
-            // 读取短信
             .permission(PermissionLists.getReadSmsPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         binding!!.sbApiQuerySms.isChecked = false
                         return
                     }
@@ -288,27 +273,20 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
             })
     }
 
-    //电话权限
     private fun checkCallPermission() {
         XXPermissions.with(this)
-            // 读取电话状态
             .permission(PermissionLists.getReadPhoneStatePermission())
-            // 读取手机号码
             .permission(PermissionLists.getReadPhoneNumbersPermission())
-            // 读取通话记录
             .permission(PermissionLists.getReadCallLogPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         binding!!.sbApiQueryCall.isChecked = false
                         return
                     }
@@ -316,7 +294,6 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
             })
     }
 
-    //联系人权限
     private fun checkContactsPermission() {
         XXPermissions.with(this)
             .permission(PermissionLists.getReadContactsPermission())
@@ -325,14 +302,11 @@ class HttpServerFragment : BaseFragment<FragmentTasksActionHttpServerBinding?>()
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         binding!!.sbApiQueryContacts.isChecked = false
                         binding!!.sbApiAddContacts.isChecked = false
                         return

@@ -54,7 +54,7 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): AppDatabase {
             val builder = Room.databaseBuilder(
                 context.applicationContext, AppDatabase::class.java, DATABASE_NAME
-            ).allowMainThreadQueries() //TODO:允许主线程访问，后面再优化
+            ).allowMainThreadQueries()
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         //fillInDb(context.applicationContext)
@@ -123,21 +123,18 @@ custom_domains = smsf.demo.com
             return builder.build()
         }
 
-        //转发日志添加SIM卡槽信息
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table log add column sim_info TEXT ")
             }
         }
 
-        //转发规则添加SIM卡槽信息
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column sim_slot TEXT NOT NULL DEFAULT 'ALL' ")
             }
         }
 
-        //转发日志添加转发状态与返回信息
         private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table log add column forward_status INTEGER NOT NULL DEFAULT 1 ")
@@ -145,14 +142,12 @@ custom_domains = smsf.demo.com
             }
         }
 
-        //转发规则添加规则自定义信息模板
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column sms_template TEXT NOT NULL DEFAULT '' ")
             }
         }
 
-        //增加转发规则与日志的分类
         private val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column type TEXT NOT NULL DEFAULT 'sms' ")
@@ -160,21 +155,18 @@ custom_domains = smsf.demo.com
             }
         }
 
-        //转发规则添加正则替换内容
         private val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column regex_replace TEXT NOT NULL DEFAULT '' ")
             }
         }
 
-        //更新日志表状态：0=失败，1=待处理，2=成功
         private val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("update log set forward_status = 2 where forward_status = 1 ")
             }
         }
 
-        //规则/通道状态：0=禁用，1=启用
         private val MIGRATION_8_9 = object : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column status INTEGER NOT NULL DEFAULT 1 ")
@@ -182,7 +174,6 @@ custom_domains = smsf.demo.com
             }
         }
 
-        //从SQLite迁移到 Room
         private val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
@@ -299,14 +290,12 @@ CREATE TABLE "Sender" (
             }
         }
 
-        //转发日志添加SIM卡槽ID
         private val MIGRATION_10_11 = object : Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table Logs add column sub_id INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        //单个转发规则可绑定多个发送通道
         private val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table Logs add column sender_id INTEGER NOT NULL DEFAULT 0")
@@ -314,7 +303,6 @@ CREATE TABLE "Sender" (
                 database.execSQL("Alter table Rule add column sender_list TEXT NOT NULL DEFAULT ''")
                 database.execSQL("Update Rule set sender_list = sender_id")
                 database.execSQL("CREATE INDEX \"index_Rule_sender_ids\" ON \"Rule\" ( \"sender_list\" ASC)")
-                //删除字段：sender_id
                 /*database.execSQL("Create table Rule_t as Select id,type,filed,check,value,sender_list,sms_template,regex_replace,sim_slot,status,time from Rule where 1 = 1")
                 database.execSQL("Drop table Rule")
                 database.execSQL("Alter table Rule_t rename to Rule")
@@ -322,14 +310,12 @@ CREATE TABLE "Sender" (
             }
         }
 
-        //转发规则添加发送通道逻辑
         private val MIGRATION_12_13 = object : Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table Rule add column sender_logic TEXT NOT NULL DEFAULT 'ALL'")
             }
         }
 
-        //分割Logs表
         private val MIGRATION_13_14 = object : Migration(13, 14) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 //database.execSQL("Create table Msg as Select id,type,`from`,content,(case when sim_info like 'SIM1%' then '0' when sim_info like 'SIM2%' then '1' else '-1' end) as sim_slot,sim_info,sub_id,time from Logs where 1 = 1")
@@ -377,15 +363,12 @@ CREATE TABLE "Logs" (
             }
         }
 
-        // 定义数据库迁移配置
         private val MIGRATION_14_15 = object : Migration(14, 15) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // 这里新建一个视图（视图名称要用两个半角的间隔号括起来）
                 database.execSQL("CREATE VIEW `LogsDetail` AS SELECT LOGS.id,LOGS.type,LOGS.msg_id,LOGS.rule_id,LOGS.sender_id,LOGS.forward_status,LOGS.forward_response,LOGS.TIME,Rule.filed AS rule_filed,Rule.`check` AS rule_check,Rule.value AS rule_value,Rule.sim_slot AS rule_sim_slot,Sender.type AS sender_type,Sender.NAME AS sender_name FROM LOGS  LEFT JOIN Rule ON LOGS.rule_id = Rule.id LEFT JOIN Sender ON LOGS.sender_id = Sender.id")
             }
         }
 
-        //免打扰(禁用转发)时间段
         private val MIGRATION_15_16 = object : Migration(15, 16) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column silent_period_start INTEGER NOT NULL DEFAULT 0 ")
@@ -393,14 +376,12 @@ CREATE TABLE "Logs" (
             }
         }
 
-        //通话类型：1.来电挂机 2.去电挂机 3.未接来电 4.来电提醒 5.来电接通 6.去电拨出
         private val MIGRATION_16_17 = object : Migration(16, 17) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table Msg add column call_type INTEGER NOT NULL DEFAULT 0")
             }
         }
 
-        //自动化任务
         private val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL(
@@ -421,15 +402,11 @@ CREATE TABLE "Task" (
             }
         }
 
-        //自定义模板可用变量统一成英文标签
         private val MIGRATION_18_19 = object : Migration(18, 19) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                //替换自定义模板标签
                 var smsTemplate = SettingUtils.smsTemplate
-                //替换Rule.sms_template中的标签
                 var ruleColumnCN = "sms_template"
                 var ruleColumnTW = "sms_template"
-                //替换Sender.json_setting中的标签
                 var senderColumnCN = "json_setting"
                 var senderColumnTW = "json_setting"
 
@@ -454,14 +431,12 @@ CREATE TABLE "Task" (
             }
         }
 
-        //免打扰星期段
         private val MIGRATION_19_20 = object : Migration(19, 20) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column silent_day_of_week TEXT NOT NULL DEFAULT '' ")
             }
         }
 
-        //转发规则增加自定义名称
         private val MIGRATION_20_21 = object : Migration(20, 21) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("Alter table rule add column title TEXT NOT NULL DEFAULT '' ")

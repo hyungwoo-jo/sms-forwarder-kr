@@ -75,7 +75,6 @@ class ContactQueryFragment : BaseFragment<FragmentClientContactQueryBinding?>() 
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -129,7 +128,6 @@ class ContactQueryFragment : BaseFragment<FragmentClientContactQueryBinding?>() 
         delegateAdapter.addAdapter(mAdapter)
         binding!!.recyclerView.adapter = delegateAdapter
 
-        //搜索框
         binding!!.searchView.findViewById<View>(com.xuexiang.xui.R.id.search_layout).visibility = View.GONE
         //binding!!.searchView.setVoiceSearch(true)
         binding!!.searchView.setEllipsize(true)
@@ -167,13 +165,12 @@ class ContactQueryFragment : BaseFragment<FragmentClientContactQueryBinding?>() 
     }
 
     override fun initListeners() {
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             refreshLayout.layout.postDelayed({
                 loadRemoteData()
             }, 1000)
         }
-        binding!!.refreshLayout.autoRefresh() //第一次进入触发自动刷新，演示效果
+        binding!!.refreshLayout.autoRefresh()
     }
 
     private fun loadRemoteData() {

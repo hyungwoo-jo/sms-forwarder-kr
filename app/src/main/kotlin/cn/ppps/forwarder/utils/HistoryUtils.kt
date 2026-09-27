@@ -8,10 +8,8 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * 转发历史工具类
  *
  * @author pppscn
- * @since 2022年5月9日
  */
 @Suppress("UNCHECKED_CAST", "unused")
 class HistoryUtils<T>(private val name: String, private val default: T) : ReadWriteProperty<Any?, T> {
@@ -28,10 +26,8 @@ class HistoryUtils<T>(private val name: String, private val default: T) : ReadWr
             }
         }
 
-        //删除全部数据
         fun clearPreference() = preference.edit().clear().apply()
 
-        //根据key删除存储数据
         fun clearPreference(key: String) = preference.edit().remove(key).commit()
     }
 
@@ -44,10 +40,6 @@ class HistoryUtils<T>(private val name: String, private val default: T) : ReadWr
     }
 
     /**
-     * 查找数据 返回给调用方法一个具体的对象
-     * 如果查找不到类型就采用反序列化方法来返回类型
-     * default是默认对象 以防止会返回空对象的异常
-     * 即如果name没有查找到value 就返回默认的序列化对象，然后经过反序列化返回
      */
     private fun getPreference(name: String, default: T): T = with(preference) {
         val res: Any = when (default) {
@@ -75,7 +67,6 @@ class HistoryUtils<T>(private val name: String, private val default: T) : ReadWr
     }
 
     /**
-     * 序列化对象
      * @throws IOException
      */
     @Throws(IOException::class)
@@ -93,7 +84,6 @@ class HistoryUtils<T>(private val name: String, private val default: T) : ReadWr
     }
 
     /**
-     * 反序列化对象
      * @param str
      * @throws IOException
      * @throws ClassNotFoundException

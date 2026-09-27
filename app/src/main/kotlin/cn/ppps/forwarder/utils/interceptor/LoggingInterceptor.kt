@@ -28,14 +28,12 @@ class LoggingInterceptor(private val logId: Long) : HttpLoggingInterceptor("cust
     override fun log(message: String) {
         val safeMessage = redact(message)
         Log.d(TAG, safeMessage)
-        //状态=-1，不更新原状态
         SendUtils.updateLogs(logId, -1, safeMessage)
     }
 
     private fun redact(message: String): String = SensitiveLogRedactor.redact(message)
 
     /**
-     * 记录请求日志
      *
      * @param request
      * @param connection
@@ -80,10 +78,8 @@ class LoggingInterceptor(private val logId: Long) : HttpLoggingInterceptor("cust
     }
 
     /**
-     * 记录响应日志
      *
      * @param response
-     * @param tookMs   请求花费的时间
      * @return
      */
     override fun logForResponse(response: Response, tookMs: Long): Response {

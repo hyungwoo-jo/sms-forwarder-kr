@@ -42,9 +42,7 @@ ${RuleLine.CONJUNCTION_AND} ${RuleLine.SURE_YES} ${RuleLine.FILED_PHONE_NUM} ${R
         while (scanner.hasNextLine()) {
             val line = scanner.nextLine()
             logg("$lineNum : $line")
-            //第一行
             if (lineNum == 0) {
-                //第一行不允许缩进
                 if (line.startsWith(" ")) {
                     throw Exception(getString(R.string.no_indentation_allowed_on_the_first_line))
                 }
@@ -62,17 +60,12 @@ ${RuleLine.CONJUNCTION_AND} ${RuleLine.SURE_YES} ${RuleLine.FILED_PHONE_NUM} ${R
     }
 
     /**
-     * 使用规则树判断消息是否命中规则
-     * Rule节点是否命中取决于：该节点是否命中、该节点子结点（如果有的话）是否命中、该节点下节点（如果有的话）是否命中
-     * 递归检查
      */
     @Throws(Exception::class)
     fun checkRuleTree(msg: MsgInfo, currentRuleLine: RuleLine?): Boolean {
-        //该节点是否命中
         var currentAll = currentRuleLine!!.checkMsg(msg)
         logg("current:$currentRuleLine checked:$currentAll")
 
-        //该节点子结点（如果有的话）是否命中
         if (currentRuleLine.getChildRuleLine() != null) {
             logg(" child:" + currentRuleLine.getChildRuleLine())
             currentAll = when (currentRuleLine.getChildRuleLine()!!.conjunction) {
@@ -82,7 +75,6 @@ ${RuleLine.CONJUNCTION_AND} ${RuleLine.SURE_YES} ${RuleLine.FILED_PHONE_NUM} ${R
             }
         }
 
-        //该节点下节点（如果有的话）是否命中
         if (currentRuleLine.getNextRuleLine() != null) {
             logg("next:" + currentRuleLine.getNextRuleLine())
             currentAll = when (currentRuleLine.getNextRuleLine()!!.conjunction) {
@@ -95,8 +87,6 @@ ${RuleLine.CONJUNCTION_AND} ${RuleLine.SURE_YES} ${RuleLine.FILED_PHONE_NUM} ${R
     }
 
     /**
-     * 生成规则树
-     * 一行代表一个规则
      */
     @Throws(Exception::class)
     fun generateRuleTree(line: String, lineNum: Int, parentRuleLine: RuleLine?): RuleLine {

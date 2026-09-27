@@ -82,10 +82,8 @@ class UrlSchemeFragment : BaseFragment<FragmentSendersUrlSchemeBinding?>(), View
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -97,14 +95,12 @@ class UrlSchemeFragment : BaseFragment<FragmentSendersUrlSchemeBinding?>(), View
             }
         })
 
-        //新增
         if (senderId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_sender))
             binding!!.btnDel.setText(R.string.discard)
             return
         }
 
-        //编辑
         binding!!.btnDel.setText(R.string.del)
         Core.sender.get(senderId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Sender> {
             override fun onSubscribe(d: Disposable) {}
@@ -207,7 +203,6 @@ class UrlSchemeFragment : BaseFragment<FragmentSendersUrlSchemeBinding?>(), View
             throw Exception(getString(R.string.invalid_url_scheme))
         }
 
-        //TODO:判断Sheme是否有效
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlScheme))
         val packageManager: PackageManager = requireContext().packageManager
         val activities: List<ResolveInfo> = packageManager.queryIntentActivities(intent, 0)

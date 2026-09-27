@@ -14,14 +14,14 @@ import java.util.Date
 @Entity(tableName = "Task")
 data class Task(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
-    @ColumnInfo(name = "type", defaultValue = "1") var type: Int = 1, // 任务类型：＜1000为任务模板，>=1000为自定义任务
-    @ColumnInfo(name = "name", defaultValue = "") val name: String = "", // 任务名称
-    @ColumnInfo(name = "description", defaultValue = "") val description: String = "", // 任务描述
-    @ColumnInfo(name = "conditions", defaultValue = "") val conditions: String = "", // 触发条件
-    @ColumnInfo(name = "actions", defaultValue = "") val actions: String = "", // 执行动作
-    @ColumnInfo(name = "status", defaultValue = "1") var status: Int = 1, // 任务状态
-    @ColumnInfo(name = "last_exec_time") var lastExecTime: Date = Date(), // 上次执行时间
-    @ColumnInfo(name = "next_exec_time") var nextExecTime: Date = Date(), // 下次执行时间
+    @ColumnInfo(name = "type", defaultValue = "1") var type: Int = 1,
+    @ColumnInfo(name = "name", defaultValue = "") val name: String = "",
+    @ColumnInfo(name = "description", defaultValue = "") val description: String = "",
+    @ColumnInfo(name = "conditions", defaultValue = "") val conditions: String = "",
+    @ColumnInfo(name = "actions", defaultValue = "") val actions: String = "",
+    @ColumnInfo(name = "status", defaultValue = "1") var status: Int = 1,
+    @ColumnInfo(name = "last_exec_time") var lastExecTime: Date = Date(),
+    @ColumnInfo(name = "next_exec_time") var nextExecTime: Date = Date(),
 ) : Parcelable {
 
     val imageId: Int

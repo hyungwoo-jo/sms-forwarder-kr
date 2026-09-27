@@ -37,7 +37,6 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * 自动任务条件工具类
  */
 class ConditionUtils private constructor() {
 
@@ -45,7 +44,6 @@ class ConditionUtils private constructor() {
 
         private val TAG: String = ConditionUtils::class.java.simpleName
 
-        //遍历条件列表，判断是否满足条件，默认不校验第一个条件（第一个条件是触发条件）
         fun checkCondition(taskId: Long, conditionList: MutableList<TaskSetting>, beginIndex: Int = 1, endIndex: Int = -1): Boolean {
             val untilIndex = if (endIndex == -1) conditionList.size else min(endIndex + 1, conditionList.size)
             if (beginIndex >= untilIndex) {
@@ -53,10 +51,9 @@ class ConditionUtils private constructor() {
                 return true
             }
 
-            //注意：触发条件 = SIM卡已准备就绪/网络状态改变时，延迟5秒（给够搜索信号时间）才执行任务
             val firstCondition = conditionList.firstOrNull()
             val needDelay = (firstCondition?.type == TASK_CONDITION_SIM && TaskUtils.simState == 5) || (firstCondition?.type == TASK_CONDITION_NETWORK && TaskUtils.networkState != 0)
-            for (i in beginIndex until untilIndex) { //不包括untilIndex
+            for (i in beginIndex until untilIndex) {
                 val condition = conditionList[i]
                 when (condition.type) {
                     TASK_CONDITION_CRON -> {
@@ -125,7 +122,6 @@ class ConditionUtils private constructor() {
                             return false
                         }
 
-                        //移动网络
                         if (networkSetting.networkState == 1 && networkSetting.dataSimSlot != 0 && TaskUtils.dataSimSlot != networkSetting.dataSimSlot) {
                             Log.d(TAG, "TASK-$taskId：dataSimSlot is not match, networkSetting = $networkSetting")
                             return false
@@ -165,7 +161,7 @@ class ConditionUtils private constructor() {
                         }
 
                         when (batteryStatus) {
-                            BatteryManager.BATTERY_STATUS_CHARGING, BatteryManager.BATTERY_STATUS_FULL -> { //充电中
+                            BatteryManager.BATTERY_STATUS_CHARGING, BatteryManager.BATTERY_STATUS_FULL -> {
                                 if (batterySetting.status != BatteryManager.BATTERY_STATUS_CHARGING) return false
                                 if (batterySetting.keepReminding && batteryLevel >= batterySetting.levelMax) {
                                     Log.d(TAG, "TASK-$taskId：1 batteryLevel = $batteryLevel, batterySetting = $batterySetting")
@@ -176,7 +172,7 @@ class ConditionUtils private constructor() {
                                 }
                             }
 
-                            BatteryManager.BATTERY_STATUS_DISCHARGING, BatteryManager.BATTERY_STATUS_NOT_CHARGING -> { //放电中
+                            BatteryManager.BATTERY_STATUS_DISCHARGING, BatteryManager.BATTERY_STATUS_NOT_CHARGING -> {
                                 if (batterySetting.status != BatteryManager.BATTERY_STATUS_DISCHARGING) return false
                                 if (batterySetting.keepReminding && batteryLevel <= batterySetting.levelMin) {
                                     Log.d(TAG, "TASK-$taskId：3 batteryLevel = $batteryLevel, batterySetting = $batterySetting")
@@ -232,7 +228,6 @@ class ConditionUtils private constructor() {
                             Log.d(TAG, "TASK-$taskId：ruleSetting is null")
                             continue
                         }
-                        //TODO: 判断消息是否满足条件
                     }
 
                     TASK_CONDITION_BLUETOOTH -> {
@@ -284,9 +279,8 @@ class ConditionUtils private constructor() {
             return true
         }
 
-        //计算两个经纬度之间的距离
         fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-            val earthRadius = 6378137.0 // 地球平均半径，单位：米
+            val earthRadius = 6378137.0
             val latDistance = Math.toRadians(lat2 - lat1)
             val lonDistance = Math.toRadians(lon2 - lon1)
             val a = sin(latDistance / 2) * sin(latDistance / 2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(lonDistance / 2) * sin(lonDistance / 2)

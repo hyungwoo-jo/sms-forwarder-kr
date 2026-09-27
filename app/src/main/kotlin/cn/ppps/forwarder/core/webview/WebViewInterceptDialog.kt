@@ -15,7 +15,6 @@ import com.xuexiang.xutil.app.ActivityUtils
 import java.net.URISyntaxException
 
 /**
- * WebView拦截提示
  *
  * @author xuexiang
  * @since 2019-10-21 9:51
@@ -95,14 +94,11 @@ class WebViewInterceptDialog : AppCompatActivity(), DialogInterface.OnDismissLis
     companion object {
         private const val KEY_INTERCEPT_URL = "key_intercept_url"
 
-        // TODO: 修改你的applink
         const val APP_LINK_HOST = "ppps.cn"
         const val APP_LINK_ACTION = "cn.ppps.forwarder"
 
         /**
-         * 显示WebView拦截提示
          *
-         * @param url 需要拦截处理的url
          */
         @JvmStatic
         fun show(url: String?) {

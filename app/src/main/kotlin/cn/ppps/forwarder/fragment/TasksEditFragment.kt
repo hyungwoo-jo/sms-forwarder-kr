@@ -270,16 +270,13 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         conditionsRecyclerView = findViewById(R.id.recycler_conditions)
         actionsRecyclerView = findViewById(R.id.recycler_actions)
 
-        // 初始化 RecyclerView 和 Adapter
         initRecyclerViews()
 
-        // 设置拖动排序
         val conditionsCallback = ItemMoveCallback(object : ItemMoveCallback.Listener {
             override fun onItemMove(fromPosition: Int, toPosition: Int) {
                 Log.d(TAG, "onItemMove: $fromPosition $toPosition")
@@ -288,7 +285,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             }
 
             override fun onDragFinished() {
-                //conditionsList保持与adapter一致
                 conditionsList = conditionsAdapter.itemList
                 Log.d(TAG, "onDragFinished: $conditionsList")
                 //conditionsAdapter.notifyDataSetChanged()
@@ -307,7 +303,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             }
 
             override fun onDragFinished() {
-                //actionsList保持与adapter一致
                 actionsList = actionsAdapter.itemList
                 Log.d(TAG, "onDragFinished: $actionsList")
                 //actionsAdapter.notifyDataSetChanged()
@@ -318,10 +313,10 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         itemTouchHelperActions.attachToRecyclerView(actionsRecyclerView)
         actionsAdapter.setTouchHelper(itemTouchHelperActions)
 
-        if (taskId <= 0) { //新增
+        if (taskId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_task))
             binding!!.btnDel.setText(R.string.discard)
-        } else { //编辑 & 克隆
+        } else {
             binding!!.btnDel.setText(R.string.del)
             initForm()
         }
@@ -392,7 +387,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                         return
                     }
 
-                    //TODO: 删除前确认
                     return
                 }
 
@@ -400,13 +394,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                     val taskNew = checkForm()
                     if (isClone) taskNew.id = 0
                     Log.d(TAG, taskNew.toString())
-                    //保存任务
                     if (taskNew.id > 0) {
                         Core.task.update(taskNew)
                     } else {
                         taskNew.id = Core.task.insert(taskNew)
                     }
-                    //应用任务
                     applyTask(taskNew)
                     XToastUtils.success(R.string.tipSaveSuccess)
                     popToBack()
@@ -420,7 +412,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         }
     }
 
-    //初始化表单
     private fun initForm() {
         Core.task.get(taskId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Task> {
             override fun onSubscribe(d: Disposable) {}
@@ -469,7 +460,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         })
     }
 
-    //提交前检查表单
     private fun checkForm(): Task {
         val taskName = binding!!.etName.text.toString().trim()
         if (taskName.isEmpty()) {
@@ -482,7 +472,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             throw Exception(getString(R.string.invalid_actions))
         }
 
-        //短信广播/通话广播/APP通知 类型条件只能放在第一个
         for (i in 1 until conditionsList.size) {
             if (conditionsList[i].type == TASK_CONDITION_SMS || conditionsList[i].type == TASK_CONDITION_CALL || conditionsList[i].type == TASK_CONDITION_APP) {
                 throw Exception(getString(R.string.msg_condition_must_be_trigger))
@@ -490,7 +479,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         }
 
         val lastExecTime = Date()
-        // 将毫秒部分设置为 0，避免因为毫秒部分不同导致的任务重复执行
         lastExecTime.time = lastExecTime.time / 1000 * 1000
         var nextExecTime = lastExecTime
         val firstCondition = conditionsList[0]
@@ -498,7 +486,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
 
         when (taskType) {
             TASK_CONDITION_CRON -> {
-                //检查定时任务的时间设置
                 val cronSetting = Gson().fromJson(firstCondition.setting, CronSetting::class.java)
                 if (cronSetting.expression.isEmpty()) {
                     throw Exception(getString(R.string.invalid_cron))
@@ -508,7 +495,6 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             }
         }
 
-        //拼接任务描述
         val description = StringBuilder()
         description.append(getString(R.string.task_conditions)).append(" ")
         description.append(conditionsList.map { it.description }.toTypedArray().joinToString(","))
@@ -521,17 +507,13 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         )
     }
 
-    //测试任务
     private fun testTask(task: Task) {
     }
 
-    //应用任务
     private fun applyTask(task: Task) {
         when (task.type) {
-            //定时任务
             TASK_CONDITION_CRON -> {
                 if (task.id <= 0) return
-                //取消旧任务的定时器 & 设置新的定时器
                 CronJobScheduler.cancelTask(task.id)
                 CronJobScheduler.scheduleTask(task)
             }
@@ -543,27 +525,22 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
         try {
             dialog.dismiss()
             Log.d(TAG, "onItemClick: $widgetInfo")
-            //判断点击的是条件还是动作
             if (widgetInfo.classPath.contains(".condition.")) {
                 val typeCondition = TASK_CONDITION_FRAGMENT_LIST.indexOf(widgetInfo) + KEY_BACK_CODE_CONDITION
                 if (!cn.ppps.forwarder.utils.DeviceControlPolicy.allowsCondition(typeCondition)) {
                     XToastUtils.error("예약·문자·통화·앱 알림 조건을 선택하세요.")
                     return
                 }
-                //短信广播、通话广播、APP通知 类型条件必须作为触发提交
                 if ((typeCondition == TASK_CONDITION_SMS || typeCondition == TASK_CONDITION_CALL || typeCondition == TASK_CONDITION_APP) && actionsList.isNotEmpty()) {
                     XToastUtils.error(getString(R.string.msg_condition_must_be_trigger))
                     return
                 }
-                //判断是否已经添加过该类型条件
                 for (item in conditionsList) {
-                    //注意：TASK_CONDITION_XXX 枚举值 等于 TASK_CONDITION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_CONDITION，不可改变
                     if (item.type == typeCondition) {
                         XToastUtils.error(getString(R.string.condition_already_exists))
                         return
                     }
 
-                    //必须开启定位服务，才能使用进入地点 或 离开地点 类型条件
                     if ((typeCondition == TASK_CONDITION_TO_ADDRESS || typeCondition == TASK_CONDITION_LEAVE_ADDRESS) && !App.LocationClient.isStarted()) {
                         MaterialDialog.Builder(requireContext())
                             .iconRes(R.drawable.auto_task_icon_location)
@@ -580,13 +557,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                         return
                     }
 
-                    //进入地点 或 离开地点 类型条件互斥
                     if ((typeCondition == TASK_CONDITION_TO_ADDRESS || typeCondition == TASK_CONDITION_LEAVE_ADDRESS) && (item.type == TASK_CONDITION_TO_ADDRESS || item.type == TASK_CONDITION_LEAVE_ADDRESS)) {
                         XToastUtils.error(getString(R.string.only_one_location_condition))
                         return
                     }
 
-                    //短信广播、通话广播、APP通知 类型条件互斥
                     if ((typeCondition == TASK_CONDITION_SMS || typeCondition == TASK_CONDITION_CALL || typeCondition == TASK_CONDITION_APP) && (item.type == TASK_CONDITION_SMS || item.type == TASK_CONDITION_CALL || item.type == TASK_CONDITION_APP)) {
                         XToastUtils.error(getString(R.string.only_one_msg_condition))
                         return
@@ -598,9 +573,7 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                     XToastUtils.error("이 동작은 현재 지원하지 않습니다. 전달·규칙·알림 동작을 선택하세요.")
                     return
                 }
-                //判断是否已经添加过该类型动作
                 for (item in actionsList) {
-                    //注意：TASK_ACTION_XXX 枚举值 等于 TASK_ACTION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_ACTION，不可改变
                     if (item.type == typeAction) {
                         XToastUtils.error(getString(R.string.action_already_exists))
                         return
@@ -608,8 +581,8 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                 }
             }
 
-            @Suppress("UNCHECKED_CAST") PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>) //跳转的fragment
-                .setRequestCode(0) //requestCode: 0 新增 、>0 编辑（itemListXxx 的索引加1）
+            @Suppress("UNCHECKED_CAST") PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>)
+                .setRequestCode(0)
                 .putString(KEY_EVENT_PARAMS_CONDITION, widgetInfo.params)
                 .open(this)
         } catch (e: Exception) {
@@ -630,13 +603,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
             var setting: String? = null
             if (resultCode in KEY_BACK_CODE_CONDITION..KEY_BACK_CODE_CONDITION + 999) {
                 setting = extras.getString(KEY_BACK_DATA_CONDITION) ?: return
-                //注意：TASK_CONDITION_XXX 枚举值 等于 TASK_CONDITION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_CONDITION，不可改变
                 val widgetInfoIndex = resultCode - KEY_BACK_CODE_CONDITION
                 if (widgetInfoIndex >= TASK_CONDITION_FRAGMENT_LIST.size) return
                 val widgetInfo = TASK_CONDITION_FRAGMENT_LIST[widgetInfoIndex]
                 description = extras.getString(KEY_BACK_DESCRIPTION_CONDITION) ?: widgetInfo.name.toString()
                 val taskSetting = TaskSetting(resultCode, widgetInfo.name, description, setting, requestCode)
-                //requestCode: 等于 conditionsList 的索引加1
                 if (requestCode == 0) {
                     taskSetting.position = conditionsList.size
                     conditionsList.add(taskSetting)
@@ -649,13 +620,11 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
                 binding!!.layoutAddCondition.visibility = if (conditionsList.size >= MAX_SETTING_NUM) View.GONE else View.VISIBLE
             } else if (resultCode in KEY_BACK_CODE_ACTION..KEY_BACK_CODE_ACTION + 999) {
                 setting = extras.getString(KEY_BACK_DATA_ACTION) ?: return
-                //注意：TASK_ACTION_XXX 枚举值 等于 TASK_ACTION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_ACTION，不可改变
                 val widgetInfoIndex = resultCode - KEY_BACK_CODE_ACTION
                 if (widgetInfoIndex >= TASK_ACTION_FRAGMENT_LIST.size) return
                 val widgetInfo = TASK_ACTION_FRAGMENT_LIST[widgetInfoIndex]
                 description = extras.getString(KEY_BACK_DESCRIPTION_ACTION) ?: widgetInfo.name.toString()
                 val taskSetting = TaskSetting(resultCode, widgetInfo.name, description, setting, requestCode)
-                //requestCode: 等于 actionsList 的索引加1
                 if (requestCode == 0) {
                     taskSetting.position = actionsList.size
                     actionsList.add(taskSetting)
@@ -688,18 +657,15 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
     }
 
     private fun editCondition(position: Int) {
-        // 实现编辑条件项目的逻辑
-        // 根据 position 对特定项目进行编辑
         val condition = conditionsList[position]
         Log.d(TAG, "editCondition: $position, $condition")
 
         val widgetInfoIndex = condition.type - KEY_BACK_CODE_CONDITION
-        //判断是否存在
         if (widgetInfoIndex < 0 || widgetInfoIndex >= TASK_CONDITION_FRAGMENT_LIST.size) return
         val widgetInfo = TASK_CONDITION_FRAGMENT_LIST[condition.type - KEY_BACK_CODE_CONDITION]
         @Suppress("UNCHECKED_CAST")
-        PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>) //跳转的fragment
-            .setRequestCode(position + 1) //requestCode: 0 新增 、>0 编辑（conditionsList 的索引加1）
+        PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>)
+            .setRequestCode(position + 1)
             .putString(KEY_EVENT_DATA_CONDITION, condition.setting)
             .putString(KEY_EVENT_PARAMS_CONDITION, widgetInfo.params)
             .open(this)
@@ -708,23 +674,20 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
     private fun removeCondition(position: Int) {
         conditionsList.removeAt(position)
         conditionsAdapter.notifyItemRemoved(position)
-        conditionsAdapter.notifyItemRangeChanged(position, conditionsList.size) // 更新索引
+        conditionsAdapter.notifyItemRangeChanged(position, conditionsList.size)
         binding!!.layoutAddCondition.visibility = if (conditionsList.size >= MAX_SETTING_NUM) View.GONE else View.VISIBLE
     }
 
     private fun editAction(position: Int) {
-        // 实现编辑操作项目的逻辑
-        // 根据 position 对特定项目进行编辑
         val action = actionsList[position]
         Log.d(TAG, "editAction: $position, $action")
 
         val widgetInfoIndex = action.type - KEY_BACK_CODE_ACTION
-        //判断是否存在
         if (widgetInfoIndex < 0 || widgetInfoIndex >= TASK_ACTION_FRAGMENT_LIST.size) return
         val widgetInfo = TASK_ACTION_FRAGMENT_LIST[action.type - KEY_BACK_CODE_ACTION]
         @Suppress("UNCHECKED_CAST")
-        PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>) //跳转的fragment
-            .setRequestCode(position + 1) //requestCode: 0 新增 、>0 编辑（actionsList 的索引加1）
+        PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>)
+            .setRequestCode(position + 1)
             .putString(KEY_EVENT_DATA_ACTION, action.setting)
             .open(this)
     }
@@ -732,7 +695,7 @@ class TasksEditFragment : BaseFragment<FragmentTasksEditBinding?>(), View.OnClic
     private fun removeAction(position: Int) {
         actionsList.removeAt(position)
         actionsAdapter.notifyItemRemoved(position)
-        actionsAdapter.notifyItemRangeChanged(position, actionsList.size) // 更新索引
+        actionsAdapter.notifyItemRangeChanged(position, actionsList.size)
         binding!!.layoutAddAction.visibility = if (actionsList.size >= MAX_SETTING_NUM) View.GONE else View.VISIBLE
     }
 }

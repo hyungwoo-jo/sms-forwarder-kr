@@ -35,11 +35,10 @@ class CronJobScheduler {
                     .build()
             }
 
-            // 确保同一个任务 ID 的 Worker 在同一时间只会执行一个实例
             val uniqueTaskName = "$TAG-${task.id}"
             WorkManager.getInstance().beginUniqueWork(
-                uniqueTaskName, // 给任务设置一个唯一的名称
-                ExistingWorkPolicy.KEEP, // 设置任务存在时的策略
+                uniqueTaskName,
+                ExistingWorkPolicy.KEEP,
                 taskRequest
             ).enqueue()
         }

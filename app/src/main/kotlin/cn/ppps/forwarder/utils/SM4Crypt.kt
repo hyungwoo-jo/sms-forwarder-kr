@@ -7,7 +7,6 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 /**
- * SM4分组密码算法是我国自主设计的分组对称密码算法
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object SM4Crypt {
@@ -22,7 +21,6 @@ object SM4Crypt {
     private val SM4_CBC_IV = byteArrayOf(3, 5, 6, 9, 6, 9, 5, 9, 3, 5, 6, 9, 6, 9, 5, 9)
 
     /**
-     * 获取随机密钥
      */
     fun createSM4Key(): ByteArray {
         val seed = ByteArray(16)

@@ -43,3 +43,13 @@ DEVICE_PENDING: 연결 기기가 없어 UI 화면 배치·큰 글자·앱 검색
 - [universal APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-923868e/SmsKR_3.5.0.260927-kr-923868e_100059_universal_release.apk) — SHA-256 `65f556d31f476772be24c0000d298ae8b2cad4d61bcd6f48be4367995ccb8357`
 
 - [arm64-v8a APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-923868e/SmsKR_3.5.0.260927-kr-923868e_300059_arm64-v8a_release.apk) — SHA-256 `4dec086be7fbbeefdfe4439fbedbbf979686ff1819f7ca4b13ea9ca1b3b1c0d0`
+
+## 2026-09-27 중국어 소스 제거 및 표시 보호 검증
+
+기본 versionCode 60.
+
+- 앱 Kotlin/Java/XML/JSON/TXT 소스와 테스트 소스의 실제 한자 범위 문자를 검사해 0개를 확인했다. 주석도 포함한다.
+- 구형 설정 이관, 구형 이메일 종류값, Bark OTP 인식에 필요한 역사적 중국어 값은 Unicode 이스케이프로 보존해 기존 설정 호환성을 유지한다.
+- 외부 서비스나 라이브러리가 한국어가 아닌 중국어 오류를 돌려주면, 전달 로그와 공통 오류 토스트는 한국어 점검 안내로 대체한다. 해당 동작의 단위 테스트를 추가했다.
+- JVM 테스트 18개, 실패·오류 0개. debug lint 오류 0개, 경고 285개.
+- 이 검사는 이 저장소의 앱 소스를 대상으로 한다. 서드파티 AAR/DEX 내부 문자열까지 중국어 0개임을 의미하지는 않는다.

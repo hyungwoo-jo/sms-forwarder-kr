@@ -16,7 +16,6 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import com.zzhoujay.richtext.RichText
 
 /**
- * 小贴士弹窗
  *
  * @author xuexiang
  * @since 2019-08-22 17:02
@@ -33,7 +32,6 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
     private var mTvContent: TextView? = null
 
     /**
-     * 初始化弹窗
      */
     private fun initViews() {
         mTvTitle = findViewById(R.id.tv_title)
@@ -56,9 +54,7 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
     }
 
     /**
-     * 更新提示信息
      *
-     * @param tips 提示信息
      */
     private fun updateTips(tips: List<TipInfo>) {
         mTips = tips
@@ -69,9 +65,7 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
     }
 
     /**
-     * 切换提示信息
      *
-     * @param index 索引
      */
     private fun switchTipInfo(index: Int) {
         if (mTips != null && mTips!!.isNotEmpty() && mTvContent != null) {
@@ -98,9 +92,7 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
     }
 
     /**
-     * 显示富文本
      *
-     * @param tipInfo 提示信息
      */
     private fun showRichText(tipInfo: TipInfo) {
         mTvTitle!!.text = tipInfo.title
@@ -141,9 +133,7 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
             "cn.ppps.forwarder.widget.key_is_ignore_tips_"
 
         /**
-         * 显示提示
          *
-         * @param context 上下文
          */
         @JvmStatic
         fun showTips(context: Context?) {
@@ -153,9 +143,7 @@ class GuideTipsDialog(context: Context?, tips: List<TipInfo>) :
         }
 
         /**
-         * 强制显示提示
          *
-         * @param context 上下文
          */
         @JvmStatic
         fun showTipsForce(context: Context?) {

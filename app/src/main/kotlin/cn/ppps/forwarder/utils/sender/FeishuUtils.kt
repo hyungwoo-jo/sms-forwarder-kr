@@ -108,7 +108,6 @@ class FeishuUtils private constructor() {
             val stringToSign = "$timestamp\n" + setting.secret
             Log.i(TAG, "stringToSign = $stringToSign")
 
-            //使用HmacSHA256算法计算签名
             val mac = Mac.getInstance("HmacSHA256")
             mac.init(SecretKeySpec(stringToSign.toByteArray(StandardCharsets.UTF_8), "HmacSHA256"))
             val signData = mac.doFinal(byteArrayOf())
@@ -117,7 +116,6 @@ class FeishuUtils private constructor() {
             msgMap["timestamp"] = timestamp
             msgMap["sign"] = sign
 
-            //组装报文
             val requestMsg: String
             val atLarkMd = buildAtStr(setting.atAll, setting.atOpenIds, forText = false)
             if (setting.msgType == "interactive") {
@@ -150,11 +148,11 @@ class FeishuUtils private constructor() {
             XHttp.post(requestUrl)
                 .upJson(requestMsg)
                 .keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

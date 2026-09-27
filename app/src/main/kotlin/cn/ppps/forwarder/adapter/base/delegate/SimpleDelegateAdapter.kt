@@ -3,7 +3,6 @@ package cn.ppps.forwarder.adapter.base.delegate
 import com.alibaba.android.vlayout.LayoutHelper
 
 /**
- * 简易DelegateAdapter适配器
  *
  * @author xuexiang
  * @since 2020/3/20 12:55 AM

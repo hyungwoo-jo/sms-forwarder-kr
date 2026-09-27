@@ -49,7 +49,6 @@ class BatteryReceiver : BroadcastReceiver() {
         val voltage: Int = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)
         TaskUtils.batteryVoltage = voltage
 
-        //EXTRA_TEMPERATURE 单位为 0.1℃，换算为 ℃
         val temperature: Int = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10
         TaskUtils.batteryTemperature = temperature
 
@@ -58,7 +57,6 @@ class BatteryReceiver : BroadcastReceiver() {
         val isHealthChanged = healthNew != healthOld
         TaskUtils.batteryHealth = healthNew
 
-        //电量改变
         if (isLevelChanged) {
             Log.d(TAG, "배터리 잔량 변경")
             val request = OneTimeWorkRequestBuilder<BatteryWorker>().setInputData(
@@ -72,7 +70,6 @@ class BatteryReceiver : BroadcastReceiver() {
             WorkManager.getInstance(context).enqueue(request)
         }
 
-        //充电状态改变（含电池健康度变化）
         if (isPluggedChanged || isStatusChanged || isHealthChanged) {
             Log.d(TAG, "충전 상태 변경")
             val inputData = workDataOf(
@@ -86,9 +83,7 @@ class BatteryReceiver : BroadcastReceiver() {
                 "voltage" to voltage,
                 "temperature" to temperature,
             )
-            // 使用 hashcode 生成唯一的标识符
             val inputDataHash = inputData.hashCode().toString()
-            // 检查是否已经存在具有相同输入数据的工作
             val existingWorkPolicy = if (WorkManager.getInstance(context).getWorkInfosByTag(inputDataHash).get().isEmpty()) {
                 ExistingWorkPolicy.REPLACE
             } else {

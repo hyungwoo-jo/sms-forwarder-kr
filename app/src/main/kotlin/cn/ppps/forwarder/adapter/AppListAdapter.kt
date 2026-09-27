@@ -12,7 +12,6 @@ import me.samlss.broccoli.Broccoli
 
 class AppListAdapter(
     /**
-     * 是否是加载占位
      */
     private val mIsAnim: Boolean,
 ) : BroccoliRecyclerAdapter<AppInfo?>(AppUtils.getAppsInfo()) {
@@ -22,7 +21,6 @@ class AppListAdapter(
     }
 
     /**
-     * 绑定控件
      *
      * @param holder
      * @param model
@@ -40,7 +38,6 @@ class AppListAdapter(
     }
 
     /**
-     * 绑定占位控件
      *
      * @param holder
      * @param broccoli

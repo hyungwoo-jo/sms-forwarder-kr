@@ -8,16 +8,12 @@ import com.xuexiang.xui.widget.imageview.preview.enitity.IPreviewInfo
 import com.xuexiang.xutil.resource.ResUtils.getString
 
 /**
- * 图片预览实体类
  *
  * @author xuexiang
- * @since 2018/12/7 下午5:34
  */
 @Suppress("unused", "DEPRECATION")
 data class ImageInfo(
-    //图片地址
     var mUrl: String,
-    //记录坐标
     var mBounds: Rect? = null,
     var mVideoUrl: String? = null,
     var description: String? = getString(R.string.description),
@@ -29,7 +25,7 @@ data class ImageInfo(
 
     constructor(videoUrl: String?, url: String) : this(mUrl = url, mVideoUrl = videoUrl)
 
-    override fun getUrl(): String { //将你的图片地址字段返回
+    override fun getUrl(): String {
         return mUrl
     }
 
@@ -37,7 +33,7 @@ data class ImageInfo(
         mUrl = url
     }
 
-    override fun getBounds(): Rect? { //将你的图片显示坐标字段返回
+    override fun getBounds(): Rect? {
         return mBounds
     }
 

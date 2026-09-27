@@ -7,7 +7,6 @@ import cn.ppps.forwarder.utils.Log
 import com.gyf.cactus.Cactus
 import cn.ppps.forwarder.App
 
-//接收Cactus广播
 class CactusReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         intent.action?.apply {

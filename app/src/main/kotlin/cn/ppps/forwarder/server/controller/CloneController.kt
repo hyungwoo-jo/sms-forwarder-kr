@@ -15,7 +15,6 @@ class CloneController {
 
     private val TAG: String = CloneController::class.java.simpleName
 
-    //客户端从服务端拉取克隆信息
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/pull")
     fun pull(@RequestBody bean: BaseRequest<CloneInfo>): CloneInfo {
@@ -29,7 +28,6 @@ class CloneController {
         return cloneInfo
     }
 
-    //客户端向服务端推送克隆信息
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/push")
     fun push(@RequestBody bean: BaseRequest<CloneInfo>): String {

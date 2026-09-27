@@ -6,7 +6,6 @@ import cn.ppps.forwarder.core.BaseFragment
 import com.just.agentweb.core.AgentWeb
 
 /**
- * 基础web
  *
  * @author xuexiang
  * @since 2019/5/28 10:22
@@ -14,10 +13,8 @@ import com.just.agentweb.core.AgentWeb
 abstract class BaseWebViewFragment : BaseFragment<ViewBinding?>() {
     private var mAgentWeb: AgentWeb? = null
 
-    //===================生命周期管理===========================//
     override fun onResume() {
         if (mAgentWeb != null) {
-            //恢复
             mAgentWeb!!.webLifeCycle.onResume()
         }
         super.onResume()
@@ -25,7 +22,6 @@ abstract class BaseWebViewFragment : BaseFragment<ViewBinding?>() {
 
     override fun onPause() {
         if (mAgentWeb != null) {
-            //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
             mAgentWeb!!.webLifeCycle.onPause()
         }
         super.onPause()

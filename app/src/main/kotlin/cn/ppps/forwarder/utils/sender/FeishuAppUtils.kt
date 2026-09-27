@@ -17,7 +17,6 @@ import com.xuexiang.xhttp2.callback.SimpleCallBack
 import com.xuexiang.xhttp2.exception.ApiException
 import com.xuexiang.xutil.resource.ResUtils.getString
 
-//飞书企业应用
 class FeishuAppUtils private constructor() {
     companion object {
 
@@ -50,11 +49,11 @@ class FeishuAppUtils private constructor() {
             XHttp.post(requestUrl)
                 .upJson(requestMsg)
                 .keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {
@@ -70,7 +69,7 @@ class FeishuAppUtils private constructor() {
                         val resp = Gson().fromJson(response, FeishuAppResult::class.java)
                         if (!TextUtils.isEmpty(resp?.tenant_access_token)) {
                             accessToken = resp.tenant_access_token.toString()
-                            expiresIn = System.currentTimeMillis() + ((resp.expire ?: 7010) - 120) * 1000L //提前2分钟过期
+                            expiresIn = System.currentTimeMillis() + ((resp.expire ?: 7010) - 120) * 1000L
                             sendTextMsg(setting, msgInfo, rule, senderIndex, logId, msgId)
                         } else {
                             SendUtils.updateLogs(logId, 0, String.format(getString(R.string.request_failed_tips), response))
@@ -82,7 +81,6 @@ class FeishuAppUtils private constructor() {
 
         }
 
-        //发送文本消息
         private fun sendTextMsg(
             setting: FeishuAppSetting,
             msgInfo: MsgInfo,
@@ -131,11 +129,11 @@ class FeishuAppUtils private constructor() {
 
             val accessToken: String by SharedPreference("feishu_access_token_" + setting.appId, "")
             XHttp.post(requestUrl).upJson(requestMsg).headers("Authorization", "Bearer $accessToken").keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

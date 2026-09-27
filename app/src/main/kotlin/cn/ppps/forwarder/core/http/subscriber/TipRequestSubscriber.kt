@@ -8,7 +8,6 @@ import com.xuexiang.xutil.common.StringUtils
 import com.xuexiang.xutil.common.logger.Logger
 
 /**
- * 带错误toast提示的网络请求订阅
  *
  * @author xuexiang
  * @since 2019-11-18 23:10
@@ -16,7 +15,6 @@ import com.xuexiang.xutil.common.logger.Logger
 @Suppress("unused")
 abstract class TipRequestSubscriber<T> : BaseSubscriber<T> {
     /**
-     * 记录一下请求的url,确定出错的请求是哪个请求
      */
     private var mUrl: String? = null
 

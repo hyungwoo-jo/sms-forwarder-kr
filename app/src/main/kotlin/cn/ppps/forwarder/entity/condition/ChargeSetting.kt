@@ -7,16 +7,15 @@ import java.io.Serializable
 
 data class ChargeSetting(
     var description: String = "",
-    var statusList: List<Int> = emptyList(),  // 多选状态列表
-    var pluggedList: List<Int> = emptyList(),  // 多选充电方式列表，空=不限
-    var healthList: List<Int> = emptyList(),  // 多选健康度列表，空=不限
-    var voltageMin: Int = 0,  // 最低电压（mV），0=不限
-    var voltageMax: Int = 0,  // 最高电压（mV），0=不限
-    var temperatureLimited: Boolean = false,  // 是否启用温度条件（温度可为0/负值，需显式标记）
-    var temperatureMin: Int = 0,  // 最低温度（℃）
-    var temperatureMax: Int = 0,  // 最高温度（℃）
-    var matchType: Int = 0,  // 条件组合方式：0=全部满足(AND)，1=任一满足(OR)
-    // 旧版字段，保留以兼容已存储的历史数据
+    var statusList: List<Int> = emptyList(),
+    var pluggedList: List<Int> = emptyList(),
+    var healthList: List<Int> = emptyList(),
+    var voltageMin: Int = 0,
+    var voltageMax: Int = 0,
+    var temperatureLimited: Boolean = false,
+    var temperatureMin: Int = 0,
+    var temperatureMax: Int = 0,
+    var matchType: Int = 0,
     var status: Int = BatteryManager.BATTERY_STATUS_UNKNOWN,
     var plugged: Int = BatteryManager.BATTERY_PLUGGED_AC,
 ) : Serializable {
@@ -43,7 +42,7 @@ data class ChargeSetting(
             }
         }
         pluggedList = if (pluggedCheckIds.contains(R.id.cb_plugged_unlimited)) {
-            emptyList() // 不限 = 任意充电方式
+            emptyList()
         } else {
             pluggedCheckIds.mapNotNull { id ->
                 when (id) {
@@ -55,7 +54,7 @@ data class ChargeSetting(
             }
         }
         healthList = if (healthCheckIds.contains(R.id.cb_health_unlimited)) {
-            emptyList() // 不限 = 任意健康度
+            emptyList()
         } else {
             healthCheckIds.mapNotNull { id ->
                 when (id) {
@@ -79,23 +78,17 @@ data class ChargeSetting(
         description = buildDescription()
     }
 
-    // 兼容旧数据：statusList 为空时回退到旧字段 status
     private fun getEffectiveStatusList(): List<Int> =
         statusList.ifEmpty { listOf(status) }
 
-    // 兼容旧数据：statusList 为空时代表旧格式，回退到旧字段 plugged
     private fun getEffectivePluggedList(): List<Int> {
         if (statusList.isEmpty()) return if (plugged != 0) listOf(plugged) else emptyList()
-        return pluggedList // 新格式：空列表 = 任意充电方式
+        return pluggedList
     }
 
-    // 电压条件是否启用（voltageMax > 0 视为已设置范围）
     private fun isVoltageLimited(): Boolean = voltageMax > 0
 
     /**
-     * 判断当前电池状态是否满足条件
-     * matchType = 0：所有已设置（非不限）的条件组都满足才为 true
-     * matchType = 1：任一已设置的条件组满足即为 true（全部不限时恒为 true）
      */
     fun isMatch(status: Int, plugged: Int, voltage: Int, health: Int, temperature: Int): Boolean {
         val results = mutableListOf<Boolean>()
@@ -107,7 +100,7 @@ data class ChargeSetting(
         if (healthList.isNotEmpty()) results.add(health in healthList)
         if (temperatureLimited) results.add(temperature in temperatureMin..temperatureMax)
 
-        if (results.isEmpty()) return true // 全部不限
+        if (results.isEmpty()) return true
         return if (matchType == 1) results.any { it } else results.all { it }
     }
 

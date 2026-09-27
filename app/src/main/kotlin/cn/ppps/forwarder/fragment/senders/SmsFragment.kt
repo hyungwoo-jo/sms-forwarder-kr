@@ -83,34 +83,27 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //检查发短信权限
         XXPermissions.with(this)
             .permission(PermissionLists.getSendSmsPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiSmsSend = false
                         return
                     }
-                    // 处理权限请求成功的逻辑
 
                 }
             })
 
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -122,14 +115,12 @@ class SmsFragment : BaseFragment<FragmentSendersSmsBinding?>(), View.OnClickList
             }
         })
 
-        //新增
         if (senderId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_sender))
             binding!!.btnDel.setText(R.string.discard)
             return
         }
 
-        //编辑
         binding!!.btnDel.setText(R.string.del)
         Core.sender.get(senderId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Sender> {
             override fun onSubscribe(d: Disposable) {}

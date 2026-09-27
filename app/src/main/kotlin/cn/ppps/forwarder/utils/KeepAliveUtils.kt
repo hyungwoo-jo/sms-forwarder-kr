@@ -17,7 +17,6 @@ class KeepAliveUtils private constructor() {
 
     companion object {
         fun isIgnoreBatteryOptimization(activity: Activity): Boolean {
-            //安卓6.0以下没有忽略电池优化
             return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 true
             } else try {

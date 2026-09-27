@@ -33,10 +33,8 @@ class NotificationService : NotificationListenerService() {
     }
 
     override fun onListenerDisconnected() {
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
-        //总开关
         if (!SettingUtils.enableAppNotify) return
 
         Log.d(TAG, "알림 수신 서비스 연결이 끊어져 재연결을 요청합니다")
@@ -48,14 +46,11 @@ class NotificationService : NotificationListenerService() {
     @SuppressLint("DiscouragedPrivateApi")
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         try {
-            //纯客户端模式
             if (SettingUtils.enablePureClientMode) return
 
-            //异常通知跳过
             val notification = sbn?.notification ?: return
             val extras = notification.extras ?: return
 
-            //自动消除额外APP通知
             SettingUtils.cancelExtraAppNotify
                 .takeIf { it.isNotEmpty() }
                 ?.split("\n")
@@ -72,18 +67,13 @@ class NotificationService : NotificationListenerService() {
                 }
 
 
-            //总开关
             if (!SettingUtils.enableAppNotify) return
 
-            //仅锁屏状态转发APP通知
             if (SettingUtils.enableNotUserPresent && !ScreenUtils.isScreenLock()) return
 
             val from = sbn.packageName
-            //自身通知跳过
             if (PACKAGE_NAME == sbn.packageName) return
-            // 标题
             val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
-            // 通知内容
             var text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString() ?: ""
@@ -95,10 +85,8 @@ class NotificationService : NotificationListenerService() {
                 text = notification.tickerText.toString()
             }
 
-            //不处理空消息（标题跟内容都为空）
             if (TextUtils.isEmpty(title) && TextUtils.isEmpty(text)) return
 
-            //关键词黑名单：一行一个，支持正则，命中标题或内容则不转发
             if (isInBlacklist(title, text)) {
                 Log.d(TAG, "앱 알림이 차단 키워드에 일치하여 전달을 건너뜁니다. title=$title, text=$text")
                 return
@@ -109,7 +97,6 @@ class NotificationService : NotificationListenerService() {
                 Log.d(TAG, "메시지 UID====>" + sbn.uid)
                 msgInfo.uid = sbn.uid
             }
-            //TODO：自动消除通知（临时方案，重复查询换取准确性）
             if (SettingUtils.enableCancelAppNotify) {
                 val ruleList: List<Rule> = Core.rule.getRuleList(msgInfo.type, 1, "SIM0")
                 for (rule in ruleList) {
@@ -138,7 +125,6 @@ class NotificationService : NotificationListenerService() {
 
     }
 
-    //关键词黑名单匹配：一行一个关键词，支持正则表达式，命中通知标题或内容任意一项即返回 true
     private fun isInBlacklist(title: String, text: String): Boolean {
         val blacklist = SettingUtils.appNotifyBlacklist
         if (TextUtils.isEmpty(blacklist)) return false
@@ -152,7 +138,6 @@ class NotificationService : NotificationListenerService() {
                     return true
                 }
             } catch (e: Exception) {
-                //正则表达式非法时，降级为普通包含匹配
                 Log.w(TAG, "차단 키워드 정규식이 잘못되어 포함 여부로 검사합니다: $keyword, ${e.message}")
                 if (title.contains(keyword) || text.contains(keyword)) {
                     return true

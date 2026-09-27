@@ -17,13 +17,11 @@ class ConfigController {
 
     private val TAG: String = CloneController::class.java.simpleName
 
-    //远程查配置
     @CrossOrigin(methods = [RequestMethod.POST])
     @PostMapping("/query")
     fun test(@RequestBody bean: BaseRequest<*>): ConfigData {
         Log.d(TAG, bean.data.toString())
 
-        //获取卡槽信息
         if (App.SimInfoList.isEmpty()) {
             App.SimInfoList = PhoneUtils.getSimMultiInfo()
         }

@@ -51,7 +51,6 @@ class EmailUtils {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
             }
 
-            //常用邮箱类型的转换
             when (setting.mailType) {
                 "@qq.com", "@foxmail.com" -> {
                     setting.host = "smtp.qq.com"
@@ -138,7 +137,6 @@ class EmailUtils {
             runBlocking {
                 val job = launch(Dispatchers.IO) {
                     try {
-                        // 设置邮件参数
                         val host = setting.host
                         val port = setting.port
                         val from = setting.fromEmail
@@ -148,7 +146,6 @@ class EmailUtils {
                         }
                         val nickname = msgInfo.getTitleForSend(setting.nickname, "", rule?.title ?: "")
                         setting.recipients.ifEmpty {
-                            //兼容旧的设置
                             val emails = setting.toEmail.replace("[,，;；]".toRegex(), ",").trim(',').split(',')
                             emails.forEach {
                                 setting.recipients[it] = Pair("", "")
@@ -158,10 +155,8 @@ class EmailUtils {
                         val openSSL = setting.ssl
                         val startTls = setting.startTls
 
-                        //发件人S/MIME私钥（用于签名）
                         var signingPrivateKey: PrivateKey? = null
                         var signingCertificate: X509Certificate? = null
-                        //发件人OpenPGP私钥（用于签名）
                         var senderPGPSecretKeyRing: PGPSecretKeyRing? = null
                         var senderPGPSecretKeyPassword = ""
 
@@ -194,7 +189,6 @@ class EmailUtils {
                             }
                         }
 
-                        // 发送结果监听器
                         val listener = object : EmailSender.EmailTaskListener {
                             override fun onEmailSent(success: Boolean, message: String) {
                                 if (success) {
@@ -208,11 +202,9 @@ class EmailUtils {
                             }
                         }
 
-                        //失败重试次数及间隔（复用请求接口失败重试的设置）
                         val retryTimes = SettingUtils.requestRetryTimes
                         val delayTime = SettingUtils.requestDelayTime
 
-                        //带失败重试的发送：内部拦截每次发送结果，失败则延迟重试，最终结果才上报给 listener
                         suspend fun sendWithRetry(build: (EmailSender.EmailTaskListener) -> EmailSender) {
                             var attempt = 0
                             var success = false
@@ -233,10 +225,8 @@ class EmailUtils {
                             listener.onEmailSent(success, resultMessage)
                         }
 
-                        //逐一发送加密邮件
                         val recipientsWithoutCert = mutableListOf<String>()
                         if (setting.encryptionProtocol == "OpenKeychain") {
-                            //OpenKeychain：公钥按收件人邮箱由OpenKeychain自动匹配，一次加密发送给全部收件人
                             val openKeychainHelper = OpenKeychainHelper(App.context)
                             try {
                                 sendWithRetry { emailListener ->
@@ -270,7 +260,6 @@ class EmailUtils {
                             var recipientPGPPublicKeyRing: PGPPublicKeyRing? = null
                             try {
                                 when {
-                                    //从私钥证书文件提取公钥
                                     keystoreBase64.isNotEmpty() && keystorePassword.isNotEmpty() -> {
                                         val keystoreStream = if (keystoreBase64.startsWith("/")) {
                                             FileInputStream(keystoreBase64)
@@ -298,7 +287,6 @@ class EmailUtils {
                                         }
                                     }
 
-                                    //从证书文件提取公钥
                                     keystoreBase64.isNotEmpty() && keystorePassword.isEmpty() -> {
                                         val keystoreStream = if (keystoreBase64.startsWith("/")) {
                                             FileInputStream(keystoreBase64)
@@ -330,7 +318,6 @@ class EmailUtils {
                             } catch (e: Exception) {
                                 e.printStackTrace()
                                 Log.w(TAG, "Failed to load recipient($email) keystore($cert): ${e.message}")
-                                //无法加载证书时，发送明文邮件
                                 recipientsWithoutCert.add(email)
                             }
 
@@ -361,7 +348,6 @@ class EmailUtils {
                             }
                         }
 
-                        //批量发送明文邮件
                         if (recipientsWithoutCert.isNotEmpty()) {
                             sendWithRetry { emailListener ->
                                 EmailSender(
@@ -380,7 +366,6 @@ class EmailUtils {
                                     encryptionProtocol = setting.encryptionProtocol,
                                     senderPrivateKey = signingPrivateKey,
                                     senderX509Cert = signingCertificate,
-                                    //TODO: OpenPGP 只签名不加密时，提示无效的数字签名，暂未解决
                                     senderPGPSecretKeyRing = senderPGPSecretKeyRing,
                                     senderPGPSecretKeyPassword = senderPGPSecretKeyPassword,
                                 )
@@ -395,7 +380,7 @@ class EmailUtils {
                         SendUtils.senderLogic(status, msgInfo, rule, senderIndex, msgId)
                     }
                 }
-                job.join() // 等待协程完成
+                job.join()
             }
 
         }

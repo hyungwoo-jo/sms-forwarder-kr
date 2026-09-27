@@ -77,7 +77,6 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
         }
     }
 
-    //开头有几个空格
     private var headSpaceNum = 0
     private var beforeRuleLine: RuleLine? = null
     private var nextRuleLine: RuleLine? = null
@@ -87,18 +86,14 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
     //and or
     var conjunction: String
 
-    //手机号 短信内容 APP包名 通知标题 通知内容 卡槽信息
     private var field: String
 
-    // 是否
     private var sure: String
     private var check: String
     private var value: String
 
-    //字段分支
     fun checkMsg(msg: MsgInfo): Boolean {
 
-        //检查这一行和上一行合并的结果是否命中
         var mixChecked = false
         when (field) {
             FILED_PHONE_NUM, FILED_PACKAGE_NAME -> mixChecked = checkValue(msg.from)
@@ -117,7 +112,6 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
         return mixChecked
     }
 
-    //内容分支
     private fun checkValue(msgValue: String?): Boolean {
         if (msgValue == null) return false
 
@@ -193,49 +187,34 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
     init {
         logg("----------$lineNum-----------------")
         logg(line)
-        //规则检验：
-        //并且 是 手机号 相等 10086
-        //[并且, 是, 手机号, 相等, 10086]
-        //  并且 是 内容 包含 test
-        //[, , 并且, 是, 内容, 包含, sms]
 
-        //处理头空格数用来确认跟上一行节点的相对位置：是同级还是子级
-        //处理4个字段，之后的全部当做value
 
-        //标记3个阶段
         var isCountHeading = false
         var isDealMiddle = false
         var isDealValue = false
 
-        //用于保存4个中间体： 并且, 是, 内容, 包含
         val middleList: MutableList<String> = ArrayList(4)
-        //保存每个中间体字符串
         var buildMiddleWord = StringBuilder()
         val valueBuilder = StringBuilder()
         for (i in line.indices) {
             val w = line[i].toString()
             logg("walk over:$w")
 
-            //控制阶段
-            //开始处理头
             if (i == 0) {
                 if (" " == w) {
                     logg("start to isCountHeading:")
                     isCountHeading = true
                 } else {
-                    //直接进入处理中间体阶段
                     isDealMiddle = true
                     logg("start to isDealMiddle:")
                 }
             }
-            //正在数空格头，但是遇到非空格，阶段变更:由处理空头阶段  变为  处理 中间体阶段
             if (isCountHeading && " " != w) {
                 logg("isCountHeading to isDealMiddle:")
                 isCountHeading = false
                 isDealMiddle = true
             }
 
-            //正在处理中间体，中间体数量够了，阶段变更：由处理中间体  变为  处理 value
             if (isDealMiddle && middleList.size == 4) {
                 logg("isDealMiddle done middleList:$middleList")
                 logg("isDealMiddle to isDealValue:")
@@ -250,24 +229,20 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
                 headSpaceNum++
             }
             if (isDealMiddle) {
-                //遇到空格
                 if (" " == w) {
                     buildMiddleWord = if (buildMiddleWord.isEmpty()) {
                         throw Exception(lineNum.toString() + "행: 연속된 공백은 사용할 수 없습니다.")
                     } else {
-                        //生成了一个中间体
                         middleList.add(buildMiddleWord.toString())
                         logg("get Middle++:$buildMiddleWord")
                         StringBuilder()
                     }
                 } else {
-                    //把w拼接到中间体上
                     buildMiddleWord.append(w)
                     logg("buildMiddleWord length:" + buildMiddleWord.length + "buildMiddleWord:" + buildMiddleWord)
                 }
             }
             if (isDealValue) {
-                //把余下的所有字符都拼接给value
                 valueBuilder.append(w)
             }
         }
@@ -277,26 +252,21 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
         }
 
 
-        //规则对齐
         if (beforeRuleLine != null) {
             logg("beforeRuleLine :$beforeRuleLine")
             logg("thisRuleLine :$this")
 
-            //同级别
             if (headSpaceNum == beforeRuleLine.headSpaceNum) {
                 logg("같은 수준")
                 this.beforeRuleLine = beforeRuleLine
                 beforeRuleLine.nextRuleLine = this
             }
-            //子级
             if (headSpaceNum - 1 == beforeRuleLine.headSpaceNum) {
                 logg("하위 수준")
                 parentRuleLine = beforeRuleLine
                 beforeRuleLine.childRuleLine = this
             }
-            //查找父级别
             if (headSpaceNum < beforeRuleLine.headSpaceNum) {
-                //匹配到最近一个同级
                 var fBeforeRuleLine = beforeRuleLine.beforeRuleLine
                 if (fBeforeRuleLine == null) {
                     fBeforeRuleLine = beforeRuleLine.parentRuleLine
@@ -304,14 +274,12 @@ class RuleLine(line: String, lineNum: Int, beforeRuleLine: RuleLine?) {
                 while (fBeforeRuleLine != null) {
                     logg("fBeforeRuleLine$fBeforeRuleLine")
 
-                    //查找到同级别
                     if (headSpaceNum == fBeforeRuleLine.headSpaceNum) {
                         logg("상위 수준")
                         this.beforeRuleLine = fBeforeRuleLine
                         fBeforeRuleLine.nextRuleLine = this
                         break
                     } else {
-                        //向上查找
                         var pBeforeRuleLine = fBeforeRuleLine.beforeRuleLine
                         if (pBeforeRuleLine == null) {
                             pBeforeRuleLine = fBeforeRuleLine.parentRuleLine

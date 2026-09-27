@@ -54,12 +54,10 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
     private var titleBar: TitleBar? = null
     private var mCountDownHelper: CountDownButtonHelper? = null
 
-    //所有转发规则下拉框
     private var ruleListAll = mutableListOf<Rule>()
     private val ruleSpinnerList = mutableListOf<RuleSpinnerItem>()
     private lateinit var ruleSpinnerAdapter: RuleSpinnerAdapter<*>
 
-    //已选转发规则列表
     private var ruleId = 0L
     private var ruleListSelected = mutableListOf<Rule>()
     private lateinit var ruleRecyclerView: RecyclerView
@@ -86,10 +84,8 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -98,7 +94,6 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
 
             override fun onFinished() {
                 binding!!.btnTest.text = getString(R.string.test)
-                //获取转发规则列表
                 getRuleList()
             }
         })
@@ -115,7 +110,6 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
             Log.d(TAG, "initViews settingVo:$settingVo")
         }
 
-        //初始化转发规则下拉框
         initRule()
     }
 
@@ -177,10 +171,8 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
         }
     }
 
-    //初始化转发规则
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initRule() {
-        //初始化转发规则下拉框
         binding!!.spRule.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = ruleSpinnerAdapter.getItemSource(position) as RuleSpinnerItem
@@ -204,12 +196,11 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
             }
         }
 
-        // 初始化已选转发规则列表 RecyclerView 和 Adapter
         ruleRecyclerView = binding!!.recyclerRules
         ruleRecyclerAdapter = RuleRecyclerAdapter(ruleListSelected, { position ->
             ruleListSelected.removeAt(position)
             ruleRecyclerAdapter.notifyItemRemoved(position)
-            ruleRecyclerAdapter.notifyItemRangeChanged(position, ruleListSelected.size) // 更新索引
+            ruleRecyclerAdapter.notifyItemRangeChanged(position, ruleListSelected.size)
         })
         ruleRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -232,11 +223,9 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
         ruleTouchHelper.attachToRecyclerView(ruleRecyclerView)
         ruleRecyclerAdapter.setTouchHelper(ruleTouchHelper)
 
-        //获取转发规则列表
         getRuleList()
     }
 
-    //获取转发规则列表
     private fun getRuleList() {
         Core.rule.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Rule>> {
             override fun onSubscribe(d: Disposable) {}
@@ -270,7 +259,6 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
                 binding!!.spRule.setAdapter(ruleSpinnerAdapter)
                 //ruleSpinnerAdapter.notifyDataSetChanged()
 
-                //更新ruleListSelected的状态与名称
                 ruleListSelected.forEach {
                     ruleListAll.forEach { rule ->
                         if (it.id == rule.id) {
@@ -285,7 +273,6 @@ class RuleFragment : BaseFragment<FragmentTasksActionRuleBinding?>(), View.OnCli
         })
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): RuleSetting {
         if (ruleListSelected.isEmpty() || ruleId == 0L) {

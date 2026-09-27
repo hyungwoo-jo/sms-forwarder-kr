@@ -90,7 +90,6 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
 
-        //自定义模板可用变量标签
         var COMMON_TAG_MAP: MutableMap<String, String> = mutableMapOf()
         var SMS_TAG_MAP: MutableMap<String, String> = mutableMapOf()
         var CALL_TAG_MAP: MutableMap<String, String> = mutableMapOf()
@@ -99,7 +98,6 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
         var BATTERY_TAG_MAP: MutableMap<String, String> = mutableMapOf()
         var NETWORK_TAG_MAP: MutableMap<String, String> = mutableMapOf()
 
-        //通话类型：1.来电挂机 2.去电挂机 3.未接来电 4.来电提醒 5.来电接通 6.去电拨出
         var CALL_TYPE_MAP: MutableMap<String, String> = mutableMapOf()
         var FILED_MAP: MutableMap<String, String> = mutableMapOf()
         var CHECK_MAP: MutableMap<String, String> = mutableMapOf()
@@ -108,49 +106,39 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
         var BARK_LEVEL_MAP: MutableMap<String, String> = mutableMapOf()
         var BARK_ENCRYPTION_ALGORITHM_MAP: MutableMap<String, String> = mutableMapOf()
 
-        //已插入SIM卡信息
         var SimInfoList: MutableMap<Int, SimInfo> = mutableMapOf()
 
-        //已安装App信息
         var LoadingAppList = false
         var UserAppList: MutableList<AppInfo> = mutableListOf()
         var SystemAppList: MutableList<AppInfo> = mutableListOf()
 
         /**
-         * @return 当前app是否是调试开发模式
          */
         var isDebug: Boolean = BuildConfig.DEBUG
 
-        //Cactus相关
-        val mEndDate = MutableLiveData<String>() //结束时间
-        val mLastTimer = MutableLiveData<String>() //上次存活时间
-        val mTimer = MutableLiveData<String>() //存活时间
-        val mStatus = MutableLiveData<Boolean>().apply { value = true } //运行状态
+        val mEndDate = MutableLiveData<String>()
+        val mLastTimer = MutableLiveData<String>()
+        val mTimer = MutableLiveData<String>()
+        val mStatus = MutableLiveData<Boolean>().apply { value = true }
         var mDisposable: Disposable? = null
 
-        //Location相关
         val LocationClient by lazy { LocationClient(context) }
         val DateFormat by lazy { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
 
-        //Frpclib是否已经初始化
         var FrpclibInited = false
 
-        //是否需要在拼接字符串时添加空格
         var isNeedSpaceBetweenWords = false
     }
 
     override fun attachBaseContext(base: Context) {
         //super.attachBaseContext(base)
-        // 绑定语种
         super.attachBaseContext(MultiLanguages.attach(base))
-        //解决4.x运行崩溃的问题
         MultiDex.install(this)
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        // 设置全局异常捕获
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             throwable.printStackTrace()
@@ -167,7 +155,6 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
             } catch (ex: IOException) {
                 ex.printStackTrace()
             }
-            //使用默认的处理方式让APP停止运行
             defaultHandler?.uncaughtException(thread, throwable)
         }
 
@@ -175,15 +162,12 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
             context = applicationContext
             initLibs()
 
-            //纯客户端模式
             if (SettingUtils.enablePureClientMode) return
 
-            //初始化WorkManager
             WorkManager.initialize(this, Configuration.Builder().build())
 
             FrpclibInited = false
 
-            //启动前台服务
             val foregroundServiceIntent = Intent(this, ForegroundService::class.java)
             foregroundServiceIntent.action = ACTION_START
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -193,51 +177,42 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
             }
 
 
-            //靠近听筒关屏
             ProximitySensorScreenHelper.refresh(this)
-            //Cactus 集成双进程前台服务，JobScheduler，onePix(一像素)，WorkManager，无声音乐
             if (SettingUtils.enableCactus) {
-                //注册广播监听器
                 registerReceiver(CactusReceiver(), IntentFilter().apply {
                     addAction(Cactus.CACTUS_WORK)
                     addAction(Cactus.CACTUS_STOP)
                     addAction(Cactus.CACTUS_BACKGROUND)
                     addAction(Cactus.CACTUS_FOREGROUND)
                 })
-                //设置通知栏点击事件
                 val activityIntent = Intent(this, MainActivity::class.java)
                 val flags = if (Build.VERSION.SDK_INT >= 30) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
                 val pendingIntent = PendingIntent.getActivity(this, 0, activityIntent, flags)
                 cactus {
-                    setServiceId(FRONT_NOTIFY_ID) //服务Id
-                    setChannelId(FRONT_CHANNEL_ID) //渠道Id
-                    setChannelName(FRONT_CHANNEL_NAME) //渠道名
+                    setServiceId(FRONT_NOTIFY_ID)
+                    setChannelId(FRONT_CHANNEL_ID)
+                    setChannelName(FRONT_CHANNEL_NAME)
                     setTitle(getString(R.string.app_name))
                     setContent(SettingUtils.notifyContent)
                     setSmallIcon(R.drawable.ic_forwarder)
                     setLargeIcon(R.mipmap.ic_launcher)
                     setPendingIntent(pendingIntent)
-                    //无声音乐
                     if (SettingUtils.enablePlaySilenceMusic) {
                         setMusicEnabled(true)
                         setBackgroundMusicEnabled(true)
                         setMusicId(R.raw.silence)
-                        //设置音乐间隔时间，时间间隔越长，越省电
                         setMusicInterval(SettingUtils.musicInterval.toLong())
                         isDebug(true)
                     }
-                    //是否可以使用一像素，默认可以使用，只有在android p以下可以使用
                     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P && SettingUtils.enableOnePixelActivity) {
                         setOnePixEnabled(true)
                     }
-                    //崩溃是否可以重启用户界面
                     setCrashRestartUIEnabled(true)
                     addCallback({
                         Log.d(TAG, "Cactus 유지 서비스: onStop")
                     }) {
                         Log.d(TAG, "Cactus 유지 서비스: doWork")
                     }
-                    //切后台切换回调
                     addBackgroundCallback {
                         Log.d(TAG, if (it) "SMS 자동전달: 백그라운드로 전환" else "SMS 자동전달: 포그라운드로 전환")
                     }
@@ -251,26 +226,18 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
     }
 
     /**
-     * 初始化基础库
      */
     private fun initLibs() {
         Core.init(this)
-        // 配置文件初始化
         SharedPreference.init(applicationContext)
-        // X系列基础库初始化
         XBasicLibInit.init(this)
-        // 初始化日志打印
         isDebug = SettingUtils.enableDebugMode
         Log.init(applicationContext)
-        // 转发历史工具类初始化
         HistoryUtils.init(applicationContext)
-        // 初始化语种切换框架
         MultiLanguages.init(this)
         MultiLanguages.setAppLanguage(this, Locale.KOREAN)
-        // 设置语种变化监听器
         MultiLanguages.setOnLanguageListener(object : OnLanguageListener {
             override fun onAppLocaleChange(oldLocale: Locale, newLocale: Locale) {
-                // 注意：只有setAppLanguage时触发，clearAppLanguage时不触发
                 Log.i(TAG, "앱 언어 변경: $oldLocale → $newLocale")
                 switchLanguage(newLocale)
             }
@@ -278,11 +245,6 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
             override fun onSystemLocaleChange(oldLocale: Locale, newLocale: Locale) {
                 Log.i(TAG, "시스템 언어 변경: $oldLocale → $newLocale")
                 switchLanguage(newLocale)
-                /*val isFlowSystem = SettingUtils.isFlowSystemLanguage //MultiLanguages.isSystemLanguage(context)取值不对，一直是false
-                Log.i(TAG, "시스템 언어 변경: $oldLocale → $newLocale，是否跟随系统：$isFlowSystem")
-                if (isFlowSystem) {
-                    CommonUtils.switchLanguage(oldLocale, newLocale)
-                }*/
             }
         })
         switchLanguage(MultiLanguages.getAppLanguage(this))
@@ -323,11 +285,9 @@ class App : Application(), CactusCallback, Configuration.Provider by Core {
         }
     }
 
-    //多语言切换时枚举常量自动切换语言
     private fun switchLanguage(newLocale: Locale) {
         isNeedSpaceBetweenWords = !newLocale.language.contains("zh")
 
-        //自定义模板可用变量标签
         COMMON_TAG_MAP.clear()
         COMMON_TAG_MAP.putAll(
             mapOf(

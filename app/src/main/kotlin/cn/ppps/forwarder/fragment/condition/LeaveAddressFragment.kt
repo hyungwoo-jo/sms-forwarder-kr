@@ -59,7 +59,6 @@ class LeaveAddressFragment : BaseFragment<FragmentTasksConditionLeaveAddressBind
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         binding!!.rgCalcType.setOnCheckedChangeListener { _, checkedId ->
@@ -103,7 +102,7 @@ class LeaveAddressFragment : BaseFragment<FragmentTasksConditionLeaveAddressBind
                     val inputText = binding!!.etLongitude.text.toString()
                     if (inputText.isEmpty()) {
                         binding!!.etLongitude.setText("0")
-                        binding!!.etLongitude.setSelection(binding!!.etLongitude.text.length) // 将光标移至文本末尾
+                        binding!!.etLongitude.setSelection(binding!!.etLongitude.text.length)
                     } else {
                         checkSetting(true)
                     }
@@ -119,7 +118,7 @@ class LeaveAddressFragment : BaseFragment<FragmentTasksConditionLeaveAddressBind
                     val inputText = binding!!.etLatitude.text.toString()
                     if (inputText.isEmpty()) {
                         binding!!.etLatitude.setText("0")
-                        binding!!.etLatitude.setSelection(binding!!.etLatitude.text.length) // 将光标移至文本末尾
+                        binding!!.etLatitude.setSelection(binding!!.etLatitude.text.length)
                     } else {
                         checkSetting(true)
                     }
@@ -135,7 +134,7 @@ class LeaveAddressFragment : BaseFragment<FragmentTasksConditionLeaveAddressBind
                     val inputText = binding!!.etDistance.text.toString()
                     if (inputText.isEmpty()) {
                         binding!!.etDistance.setText("1")
-                        binding!!.etDistance.setSelection(binding!!.etDistance.text.length) // 将光标移至文本末尾
+                        binding!!.etDistance.setSelection(binding!!.etDistance.text.length)
                     } else {
                         checkSetting(true)
                     }
@@ -212,7 +211,6 @@ class LeaveAddressFragment : BaseFragment<FragmentTasksConditionLeaveAddressBind
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(updateView: Boolean = false): LocationSetting {
         val longitude = binding!!.etLongitude.text.toString().toDouble()

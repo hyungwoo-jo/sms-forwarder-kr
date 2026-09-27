@@ -46,7 +46,6 @@ class MarkdownFragment : BaseFragment<FragmentMarkdownBinding?>() {
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         binding!!.markdownView.addStyleSheet(Github())

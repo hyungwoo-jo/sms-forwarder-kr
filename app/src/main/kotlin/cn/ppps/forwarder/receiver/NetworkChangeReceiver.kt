@@ -59,15 +59,12 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         if (networkInfo != null && networkInfo.isConnected) {
             Log.d(TAG, "Network Connected")
             if (networkInfo.type == ConnectivityManager.TYPE_MOBILE) {
-                //移动网络
                 TaskUtils.networkState = 1
-                //获取当前使用的 SIM index
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     TaskUtils.dataSimSlot = getSlotIndex(context) + 1
                 }
                 TaskUtils.wifiSsid = ""
             } else if (networkInfo.type == ConnectivityManager.TYPE_WIFI) {
-                //WiFi网络
                 TaskUtils.networkState = 2
             }
         } else {
@@ -77,13 +74,11 @@ class NetworkChangeReceiver : BroadcastReceiver() {
             TaskUtils.wifiSsid = ""
         }
 
-        //网络状态未改变，不执行任务，避免重复通知
         if (networkStateOld == TaskUtils.networkState && dataSimSlotOld == TaskUtils.dataSimSlot && wifiSsidOld == TaskUtils.wifiSsid) {
             Log.d(TAG, "Network State Not Changed")
             return
         }
 
-        //【注意】延迟5秒（给够搜索信号时间）才执行任务
         val request = OneTimeWorkRequestBuilder<NetworkWorker>()
             .setInitialDelay(DELAY_TIME_AFTER_SIM_READY, TimeUnit.MILLISECONDS)
             .setInputData(
@@ -128,7 +123,6 @@ class NetworkChangeReceiver : BroadcastReceiver() {
     //    }
     //}
 
-    // 获取当前数据连接的卡槽ID，不需要判断手机数据流量是否打开（上层已判断）
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun getSlotIndex(context: Context): Int {
         return try {
@@ -145,7 +139,6 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         }
     }
 
-    // 获取数据连接的订阅ID
     @SuppressLint("DiscouragedPrivateApi")
     private fun getDataSubId(context: Context): Int {
         val defaultDataSlotId = getDefaultDataSlotId(context)
@@ -167,7 +160,6 @@ class NetworkChangeReceiver : BroadcastReceiver() {
         }
     }
 
-    // 获取默认数据卡的卡槽ID
     private fun getDefaultDataSlotId(context: Context): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             val subscriptionManager = SubscriptionManager.from(context.applicationContext)

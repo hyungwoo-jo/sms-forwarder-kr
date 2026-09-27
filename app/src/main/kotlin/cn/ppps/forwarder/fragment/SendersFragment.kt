@@ -244,7 +244,6 @@ class SendersFragment : BaseFragment<FragmentSendersBinding?>(),
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -255,9 +254,8 @@ class SendersFragment : BaseFragment<FragmentSendersBinding?>(),
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.status_param_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             //currentStatus = statusValueArray[position]
-            currentStatus = 1 - position //注意：这里刚好相反，可以取巧
+            currentStatus = 1 - position
             viewModel.setStatus(currentStatus)
             adapter.refresh()
             binding!!.recyclerView.scrollToPosition(0)
@@ -267,7 +265,6 @@ class SendersFragment : BaseFragment<FragmentSendersBinding?>(),
     override fun initListeners() {
         binding!!.recyclerView.adapter = adapter
 
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             refreshLayout.layout.postDelayed({
                 //adapter!!.refresh()
@@ -324,9 +321,9 @@ class SendersFragment : BaseFragment<FragmentSendersBinding?>(),
     override fun onItemClick(itemView: View, widgetInfo: PageInfo, pos: Int) {
         try {
             @Suppress("UNCHECKED_CAST")
-            PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>) //跳转的fragment
+            PageOption.to(Class.forName(widgetInfo.classPath) as Class<XPageFragment>)
                 .setNewActivity(true)
-                .putInt(KEY_SENDER_TYPE, pos) //注意：目前刚好是这个顺序而已
+                .putInt(KEY_SENDER_TYPE, pos)
                 .open(this)
             dialog.dismiss()
         } catch (e: Exception) {

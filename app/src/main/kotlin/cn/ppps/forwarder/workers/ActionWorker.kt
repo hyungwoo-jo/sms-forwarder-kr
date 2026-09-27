@@ -72,7 +72,6 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import frpclib.Frpclib
 import java.util.Calendar
 
-//执行每个task具体动作任务
 @Suppress("PrivatePropertyName")
 class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
@@ -91,7 +90,6 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
             return Result.failure()
         }
 
-        //TODO: 如果传入的taskConditionsJson不为空，需要再次判断触发条件是否满足
         if (!taskConditionsJson.isNullOrEmpty()) {
             val conditionList = Gson().fromJson(taskConditionsJson, Array<TaskSetting>::class.java).toMutableList()
             if (conditionList.isEmpty()) {
@@ -130,15 +128,12 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                             writeLog("smsSetting is null")
                             continue
                         }
-                        //获取卡槽信息
                         if (App.SimInfoList.isEmpty()) {
                             App.SimInfoList = PhoneUtils.getSimMultiInfo()
                         }
                         Log.d(TAG, App.SimInfoList.toString())
 
-                        //发送卡槽: 1=SIM1, 2=SIM2
                         val simSlotIndex = smsSetting.simSlot - 1
-                        //TODO：取不到卡槽信息时，采用默认卡槽发送
                         val mSubscriptionId: Int = App.SimInfoList[simSlotIndex]?.mSubscriptionId ?: -1
 
                         val msg = if (ActivityCompat.checkSelfPermission(App.context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
@@ -158,10 +153,8 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
 
                     TASK_ACTION_NOTIFICATION -> {
                         val ruleSetting = Gson().fromJson(action.setting, Rule::class.java)
-                        //重新查询发送通道最新设置
                         val ids = ruleSetting.senderList.joinToString(",") { it.id.toString() }
                         ruleSetting.senderList = Core.sender.getByIds(ids.split(",").map { it.trim().toLong() }, ids)
-                        //自动任务的不需要吐司或者更新日志，特殊处理 logId = -1，msgId = -1
                         SendUtils.sendMsgSender(msgInfo, ruleSetting, 0, -1L, -1L)
 
                         successNum++
@@ -181,7 +174,6 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                         } else {
                             Core.msg.deleteAll()
                         }
-                        //清理缓存
                         HistoryUtils.clearPreference()
                         CacheUtils.clearAllCache(App.context)
 
@@ -357,7 +349,6 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                             continue
                         }
 
-                        // 发送开始播放指令
                         LiveEventBus.get<AlarmSetting>(EVENT_ALARM_ACTION).post(alarmSetting)
 
                         successNum++
@@ -388,9 +379,7 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                             continue
                         }
 
-                        // 根据唤醒方式执行不同的逻辑
                         if (wolSetting.wakeMethod == 1) {
-                            // 直接发送幻数据包
                             try {
                                 sendWakeOnLanPacket(wolSetting)
                                 writeLog(String.format(getString(R.string.successful_execution), wolSetting.description), "SUCCESS")
@@ -401,7 +390,6 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
                                 writeLog("WOL direct send failed: ${e.message}", "ERROR")
                             }
                         } else {
-                            // 通过本地服务API
                             val requestUrl: String = HttpServerUtils.serverAddress + "/wol/send"
                             Log.i(TAG, "requestUrl:$requestUrl")
 
@@ -539,45 +527,36 @@ class ActionWorker(context: Context, params: WorkerParameters) : CoroutineWorker
             return
         }
 
-        //TODO: 写入日志
     }
 
     /**
-     * 直接发送WOL幻数据包
-     * @param wolSetting WOL设置
      */
     private fun sendWakeOnLanPacket(wolSetting: WolSetting) {
         val macAddress = wolSetting.mac
-        val ipAddress = wolSetting.ip.ifBlank { "255.255.255.255" } // 默认广播地址
-        val port = if (wolSetting.port.isNotBlank()) wolSetting.port.toInt() else 9 // 默认WOL端口
+        val ipAddress = wolSetting.ip.ifBlank { "255.255.255.255" }
+        val port = if (wolSetting.port.isNotBlank()) wolSetting.port.toInt() else 9
 
         Log.i(TAG, "Sending WOL packet to MAC: $macAddress, IP: $ipAddress, Port: $port")
 
-        // 清理MAC地址：移除所有非十六进制字符
         val cleanMac = macAddress.replace(Regex("[^0-9A-Fa-f]"), "").uppercase()
         if (cleanMac.length != 12) {
             throw IllegalArgumentException("Invalid MAC address: $macAddress")
         }
         Log.i(TAG, "Cleaned MAC address: $cleanMac")
 
-        // 构建MAC字节数组
         val macBytes = ByteArray(6)
         for (i in 0 until 6) {
             macBytes[i] = cleanMac.substring(i * 2, i * 2 + 2).toInt(16).toByte()
         }
 
-        // 构建WOL幻数据包：6个0xFF字节 + 16个MAC地址字节
         val magicPacket = ByteArray(6 + 16 * 6)
-        // 填充前6个字节为0xFF
         for (i in 0 until 6) {
             magicPacket[i] = 0xFF.toByte()
         }
-        // 填充16个MAC地址
         for (i in 6 until magicPacket.size step 6) {
             System.arraycopy(macBytes, 0, magicPacket, i, 6)
         }
 
-        // 发送UDP数据包
         val socket = java.net.DatagramSocket()
         socket.broadcast = true
         val address = java.net.InetAddress.getByName(ipAddress)

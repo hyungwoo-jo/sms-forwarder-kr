@@ -13,6 +13,14 @@ import cn.ppps.forwarder.utils.PhoneAreaLookupPolicy
 
 class SensitiveLogRedactorTest {
     @Test
+    fun displayRedactionReplacesChineseResponse() {
+        assertEquals(
+            "외부 서비스 응답을 표시할 수 없습니다. 전송 상태와 서버 설정을 확인하세요.",
+            SensitiveLogRedactor.redactForDisplay("\u7f51\u7edc\u8fde\u63a5\u5f02\u5e38")
+        )
+    }
+
+    @Test
     fun redactsEscapedQuotesAndStandaloneTokens() {
         val json = """{"text":"앞 \"민감\" 뒤","token":"secret-token"}"""
         val redacted = SensitiveLogRedactor.redact(json)

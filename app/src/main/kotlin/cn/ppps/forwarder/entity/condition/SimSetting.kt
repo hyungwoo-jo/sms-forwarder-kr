@@ -5,8 +5,8 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable
 
 data class SimSetting(
-    var description: String = "", //描述
-    var simState: Int = 0, //SIM卡状态：0-未知状态，1-卡被移除，5-卡已准备就绪
+    var description: String = "",
+    var simState: Int = 0,
 ) : Serializable {
 
     constructor(simStateCheckId: Int) : this() {

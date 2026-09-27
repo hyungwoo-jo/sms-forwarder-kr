@@ -14,7 +14,6 @@ import com.xuexiang.xutil.resource.ResourceUtils
 import java.util.Locale
 
 /**
- * 服务协议【本地加载】
  *
  * @author xuexiang
  * @since 2021/5/18 1:35 AM
@@ -46,7 +45,6 @@ class ServiceProtocolFragment : BaseFragment<FragmentServiceProtocolBinding?>() 
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         if (title == getString(R.string.title_user_protocol)) {
@@ -70,12 +68,10 @@ class ServiceProtocolFragment : BaseFragment<FragmentServiceProtocolBinding?>() 
         const val KEY_IS_IMMERSIVE = "key_is_immersive"
 
         /**
-         * 用户协议asset本地保存路径
          */
         private const val ACCOUNT_PROTOCOL_ASSET_PATH = "protocol/account_protocol.txt"
 
         /**
-         * 隐私政策asset本地保存路径
          */
         private const val PRIVACY_PROTOCOL_ASSET_PATH = "protocol/privacy_protocol.txt"
 

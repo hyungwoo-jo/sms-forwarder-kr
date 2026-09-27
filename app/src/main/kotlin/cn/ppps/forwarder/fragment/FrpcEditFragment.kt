@@ -54,7 +54,6 @@ class FrpcEditFragment : BaseFragment<FragmentFrpcEditBinding?>() {
         codeview.setLineNumberTextSize(24f)
         codeview.textSize = 14f
 
-        //语法高亮
         val syntaxPatterns: MutableMap<Pattern, Int> = HashMap()
         syntaxPatterns[Pattern.compile("\\s*#.*")] = Color.GRAY
         syntaxPatterns[Pattern.compile("\\[\\[?([^]]*?)]]?", Pattern.DOTALL)] = Color.MAGENTA

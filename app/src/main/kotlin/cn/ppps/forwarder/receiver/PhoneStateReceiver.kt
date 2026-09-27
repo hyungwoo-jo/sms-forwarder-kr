@@ -13,10 +13,8 @@ abstract class PhoneStateReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
-        //总开关
         if (!SettingUtils.enablePhone) return
 
         //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
@@ -34,7 +32,6 @@ abstract class PhoneStateReceiver : BroadcastReceiver() {
             Log.d(TAG, "stateStr：$stateStr，savedNumber：$savedNumber")
             var state = 0
 
-            //遍历intent.extras的所有key，打印出内容
             for (key in intent.extras!!.keySet()) {
                 Log.d(TAG, "key：$key，value：${intent.extras!!.get(key)}")
             }

@@ -38,12 +38,11 @@ class ServerchanUtils {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
             }
 
-            // 兼容Server酱³Sendkey，使用正则表达式提取数字部分
             val matchResult = Regex("^sctp(\\d+)t", RegexOption.IGNORE_CASE).find(setting.sendKey)
             val requestUrl = if (matchResult != null && matchResult.groups[1] != null) {
                 "https://${matchResult.groups[1]?.value}.push.ft07.com/send/${setting.sendKey}.send"
             } else {
-                String.format("https://sctapi.ftqq.com/%s.send", setting.sendKey) // 默认推送地址
+                String.format("https://sctapi.ftqq.com/%s.send", setting.sendKey)
             }
 
             Log.i(TAG, "requestUrl:$requestUrl")
@@ -56,11 +55,11 @@ class ServerchanUtils {
             if (!TextUtils.isEmpty(setting.openid)) request.params("group", setting.openid)
 
             request.keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

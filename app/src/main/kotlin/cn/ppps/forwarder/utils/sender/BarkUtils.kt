@@ -48,10 +48,9 @@ class BarkUtils {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
             }
 
-            val requestUrl: String = setting.server //推送地址
+            val requestUrl: String = setting.server
             Log.i(TAG, "requestUrl:$requestUrl")
 
-            //支持HTTP基本认证(Basic Authentication)
             val regex = "^(https?://)([^:]+):([^@]+)@(.+)"
             val matches = Regex(regex, RegexOption.IGNORE_CASE).findAll(requestUrl).toList().flatMap(MatchResult::groupValues)
             Log.i(TAG, "matches = $matches")
@@ -77,12 +76,11 @@ class BarkUtils {
 
             if (!TextUtils.isEmpty(setting.call)) msgMap["call"] = setting.call
 
-            //自动复制
             if (TextUtils.isEmpty(setting.autoCopy)) {
-                val pattern = Regex("(?<!回复)(验证码|授权码|校验码|检验码|确认码|激活码|动态码|安全码|(验证)?代码|校验代码|检验代码|激活代码|确认代码|动态代码|安全代码|登入码|认证码|识别码|短信口令|动态密码|交易码|上网密码|动态口令|随机码|驗證碼|授權碼|校驗碼|檢驗碼|確認碼|激活碼|動態碼|(驗證)?代碼|校驗代碼|檢驗代碼|確認代碼|激活代碼|動態代碼|登入碼|認證碼|識別碼|一次性密码|[Cc][Oo][Dd][Ee]|[Vv]erification)")
+                val pattern = Regex("(?<!\\u56DE\\u590D)(\\u9A8C\\u8BC1\\u7801|\\u6388\\u6743\\u7801|\\u6821\\u9A8C\\u7801|\\u68C0\\u9A8C\\u7801|\\u786E\\u8BA4\\u7801|\\u6FC0\\u6D3B\\u7801|\\u52A8\\u6001\\u7801|\\u5B89\\u5168\\u7801|(\\u9A8C\\u8BC1)?\\u4EE3\\u7801|\\u6821\\u9A8C\\u4EE3\\u7801|\\u68C0\\u9A8C\\u4EE3\\u7801|\\u6FC0\\u6D3B\\u4EE3\\u7801|\\u786E\\u8BA4\\u4EE3\\u7801|\\u52A8\\u6001\\u4EE3\\u7801|\\u5B89\\u5168\\u4EE3\\u7801|\\u767B\\u5165\\u7801|\\u8BA4\\u8BC1\\u7801|\\u8BC6\\u522B\\u7801|\\u77ED\\u4FE1\\u53E3\\u4EE4|\\u52A8\\u6001\\u5BC6\\u7801|\\u4EA4\\u6613\\u7801|\\u4E0A\\u7F51\\u5BC6\\u7801|\\u52A8\\u6001\\u53E3\\u4EE4|\\u968F\\u673A\\u7801|\\u9A57\\u8B49\\u78BC|\\u6388\\u6B0A\\u78BC|\\u6821\\u9A57\\u78BC|\\u6AA2\\u9A57\\u78BC|\\u78BA\\u8A8D\\u78BC|\\u6FC0\\u6D3B\\u78BC|\\u52D5\\u614B\\u78BC|(\\u9A57\\u8B49)?\\u4EE3\\u78BC|\\u6821\\u9A57\\u4EE3\\u78BC|\\u6AA2\\u9A57\\u4EE3\\u78BC|\\u78BA\\u8A8D\\u4EE3\\u78BC|\\u6FC0\\u6D3B\\u4EE3\\u78BC|\\u52D5\\u614B\\u4EE3\\u78BC|\\u767B\\u5165\\u78BC|\\u8A8D\\u8B49\\u78BC|\\u8B58\\u5225\\u78BC|\\u4E00\\u6B21\\u6027\\u5BC6\\u7801|[Cc][Oo][Dd][Ee]|[Vv]erification)")
                 if (pattern.containsMatchIn(content)) {
-                    var code = content.replace("(.*)((代|授权|验证|动态|校验)码|[【\\[].*[】\\]]|[Cc][Oo][Dd][Ee]|[Vv]erification\\s?([Cc]ode)?)\\s?(G-|<#>)?([:：\\s是为]|[Ii][Ss]){0,3}[\\(（\\[【{「]?(([0-9\\s]{4,7})|([\\dA-Za-z]{5,6})(?!([Vv]erification)?([Cc][Oo][Dd][Ee])|:))[」}】\\]）\\)]?(?=([^0-9a-zA-Z]|\$))(.*)".toRegex(), "$7").trim()
-                    code = code.replace("\\D*[\\(（\\[【{「]?([0-9]{3}\\s?[0-9]{1,3})[」}】\\]）\\)]?(?=.*((代|授权|验证|动态|校验)码|[【\\[].*[】\\]]|[Cc][Oo][Dd][Ee]|[Vv]erification\\s?([Cc]ode)?))(.*)".toRegex(), "$1").trim()
+                    var code = content.replace("(.*)((\\u4EE3|\\u6388\\u6743|\\u9A8C\\u8BC1|\\u52A8\\u6001|\\u6821\\u9A8C)\\u7801|[【\\[].*[】\\]]|[Cc][Oo][Dd][Ee]|[Vv]erification\\s?([Cc]ode)?)\\s?(G-|<#>)?([:：\\s\\u662F\\u4E3A]|[Ii][Ss]){0,3}[\\(（\\[【{「]?(([0-9\\s]{4,7})|([\\dA-Za-z]{5,6})(?!([Vv]erification)?([Cc][Oo][Dd][Ee])|:))[」}】\\]）\\)]?(?=([^0-9a-zA-Z]|\$))(.*)".toRegex(), "$7").trim()
+                    code = code.replace("\\D*[\\(（\\[【{「]?([0-9]{3}\\s?[0-9]{1,3})[」}】\\]）\\)]?(?=.*((\\u4EE3|\\u6388\\u6743|\\u9A8C\\u8BC1|\\u52A8\\u6001|\\u6821\\u9A8C)\\u7801|[【\\[].*[】\\]]|[Cc][Oo][Dd][Ee]|[Vv]erification\\s?([Cc]ode)?))(.*)".toRegex(), "$1").trim()
                     if (code.isNotEmpty()) {
                         msgMap["copy"] = code
                         msgMap["autoCopy"] = 1
@@ -95,13 +93,11 @@ class BarkUtils {
 
             val requestMsg: String = Gson().toJson(msgMap)
             Log.i(TAG, "requestMsg:$requestMsg")
-            //推送加密
             if (setting.transformation.isNullOrBlank() || "none" == setting.transformation || setting.key.isNullOrBlank()) {
                 request.upJson(requestMsg)
             } else {
                 val transformation = setting.transformation.replace("AES128", "AES").replace("AES192", "AES").replace("AES256", "AES")
                 if (setting.iv.isNullOrBlank()) {
-                    // 留空则随机产生，GCM用12位，其他用16位
                     val ivLength = if (setting.transformation.contains("GCM")) 12 else 16
                     setting.iv = RandomUtils.getRandomNumbersAndLetters(ivLength).toString()
                     request.params("iv", URLEncoder.encode(setting.iv, "UTF-8"))
@@ -117,11 +113,11 @@ class BarkUtils {
             }
 
             request.keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

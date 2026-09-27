@@ -9,10 +9,8 @@ import androidx.annotation.Keep
 @Keep
 class TipInfo {
     /**
-     * title : 小贴士3
      * content :
      *
-     *欢迎关注我的微信公众号：我的Android开源之旅。
      *
      *<br></br>
      */

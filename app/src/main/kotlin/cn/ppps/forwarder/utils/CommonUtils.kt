@@ -53,19 +53,15 @@ import java.net.NetworkInterface
 import java.util.regex.Pattern
 
 /**
- * 常用工具类
  */
 @Suppress("RegExpRedundantEscape", "unused", "RegExpUnnecessaryNonCapturingGroup")
 class CommonUtils private constructor() {
     companion object {
         /**
-         * 这里填写你的应用隐私政策网页地址
          */
         /**
-         * 显示隐私政策的提示
          *
          * @param context
-         * @param submitListener 同意的监听
          * @return
          */
         @Suppress("SameParameterValue", "NAME_SHADOWING")
@@ -100,21 +96,18 @@ class CommonUtils private constructor() {
                 }
             }.build()
             dialog.setContent(getPrivacyContent())
-            //开始响应点击事件
             dialog.contentView!!.movementMethod = LinkMovementMethod.getInstance()
             dialog.show()
             return dialog
         }
 
         /**
-         * @return 隐私政策说明
          */
         private fun getPrivacyContent(): SpannableStringBuilder {
             return SpannableStringBuilder().append("    ").append(getString(R.string.privacy_content_1)).append(" ").append(getString(R.string.app_name)).append("!\n").append("    ").append(getString(R.string.privacy_content_2)).append("    ").append(getString(R.string.privacy_content_3)).append(getPrivacyLink()).append(getString(R.string.privacy_content_4)).append("    ").append(getString(R.string.privacy_content_5)).append(getPrivacyLink()).append(getString(R.string.privacy_content_6)).append("    ").append(getString(R.string.privacy_content_7))
         }
 
         /**
-         * @param context 隐私政策的链接
          * @return
          */
         @Suppress("SameParameterValue")
@@ -127,7 +120,6 @@ class CommonUtils private constructor() {
         }
 
         /**
-         * 请求浏览器
          *
          * @param url
          */
@@ -139,11 +131,8 @@ class CommonUtils private constructor() {
         }
 
         /**
-         * 打开用户协议和隐私协议
          *
          * @param fragment
-         * @param isPrivacy   是否是隐私协议
-         * @param isImmersive 是否沉浸式
          */
         @JvmStatic
         fun gotoProtocol(fragment: XPageFragment?, isPrivacy: Boolean, isImmersive: Boolean) {
@@ -155,7 +144,6 @@ class CommonUtils private constructor() {
         }
 
         /**
-         * 是否是深色的颜色
          *
          * @param color
          * @return
@@ -165,7 +153,6 @@ class CommonUtils private constructor() {
             return ColorUtils.isColorDark(color, 0.382)
         }
 
-        //焦点位置插入文本
         fun insertOrReplaceText2Cursor(editText: EditText, str: String) {
             if (TextUtils.isEmpty(str)) return
 
@@ -183,13 +170,9 @@ class CommonUtils private constructor() {
             editText.setSelection(newCursor)
         }
 
-        //==========图片预览===========//
         /**
-         * 大图预览
          *
          * @param fragment
-         * @param url      图片资源
-         * @param view     小图加载控件
          */
         fun previewPicture(fragment: Fragment?, url: String, view: View?) {
             if (fragment == null || StringUtils.isEmpty(url)) {
@@ -201,24 +184,19 @@ class CommonUtils private constructor() {
         }
 
         /**
-         * 打开Markdown链接并渲染
          *
          * @param fragment
-         * @param url   Markdown链接
-         * @param isImmersive 是否沉浸式
          */
         @JvmStatic
         fun previewMarkdown(fragment: XPageFragment?, title: String, url: String, isImmersive: Boolean) {
             PageOption.to(MarkdownFragment::class.java).putString(MarkdownFragment.KEY_MD_TITLE, title).putString(MarkdownFragment.KEY_MD_URL, url).putBoolean(MarkdownFragment.KEY_IS_IMMERSIVE, isImmersive).open(fragment!!)
         }
 
-        //检查自定义模板中的标签是否合法
         fun checkTemplateTag(template: String): String {
             val tagRegex = "\\{\\{[^#]+###([^=]+)===(.*?)\\}\\}".toRegex()
             tagRegex.findAll(template).forEach {
                 try {
                     it.groupValues[1].toRegex()
-                    //TODO:怎么测试反向引用是否正确？
                     /*val replacement = it.groupValues[2]
                     if (replacement.isNotEmpty()) {
                         "pppscn/SmsForwarder".replace(regex, replacement)
@@ -230,7 +208,6 @@ class CommonUtils private constructor() {
             return ""
         }
 
-        //是否合法的url
         fun checkUrl(url: String?, emptyResult: Boolean = false): Boolean {
             if (url.isNullOrEmpty()) return emptyResult
 
@@ -238,7 +215,6 @@ class CommonUtils private constructor() {
             return regex.matches(url)
         }
 
-        //是否合法的URL Scheme
         fun checkUrlScheme(url: String?, emptyResult: Boolean = false): Boolean {
             if (url.isNullOrEmpty()) return emptyResult
 
@@ -246,7 +222,6 @@ class CommonUtils private constructor() {
             return regex.matches(url)
         }
 
-        //是否合法的IP地址
         fun checkIP(ip: String): String {
             if (TextUtils.isEmpty(ip)) return "Neither"
 
@@ -262,13 +237,11 @@ class CommonUtils private constructor() {
             return "Neither"
         }
 
-        //是否合法的域名
         fun checkDomain(domain: String): Boolean {
             val pattenDomain = Pattern.compile("^(?=^.{3,255}$)(?:(?:(?:[a-zA-Z\\d]|[a-zA-Z\\d][a-zA-Z\\d\\-]*[a-zA-Z\\d])\\.){1,126}(?:[A-Za-z\\d]|[A-Za-z\\d][A-Za-z\\d\\-]*[A-Za-z\\d]))$")
             return pattenDomain.matcher(domain).matches()
         }
 
-        //是否合法的端口号
         fun checkPort(port: String): Boolean {
             if (TextUtils.isEmpty(port)) return false
             val pattenPort = Pattern.compile("^((6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])|[0-5]?\\d{0,4})$")
@@ -280,13 +253,11 @@ class CommonUtils private constructor() {
             return emailRegex.matches(email)
         }
 
-        //是否启用通知监听服务
         fun isNotificationListenerServiceEnabled(context: Context): Boolean {
             val packageNames = NotificationManagerCompat.getEnabledListenerPackages(context)
             return packageNames.contains(context.packageName)
         }
 
-        //开关通知监听服务
         fun toggleNotificationListenerService(context: Context) {
             val pm = context.packageManager
             pm.setComponentEnabledSetting(
@@ -297,7 +268,6 @@ class CommonUtils private constructor() {
             )
         }
 
-        //获取本机IP地址
         fun getIPAddresses(): List<String> {
             val ipAddresses = mutableListOf<String>()
 
@@ -343,15 +313,11 @@ class CommonUtils private constructor() {
             XUtil.exitApp()
         }
 
-        // 动态创建标签按钮并设置点击事件(将标签插入指定输入框)
         fun createTagButtons(context: Context, gridLayout: GridLayout, editText: EditText, scene: String = "basic", excludeButtons: Array<String> = emptyArray()) {
-            // 将排除的按钮转换成一个集合，方便查找
             val excludeSet = excludeButtons.toSet()
 
-            // 清空GridLayout中的所有视图
             gridLayout.removeAllViews()
 
-            // 根据场景动态拼接所有按钮数据
             val allButtons = when (scene) {
                 "sms" -> SMS_TAG_MAP
                 "call" -> CALL_TAG_MAP
@@ -371,7 +337,6 @@ class CommonUtils private constructor() {
             val btnBackground = getDrawable(R.drawable.rounded_button)
             val btnTextColor = getColor(android.R.color.white)
 
-            // 遍历所有按钮数据，过滤掉需要排除的按钮
             allButtons.forEach { (tag, lable) ->
                 if (excludeSet.isNotEmpty() && excludeSet.contains(tag)) {
                     return@forEach
@@ -383,7 +348,6 @@ class CommonUtils private constructor() {
                         insertOrReplaceText2Cursor(editText, tag)
                     }
 
-                    // 设置紧凑样式
                     setTextSize(TypedValue.COMPLEX_UNIT_SP, 9f)
                     maxLines = 1
                     ellipsize = TextUtils.TruncateAt.END
@@ -392,7 +356,6 @@ class CommonUtils private constructor() {
                     background = btnBackground
                     setTextColor(btnTextColor)
 
-                    // 布局参数
                     layoutParams = GridLayout.LayoutParams().apply {
                         height = GridLayout.LayoutParams.WRAP_CONTENT
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -49,13 +49,10 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                 }
 
                 val msgInfo = Gson().fromJson(msgInfoJson, MsgInfo::class.java)
-                //【注意】卡槽id：-1=获取失败、0=卡槽1、1=卡槽2，但是 Rule 表里存的是 SIM1/SIM2
                 val simSlot = "SIM" + (msgInfo.simSlot + 1)
 
-                //自动任务处理逻辑
                 // Legacy device-control automation is intentionally not run here.
 
-                // 免打扰(禁用转发)时间段
                 var isSilentPeriod = false
                 Log.d(TAG, "silentPeriodStart = ${SettingUtils.silentPeriodStart}, silentPeriodEnd = ${SettingUtils.silentPeriodEnd}")
                 if (SettingUtils.silentPeriodStart != SettingUtils.silentPeriodEnd) {
@@ -67,7 +64,6 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                     }
                 }
 
-                // 过滤重复消息机制
                 val duplicateMessagesLimits = SettingUtils.duplicateMessagesLimits * 1000L
                 if (duplicateMessagesLimits > 0L) {
                     val key = CipherUtils.md5(msgInfo.type + msgInfo.from + msgInfo.content)
@@ -133,7 +129,6 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         for (task in taskList) {
             Log.d(TAG, "task = $task")
 
-            // 根据任务信息执行相应操作
             val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
             if (conditionList.isEmpty()) {
                 Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -161,13 +156,11 @@ class SendWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                 continue
             }
 
-            //TODO：判断其他条件是否满足
             if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                 Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                 continue
             }
 
-            //TODO: 组装消息体 && 执行具体任务
             val actionData = Data.Builder()
                 .putLong(TaskWorker.TASK_ID, task.id)
                 .putString(TaskWorker.TASK_ACTIONS, task.actions)

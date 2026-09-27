@@ -50,7 +50,6 @@ class LockScreenFragment : BaseFragment<FragmentTasksConditionLockScreenBinding?
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         binding!!.rgAction.setOnCheckedChangeListener { _, checkedId ->
@@ -134,7 +133,6 @@ class LockScreenFragment : BaseFragment<FragmentTasksConditionLockScreenBinding?
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(updateView: Boolean = false): LockScreenSetting {
         val actionCheckId = binding!!.rgAction.checkedRadioButtonId

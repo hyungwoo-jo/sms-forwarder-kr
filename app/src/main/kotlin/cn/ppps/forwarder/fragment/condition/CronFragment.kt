@@ -100,10 +100,8 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 3)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -132,7 +130,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             year = fields.getOrNull(6) ?: "*"
         }
 
-        //初始化输入提示
         initSecondInputHelper()
         initMinuteInputHelper()
         initHourInputHelper()
@@ -156,7 +153,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             mCountDownHelper?.finish()
             switchInputHelper(binding!!.layoutCronExpressionCheck)
             if (it == "success") {
-                //生成最近10次运行时间
                 val nextTimeList = mutableListOf<String>()
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 val cronExpression = CronExpression(expression)
@@ -168,7 +164,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
                     times++
                 }
                 binding!!.tvDescription.text = description
-                //TODO：低版本Android解析Cron表达式会报错，暂时不处理
                 binding!!.tvCronExpressionCheckTips.text = if (expression == description) expression else "$expression\n$description"
                 binding!!.tvNextTimeList.text = String.format(getString(R.string.next_execution_times), times.toString(), nextTimeList.joinToString("\n"))
                 binding!!.tvNextTimeList.visibility = View.VISIBLE
@@ -224,7 +219,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //切换输入提示
     private fun switchInputHelper(layout: LinearLayout) {
         binding!!.layoutSecondType.visibility = View.GONE
         binding!!.layoutMinuteType.visibility = View.GONE
@@ -237,7 +231,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         layout.visibility = View.VISIBLE
     }
 
-    //初始化输入提示--秒
     @SuppressLint("SetTextI18n")
     private fun initSecondInputHelper() {
         binding!!.etSecond.setOnFocusChangeListener { _, hasFocus ->
@@ -250,7 +243,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etSecond.setText(second)
         afterSecondChanged()
 
-        //秒类型
         binding!!.rgSecondType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_second_type_cyclic -> {
@@ -296,7 +288,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etSecond.setText(second)
         }
 
-        //初始化输入提示--秒--周期
         val secondCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val secondCyclicFrom = binding!!.etSecondCyclicFrom.text.toString().trim()
@@ -314,7 +305,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etSecondCyclicFrom.addTextChangedListener(secondCyclicWatcher)
         binding!!.etSecondCyclicTo.addTextChangedListener(secondCyclicWatcher)
 
-        //初始化输入提示--秒--间隔
         val secondIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val secondIntervalStart = binding!!.etSecondIntervalStart.text.toString().trim()
@@ -332,7 +322,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etSecondIntervalStart.addTextChangedListener(secondIntervalWatcher)
         binding!!.etSecondInterval.addTextChangedListener(secondIntervalWatcher)
 
-        //初始化输入提示--秒--指定
         binding!!.flowlayoutMultiSelectSecond.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectSecond.setItems(secondsList)
         binding!!.flowlayoutMultiSelectSecond.setOnTagSelectListener { parent, position, selectedList ->
@@ -352,7 +341,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     private fun afterSecondChanged() {
         second = binding!!.etSecond.text.toString().trim()
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterSecondChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -404,7 +392,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--分
     @SuppressLint("SetTextI18n")
     private fun initMinuteInputHelper() {
         binding!!.etMinute.setOnFocusChangeListener { _, hasFocus ->
@@ -417,7 +404,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMinute.setText(minute)
         afterMinuteChanged()
 
-        //分类型
         binding!!.rgMinuteType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_minute_type_cyclic -> {
@@ -463,7 +449,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etMinute.setText(minute)
         }
 
-        //初始化输入提示--分--周期
         val minuteCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val minuteCyclicFrom = binding!!.etMinuteCyclicFrom.text.toString().trim()
@@ -481,7 +466,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMinuteCyclicFrom.addTextChangedListener(minuteCyclicWatcher)
         binding!!.etMinuteCyclicTo.addTextChangedListener(minuteCyclicWatcher)
 
-        //初始化输入提示--分--间隔
         val minuteIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val minuteIntervalStart = binding!!.etMinuteIntervalStart.text.toString().trim()
@@ -499,7 +483,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMinuteIntervalStart.addTextChangedListener(minuteIntervalWatcher)
         binding!!.etMinuteInterval.addTextChangedListener(minuteIntervalWatcher)
 
-        //初始化输入提示--分--指定
         binding!!.flowlayoutMultiSelectMinute.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectMinute.setItems(minutesList)
         binding!!.flowlayoutMultiSelectMinute.setOnTagSelectListener { parent, position, selectedList ->
@@ -519,7 +502,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     private fun afterMinuteChanged() {
         minute = binding!!.etMinute.text.toString().trim()
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterMinuteChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -571,7 +553,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--时
     @SuppressLint("SetTextI18n")
     private fun initHourInputHelper() {
         binding!!.etHour.setOnFocusChangeListener { _, hasFocus ->
@@ -584,7 +565,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etHour.setText(hour)
         afterHourChanged()
 
-        //时类型
         binding!!.rgHourType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_hour_type_cyclic -> {
@@ -630,7 +610,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etHour.setText(hour)
         }
 
-        //初始化输入提示--时--周期
         val hourCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val hourCyclicFrom = binding!!.etHourCyclicFrom.text.toString().trim()
@@ -648,7 +627,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etHourCyclicFrom.addTextChangedListener(hourCyclicWatcher)
         binding!!.etHourCyclicTo.addTextChangedListener(hourCyclicWatcher)
 
-        //初始化输入提示--时--间隔
         val hourIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val hourIntervalStart = binding!!.etHourIntervalStart.text.toString().trim()
@@ -666,7 +644,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etHourIntervalStart.addTextChangedListener(hourIntervalWatcher)
         binding!!.etHourInterval.addTextChangedListener(hourIntervalWatcher)
 
-        //初始化输入提示--时--指定
         binding!!.flowlayoutMultiSelectHour.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectHour.setItems(hoursList)
         binding!!.flowlayoutMultiSelectHour.setOnTagSelectListener { parent, position, selectedList ->
@@ -686,7 +663,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     private fun afterHourChanged() {
         hour = binding!!.etHour.text.toString().trim()
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterHourChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -738,7 +714,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--日
     @SuppressLint("SetTextI18n")
     private fun initDayInputHelper() {
         binding!!.etDay.setOnFocusChangeListener { _, hasFocus ->
@@ -751,7 +726,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etDay.setText(day)
         afterDayChanged()
 
-        //日类型
         binding!!.rgDayType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_day_type_cyclic -> {
@@ -818,7 +792,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etDay.setText(day)
         }
 
-        //初始化输入提示--日--周期
         val dayCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val dayCyclicFrom = binding!!.etDayCyclicFrom.text.toString().trim()
@@ -836,7 +809,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etDayCyclicFrom.addTextChangedListener(dayCyclicWatcher)
         binding!!.etDayCyclicTo.addTextChangedListener(dayCyclicWatcher)
 
-        //初始化输入提示--日--间隔
         val dayIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val dayIntervalStart = binding!!.etDayIntervalStart.text.toString().trim()
@@ -854,7 +826,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etDayIntervalStart.addTextChangedListener(dayIntervalWatcher)
         binding!!.etDayInterval.addTextChangedListener(dayIntervalWatcher)
 
-        //初始化输入提示--日--指定
         binding!!.flowlayoutMultiSelectDay.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectDay.setItems(dayList)
         binding!!.flowlayoutMultiSelectDay.setOnTagSelectListener { parent, position, selectedList ->
@@ -872,7 +843,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     }
 
     private fun afterDayChanged() {
-        //周和日不能同时设置
         day = binding!!.etDay.text.toString().trim()
         if (day != "?" && week != "?") {
             week = "?"
@@ -880,7 +850,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
 
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterDayChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -951,7 +920,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--月
     @SuppressLint("SetTextI18n")
     private fun initMonthInputHelper() {
         binding!!.etMonth.setOnFocusChangeListener { _, hasFocus ->
@@ -964,7 +932,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMonth.setText(month)
         afterMonthChanged()
 
-        //月类型
         binding!!.rgMonthType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_month_type_cyclic -> {
@@ -1010,7 +977,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etMonth.setText(month)
         }
 
-        //初始化输入提示--月--周期
         val monthCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val monthCyclicFrom = binding!!.etMonthCyclicFrom.text.toString().trim()
@@ -1028,7 +994,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMonthCyclicFrom.addTextChangedListener(monthCyclicWatcher)
         binding!!.etMonthCyclicTo.addTextChangedListener(monthCyclicWatcher)
 
-        //初始化输入提示--月--间隔
         val monthIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val monthIntervalStart = binding!!.etMonthIntervalStart.text.toString().trim()
@@ -1046,7 +1011,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etMonthIntervalStart.addTextChangedListener(monthIntervalWatcher)
         binding!!.etMonthInterval.addTextChangedListener(monthIntervalWatcher)
 
-        //初始化输入提示--月--指定
         binding!!.flowlayoutMultiSelectMonth.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectMonth.setItems(monthList)
         binding!!.flowlayoutMultiSelectMonth.setOnTagSelectListener { parent, position, selectedList ->
@@ -1066,7 +1030,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     private fun afterMonthChanged() {
         month = binding!!.etMonth.text.toString().trim()
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterMonthChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -1118,7 +1081,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--周
     private fun initWeekInputHelper() {
         binding!!.etWeek.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -1130,7 +1092,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etWeek.setText(week)
         afterWeekChanged()
 
-        //周类型
         binding!!.rgWeekType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_week_type_cyclic -> {
@@ -1189,7 +1150,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etWeek.setText(week)
         }
 
-        //初始化输入提示--周--周期
         val weekCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val weekCyclicFrom = binding!!.etWeekCyclicFrom.text.toString().trim()
@@ -1207,7 +1167,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etWeekCyclicFrom.addTextChangedListener(weekCyclicWatcher)
         binding!!.etWeekCyclicTo.addTextChangedListener(weekCyclicWatcher)
 
-        //初始化输入提示--周--间隔
         val weeksOfWeekWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val whichWeekOfMonth = binding!!.etWhichWeekOfMonth.text.toString().trim()
@@ -1225,7 +1184,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etWhichWeekOfMonth.addTextChangedListener(weeksOfWeekWatcher)
         binding!!.etWhichDayOfWeek.addTextChangedListener(weeksOfWeekWatcher)
 
-        //初始化输入提示--周--指定
         binding!!.flowlayoutMultiSelectWeek.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectWeek.setItems(weekList)
         binding!!.flowlayoutMultiSelectWeek.setOnTagSelectListener { parent, position, selectedList ->
@@ -1241,7 +1199,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etWeek.setText(week)
         }
 
-        //初始化输入提示--周--本月最后
         binding!!.etLastWeekOfMonth.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val lastWeekOfMonth = binding!!.etLastWeekOfMonth.text.toString().trim()
@@ -1261,7 +1218,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     }
 
     private fun afterWeekChanged() {
-        //周和日不能同时设置
         week = binding!!.etWeek.text.toString().trim()
         if (day != "?" && week != "?") {
             day = "?"
@@ -1269,7 +1225,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
 
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterWeekChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -1330,7 +1285,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //初始化输入提示--年
     @SuppressLint("SetTextI18n")
     private fun initYearInputHelper() {
         binding!!.etYear.setOnFocusChangeListener { _, hasFocus ->
@@ -1343,7 +1297,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etYear.setText(year)
         afterYearChanged()
 
-        //年类型
         binding!!.rgYearType.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
                 R.id.rb_year_type_cyclic -> {
@@ -1389,7 +1342,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
             binding!!.etYear.setText(year)
         }
 
-        //初始化输入提示--年--周期
         val yearCyclicWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val yearCyclicFrom = binding!!.etYearCyclicFrom.text.toString().trim()
@@ -1407,7 +1359,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etYearCyclicFrom.addTextChangedListener(yearCyclicWatcher)
         binding!!.etYearCyclicTo.addTextChangedListener(yearCyclicWatcher)
 
-        //初始化输入提示--年--间隔
         val yearIntervalWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 val yearIntervalStart = binding!!.etYearIntervalStart.text.toString().trim()
@@ -1425,7 +1376,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         binding!!.etYearIntervalStart.addTextChangedListener(yearIntervalWatcher)
         binding!!.etYearInterval.addTextChangedListener(yearIntervalWatcher)
 
-        //初始化输入提示--年--指定
         binding!!.flowlayoutMultiSelectYear.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         binding!!.flowlayoutMultiSelectYear.setItems(yearList)
         binding!!.flowlayoutMultiSelectYear.setOnTagSelectListener { parent, position, selectedList ->
@@ -1445,7 +1395,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
     private fun afterYearChanged() {
         year = binding!!.etYear.text.toString().trim()
         try {
-            //判断cronExpression是否有效
             expression = "$second $minute $hour $day $month $week $year"
             Log.d(TAG, "afterYearChanged expression:$expression")
             CronExpression.validateExpression(expression)
@@ -1501,7 +1450,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         }
     }
 
-    //获取选中的项目
     private fun getSelectedItems(parent: FlowTagLayout, selectedList: List<Int>, dataType: Int = 0): String {
         if (selectedList.isEmpty()) return ""
 
@@ -1517,7 +1465,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         return mergedList.joinToString(",")
     }
 
-    //合并连续的枚举值
     private fun mergeContinuousEnum(input: List<String>): List<String> {
         if (input.isEmpty()) return emptyList()
 
@@ -1551,7 +1498,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         return result
     }
 
-    //合并连续的数字
     private fun mergeContinuousItems(input: List<String>, stringFormat: String = "%d"): List<String> {
         if (input.isEmpty()) return emptyList()
 
@@ -1584,7 +1530,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         return result
     }
 
-    //还原被合并的连续数字
     private fun restoreMergedItems(mergedString: String, stringFormat: String = "%d"): List<String> {
         if (mergedString.isEmpty()) return emptyList()
 
@@ -1607,7 +1552,6 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         return items
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): CronSetting {
         second = binding!!.etSecond.text.toString().trim()
@@ -1622,15 +1566,11 @@ class CronFragment : BaseFragment<FragmentTasksConditionCronBinding?>(), View.On
         description = ""
         Log.d(TAG, "checkSetting, expression:$expression")
 
-        //判断cronExpression是否有效
         CronExpression.validateExpression(expression)
 
-        //TODO：低版本Android解析Cron表达式会报错，暂时不处理
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            //生成cron表达式描述
             val options = Options()
             options.isTwentyFourHourTime = true
-            //TODO：支持多语言
             val locale = Locale.getDefault()
             //Chinese, Japanese, Korean and other East Asian languages have no spaces between words
             options.isNeedSpaceBetweenWords = locale == Locale("zh") || locale == Locale("ja") || locale == Locale("ko")

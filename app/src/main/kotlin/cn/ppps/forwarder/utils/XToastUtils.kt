@@ -7,7 +7,6 @@ import com.xuexiang.xui.XUI
 import com.xuexiang.xui.widget.toast.XToast
 
 /**
- * xtoast 工具类
  *
  * @author xuexiang
  * @since 2019-06-30 19:04
@@ -15,7 +14,6 @@ import com.xuexiang.xui.widget.toast.XToast
 class XToastUtils private constructor() {
     @SuppressLint("CheckResult")
     companion object {
-        //======普通土司=======//
         @MainThread
         fun toast(message: CharSequence) {
             XToast.normal(XUI.getContext(), message).show()
@@ -36,7 +34,6 @@ class XToastUtils private constructor() {
             XToast.normal(XUI.getContext(), message, duration).show()
         }
 
-        //======错误【红色】=======//
         @MainThread
         fun error(throwable: Throwable) {
             XToast.error(XUI.getContext(), throwable.message!!).show()
@@ -62,7 +59,6 @@ class XToastUtils private constructor() {
             XToast.error(XUI.getContext(), message, duration).show()
         }
 
-        //======成功【绿色】=======//
         @MainThread
         fun success(message: CharSequence) {
             XToast.success(XUI.getContext(), message).show()
@@ -83,7 +79,6 @@ class XToastUtils private constructor() {
             XToast.success(XUI.getContext(), message, duration).show()
         }
 
-        //======信息【蓝色】=======//
         @MainThread
         fun info(message: CharSequence) {
             XToast.info(XUI.getContext(), message).show()
@@ -104,7 +99,6 @@ class XToastUtils private constructor() {
             XToast.info(XUI.getContext(), message, duration).show()
         }
 
-        //=======警告【黄色】======//
         @MainThread
         fun warning(message: CharSequence) {
             XToast.warning(XUI.getContext(), message).show()

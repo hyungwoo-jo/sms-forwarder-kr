@@ -17,22 +17,22 @@ import java.util.Date
             entity = Msg::class,
             parentColumns = ["id"],
             childColumns = ["msg_id"],
-            onDelete = ForeignKey.CASCADE, //级联操作
-            onUpdate = ForeignKey.CASCADE //级联操作
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Rule::class,
             parentColumns = ["id"],
             childColumns = ["rule_id"],
-            onDelete = ForeignKey.CASCADE, //级联操作
-            onUpdate = ForeignKey.CASCADE //级联操作
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = Sender::class,
             parentColumns = ["id"],
             childColumns = ["sender_id"],
-            onDelete = ForeignKey.CASCADE, //级联操作
-            onUpdate = ForeignKey.CASCADE //级联操作
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         ),
     ],
     indices = [

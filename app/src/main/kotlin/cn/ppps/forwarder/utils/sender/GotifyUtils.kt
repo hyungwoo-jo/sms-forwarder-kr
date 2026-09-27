@@ -38,10 +38,9 @@ class GotifyUtils {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
             }
 
-            val requestUrl: String = setting.webServer //推送地址
+            val requestUrl: String = setting.webServer
             Log.i(TAG, "requestUrl:$requestUrl")
 
-            //支持HTTP基本认证(Basic Authentication)
             val regex = "^(https?://)([^:]+):([^@]+)@(.+)"
             val matches = Regex(regex, RegexOption.IGNORE_CASE).findAll(requestUrl).toList().flatMap(MatchResult::groupValues)
             Log.i(TAG, "matches = $matches")
@@ -55,11 +54,11 @@ class GotifyUtils {
                 .params("message", content)
                 .params("priority", setting.priority)
                 .keepJson(true)
-                .retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
+                .retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {

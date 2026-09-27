@@ -8,7 +8,6 @@ import java.util.*
  * <pre>
  * desc   : Random Utils
  * author : xuexiang
- * time   : 2018/4/28 上午12:41
 </pre> *
  *
  * Shuffling algorithm
@@ -49,10 +48,7 @@ class RandomUtils private constructor() {
         private const val LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz"
 
         /**
-         * 在数字和英文字母中获取一个定长的随机字符串
          *
-         * @param length 长度
-         * @return 随机字符串
          * @see RandomUtils.getRandom
          */
         @JvmStatic
@@ -61,10 +57,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在数字中获取一个定长的随机字符串
          *
-         * @param length 长度
-         * @return 随机数字符串
          * @see RandomUtils.getRandom
          */
         fun getRandomNumbers(length: Int): String? {
@@ -72,10 +65,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在英文字母中获取一个定长的随机字符串
          *
-         * @param length 长度
-         * @return 随机字母字符串
          * @see RandomUtils.getRandom
          */
         fun getRandomLetters(length: Int): String? {
@@ -83,10 +73,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在大写英文字母中获取一个定长的随机字符串
          *
-         * @param length 长度
-         * @return 随机字符串 只包含大写字母
          * @see RandomUtils.getRandom
          */
         fun getRandomCapitalLetters(length: Int): String? {
@@ -94,10 +81,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在小写英文字母中获取一个定长的随机字符串
          *
-         * @param length 长度
-         * @return 随机字符串 只包含小写字母
          * @see RandomUtils.getRandom
          */
         fun getRandomLowerCaseLetters(length: Int): String? {
@@ -105,10 +89,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在一个字符数组源中获取一个定长的随机字符串
          *
-         * @param source 源字符串
-         * @param length 长度
          * @return
          *  * if source is null or empty, return null
          *  * else see [RandomUtils.getRandom]
@@ -119,10 +100,7 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 在一个字符数组源中获取一个定长的随机字符串
          *
-         * @param sourceChar 字符数组源
-         * @param length     长度
          * @return
          *  * if sourceChar is null or empty, return null
          *  * if length less than 0, return null
@@ -143,7 +121,6 @@ class RandomUtils private constructor() {
         /**
          * get random int between 0 and max
          *
-         * @param max 最大随机数
          * @return
          *  * if max <= 0, return 0
          *  * else return random int between 0 and max
@@ -156,8 +133,6 @@ class RandomUtils private constructor() {
         /**
          * get random int between min and max
          *
-         * @param min 最小随机数
-         * @param max 最大随机数
          * @return
          *  * if min > max, return 0
          *  * if min == max, return min
@@ -174,7 +149,6 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 获取随机颜色
          *
          * @return
          */
@@ -188,7 +162,6 @@ class RandomUtils private constructor() {
             }
 
         /**
-         * 随机打乱数组中的内容
          *
          * @param objArray
          * @return
@@ -203,7 +176,6 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 随机打乱数组中的内容
          *
          * @param objArray
          * @param shuffleCount
@@ -226,7 +198,6 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 随机打乱数组中的内容
          *
          * @param intArray
          * @return
@@ -241,7 +212,6 @@ class RandomUtils private constructor() {
         }
 
         /**
-         * 随机打乱数组中的内容
          *
          * @param intArray
          * @param shuffleCount

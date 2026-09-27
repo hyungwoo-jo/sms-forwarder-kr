@@ -29,13 +29,11 @@ class TaskPagingAdapter(private val itemClickListener: OnItemClickListener) : Pa
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = getItem(position)
         if (item != null) {
-            // 任务类型：＜1000为任务模板，>=1000为自定义任务
             if (item.type >= 1000) {
                 holder.binding.layoutImage.visibility = View.GONE
 
                 holder.binding.tvTime.text = KoreanTimeFormatter.format(item.lastExecTime.time)
 
-                //遍历conditions显示图标
                 holder.binding.layoutConditionsIcons.removeAllViews()
                 if (item.conditions.isNotEmpty()) {
                     val conditionList = Gson().fromJson(item.conditions, Array<TaskSetting>::class.java).toMutableList()
@@ -51,7 +49,6 @@ class TaskPagingAdapter(private val itemClickListener: OnItemClickListener) : Pa
                     }
                 }
 
-                //遍历actions显示图标
                 holder.binding.layoutActionsIcons.removeAllViews()
                 if (item.actions.isNotEmpty()) {
                     val actionList = Gson().fromJson(item.actions, Array<TaskSetting>::class.java).toMutableList()
@@ -84,7 +81,6 @@ class TaskPagingAdapter(private val itemClickListener: OnItemClickListener) : Pa
                 holder.binding.sbEnable.setOnClickListener { view: View? ->
                     itemClickListener.onItemClicked(view, item)
                 }
-                //不能用 setOnCheckedChangeListener，否则会导致切换时状态错乱
                 /*holder.binding.sbEnable.setOnCheckedChangeListener { view: View, isChecked ->
                     item.status = if (isChecked) 1 else 0
                     itemClickListener.onItemClicked(view, item)

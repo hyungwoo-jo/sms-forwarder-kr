@@ -8,9 +8,9 @@ data class FeishuSetting(
     val secret: String = "",
     val msgType: String = "interactive",
     val titleTemplate: String = "",
-    val messageCard: String = "", //自定义消息卡片
-    val atAll: Boolean = false,   //@所有人
-    val atOpenIds: String = "",   //@指定人，逗号分隔的 open_id 或 user_id
+    val messageCard: String = "",
+    val atAll: Boolean = false,
+    val atOpenIds: String = "",
 ) : Serializable {
 
     fun getMsgTypeCheckId(): Int {

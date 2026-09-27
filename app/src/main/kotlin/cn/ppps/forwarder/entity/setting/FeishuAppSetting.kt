@@ -11,7 +11,7 @@ data class FeishuAppSetting(
     val msgType: String = "interactive",
     val titleTemplate: String = "",
     val receiveIdType: String = "user_id",
-    val messageCard: String = "", //自定义消息卡片
+    val messageCard: String = "",
 ) : Serializable {
 
     fun getReceiveIdTypeCheckId(): Int {

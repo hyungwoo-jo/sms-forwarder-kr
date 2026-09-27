@@ -59,7 +59,6 @@ class LogsFragment : BaseFragment<FragmentLogsBinding?>(), MsgPagingAdapter.OnIt
     private val viewModel by viewModels<MsgViewModel> { BaseViewModelFactory(context) }
     private var currentType: String = "sms"
 
-    //日志筛选
     private var currentFilter: MutableMap<String, Any> = mutableMapOf()
     private var logsFilterPopup: MaterialDialog? = null
     private var timePicker: TimePickerView? = null
@@ -111,7 +110,6 @@ class LogsFragment : BaseFragment<FragmentLogsBinding?>(), MsgPagingAdapter.OnIt
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -123,7 +121,6 @@ class LogsFragment : BaseFragment<FragmentLogsBinding?>(), MsgPagingAdapter.OnIt
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.type_param_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             currentType = when (position) {
                 1 -> "call"
                 2 -> "app"
@@ -137,7 +134,6 @@ class LogsFragment : BaseFragment<FragmentLogsBinding?>(), MsgPagingAdapter.OnIt
     override fun initListeners() {
         binding!!.recyclerView.adapter = adapter
 
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             //adapter.refresh()
             lifecycleScope.launch {

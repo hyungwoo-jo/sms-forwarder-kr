@@ -27,7 +27,7 @@ class UpdateLogsWorker(context: Context, params: WorkerParameters) : CoroutineWo
             }
             if (sendResponse.status >= 0) {
                 val response = sendResponse.response + "\nAt " + DateUtils.getNowString(SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()))
-                Thread.sleep(100) //让status=-1的日志先更新
+                Thread.sleep(100)
                 Core.logs.updateStatus(sendResponse.logId, sendResponse.status, response)
             } else {
                 Core.logs.updateResponse(sendResponse.logId, sendResponse.response)

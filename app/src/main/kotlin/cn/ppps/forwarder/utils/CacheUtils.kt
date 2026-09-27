@@ -9,10 +9,7 @@ import java.math.BigDecimal
 class CacheUtils private constructor() {
     companion object {
         /**
-         * 获取缓存大小
          *
-         * @param context 上下文
-         * @return 缓存大小
          */
         fun getTotalCacheSize(context: Context): String {
             return try {
@@ -29,8 +26,6 @@ class CacheUtils private constructor() {
         }
 
         /***
-         * 清理所有缓存
-         * @param context 上下文
          */
         fun clearAllCache(context: Context) {
             deleteDir(context.cacheDir)
@@ -53,15 +48,11 @@ class CacheUtils private constructor() {
             return dir!!.delete()
         }
 
-        // 获取文件
-        //Context.getExternalFilesDir() --> SDCard/Android/data/你的应用的包名/files/ 目录，一般放一些长时间保存的数据
-        //Context.getExternalCacheDir() --> SDCard/Android/data/你的应用包名/cache/目录，一般存放临时缓存数据
         private fun getFolderSize(file: File?): Long {
             var size: Long = 0
             try {
                 val fileList = file!!.listFiles()!!
                 for (value in fileList) {
-                    // 如果下面还有文件
                     size = if (value.isDirectory) {
                         size + getFolderSize(value)
                     } else {
@@ -76,10 +67,7 @@ class CacheUtils private constructor() {
         }
 
         /**
-         * 格式化单位
          *
-         * @param size 文件大小
-         * @return 结果
          */
         private fun getFormatSize(size: Double): String {
             val kiloByte = size / 1024

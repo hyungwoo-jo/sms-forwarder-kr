@@ -98,10 +98,8 @@ class BluetoothFragment : BaseFragment<FragmentTasksConditionBluetoothBinding?>(
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnStartDiscovery, 12)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -187,7 +185,6 @@ class BluetoothFragment : BaseFragment<FragmentTasksConditionBluetoothBinding?>(
             return
         }
 
-        // 启动蓝牙搜索
         // startBluetoothDiscovery()
     }
 
@@ -223,18 +220,14 @@ class BluetoothFragment : BaseFragment<FragmentTasksConditionBluetoothBinding?>(
                                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                                             val allGranted = deniedList.isEmpty()
                                             if (!allGranted) {
-                                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                                 if (doNotAskAgain) {
                                                     XToastUtils.error(getString(R.string.toast_denied_never))
-                                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                                 }
-                                                // 处理权限请求失败的逻辑
                                                 XToastUtils.error(getString(R.string.toast_denied))
                                                 return
                                             }
-                                            // 处理权限请求成功的逻辑
                                             startBluetoothDiscovery()
                                             SettingUtils.enableBluetooth = true
                                             val serviceIntent = Intent(requireContext(), BluetoothScanService::class.java)
@@ -281,7 +274,6 @@ class BluetoothFragment : BaseFragment<FragmentTasksConditionBluetoothBinding?>(
                 bluetoothAdapter.cancelDiscovery()
             }
 
-            // 注册广播接收器
             val filter = IntentFilter().apply {
                 addAction(BluetoothDevice.ACTION_FOUND)
                 addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
@@ -298,7 +290,6 @@ class BluetoothFragment : BaseFragment<FragmentTasksConditionBluetoothBinding?>(
         }
     }
 
-    //检查设置
     private fun checkSetting(updateView: Boolean = false): BluetoothSetting {
         val actionCheckId = binding!!.rgBluetoothAction.checkedRadioButtonId
         val deviceAddress = binding!!.etDeviceAddress.text.toString().trim()

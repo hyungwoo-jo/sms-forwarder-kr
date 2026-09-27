@@ -3,7 +3,6 @@ package cn.ppps.forwarder.utils
 import java.io.UnsupportedEncodingException
 
 /**
- * Base64编码解码
  */
 object Base64 {
 

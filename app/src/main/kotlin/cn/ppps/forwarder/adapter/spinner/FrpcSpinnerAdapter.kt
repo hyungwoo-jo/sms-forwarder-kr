@@ -23,37 +23,29 @@ import com.xuexiang.xutil.resource.ResUtils.getDrawable
 @Suppress("unused", "NAME_SHADOWING", "DEPRECATION")
 class FrpcSpinnerAdapter<T> : BaseEditSpinnerAdapter<T>, EditSpinnerFilter {
     /**
-     * 选项的文字颜色
      */
     private var mTextColor = 0
 
     /**
-     * 选项的文字大小
      */
     private var mTextSize = 0f
 
     /**
-     * 背景颜色
      */
     private var mBackgroundSelector = 0
 
     /**
-     * 过滤关键词的选中颜色
      */
     private var mFilterColor = "#F15C58"
     private var mIsFilterKey = false
 
     /**
-     * 构造方法
      *
-     * @param data 选项数据
      */
     constructor(data: List<T>?) : super(data)
 
     /**
-     * 构造方法
      *
-     * @param data 选项数据
      */
     constructor(data: Array<T>?) : super(data)
 

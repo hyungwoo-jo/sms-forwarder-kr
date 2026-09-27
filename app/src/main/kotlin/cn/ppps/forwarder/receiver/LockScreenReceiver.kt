@@ -44,7 +44,6 @@ class LockScreenReceiver : BroadcastReceiver() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             keyguardManager?.isDeviceLocked ?: false
         } else {
-            // 对于较早版本的 Android，无法直接检查设备锁定状态
             false
         }
     }

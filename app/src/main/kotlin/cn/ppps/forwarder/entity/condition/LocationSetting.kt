@@ -4,13 +4,13 @@ import cn.ppps.forwarder.R
 import java.io.Serializable
 
 data class LocationSetting(
-    var description: String = "", //描述
-    var type: String = "to", //监控类型："to"：到达地点；"leave"：离开地点
-    var calcType: String = "distance", //计算方式："distance"：计算距离；"address"：地址匹配
-    var longitude: Double = 0.0, //经度
-    var latitude: Double = 0.0, //纬度
-    var distance: Double = 0.0, //距离
-    var address: String = "", //地址
+    var description: String = "",
+    var type: String = "to",
+    var calcType: String = "distance",
+    var longitude: Double = 0.0,
+    var latitude: Double = 0.0,
+    var distance: Double = 0.0,
+    var address: String = "",
 ) : Serializable {
 
     fun getCalcTypeCheckId(): Int {

@@ -107,23 +107,19 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
     private var callType = 1
     private var callTypeIndex = 0
 
-    //免打扰(禁用转发)时间段
     private val mTimeOption = DataProvider.timePeriodOption
     private var silentPeriodStart = 0
     private var silentPeriodEnd = 0
 
-    //所有发送通道下拉框
     private var senderListAll = mutableListOf<Sender>()
     private val senderSpinnerList = mutableListOf<SenderSpinnerItem>()
     private lateinit var senderSpinnerAdapter: SenderSpinnerAdapter<*>
 
-    //已选发送通道列表
     private var senderId = 0L
     private var senderListSelected = mutableListOf<Sender>()
     private lateinit var senderRecyclerView: RecyclerView
     private lateinit var senderRecyclerAdapter: SenderRecyclerAdapter
 
-    //已安装App信息列表
     private val appListSpinnerList = ArrayList<AppListAdapterItem>()
     private lateinit var appListSpinnerAdapter: AppListSpinnerAdapter<*>
     private val appListObserver = Observer { it: String ->
@@ -161,7 +157,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         binding!!.btnChooseApp.setOnClickListener {
@@ -180,9 +175,7 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                 binding!!.rbCallType.visibility = View.GONE
                 binding!!.rbContent.visibility = View.GONE
                 binding!!.tvMuRuleTips.setText(R.string.mu_rule_app_tips)
-                //初始化APP下拉列表
                 initAppSpinner()
-                //监听已安装App信息列表加载完成事件
                 LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observeStickyForever(appListObserver)
             }
 
@@ -195,7 +188,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                 //binding!!.rbMultiMatch.visibility = View.GONE
                 binding!!.tvMuRuleTips.setText(R.string.mu_rule_call_tips)
 
-                //通话类型：1.来电挂机 2.去电挂机 3.未接来电 4.来电提醒 5.来电接通 6.去电拨出
                 binding!!.spCallType.setItems(CALL_TYPE_MAP.values.toList())
                 binding!!.spCallType.setOnItemSelectedListener { _: MaterialSpinner?, _: Int, _: Long, item: Any ->
                     CALL_TYPE_MAP.forEach {
@@ -219,14 +211,13 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
             }
         }
 
-        //创建标签按钮
         CommonUtils.createTagButtons(requireContext(), binding!!.glSmsTemplate, binding!!.etSmsTemplate, ruleType)
 
-        if (ruleId <= 0) { //新增
+        if (ruleId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_rule))
             binding!!.btnDel.setText(R.string.discard)
             initSenderSpinner()
-        } else { //编辑 & 克隆
+        } else {
             binding!!.btnDel.setText(R.string.del)
             initForm()
         }
@@ -382,13 +373,10 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         }
     }
 
-    //初始化发送通道下拉框
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initSenderSpinner() {
-        //免打扰(禁用转发)时间段
         binding!!.tvSilentPeriod.text = mTimeOption[silentPeriodStart] + " ~ " + mTimeOption[silentPeriodEnd]
 
-        //初始化发送通道下拉框
         binding!!.spSender.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = senderSpinnerAdapter.getItemSource(position) as SenderSpinnerItem
@@ -419,12 +407,11 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
             }
         }
 
-        // 初始化已选发送通道列表 RecyclerView 和 Adapter
         senderRecyclerView = binding!!.recyclerSenders
         senderRecyclerAdapter = SenderRecyclerAdapter(senderListSelected, { position ->
             senderListSelected.removeAt(position)
             senderRecyclerAdapter.notifyItemRemoved(position)
-            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size) // 更新索引
+            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size)
             checkSenderLogicShow()
         })
         senderRecyclerView.apply {
@@ -448,11 +435,9 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         senderTouchHelper.attachToRecyclerView(senderRecyclerView)
         senderRecyclerAdapter.setTouchHelper(senderTouchHelper)
 
-        //获取发送通道列表
         getSenderList()
     }
 
-    //获取发送通道列表
     private fun getSenderList() {
         Core.sender.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Sender>> {
             override fun onSubscribe(d: Disposable) {}
@@ -479,7 +464,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                 binding!!.spSender.setAdapter(senderSpinnerAdapter)
                 //senderSpinnerAdapter.notifyDataSetChanged()
 
-                //更新senderListSelected的状态与名称
                 senderListSelected.forEach {
                     senderListAll.forEach { sender ->
                         if (it.id == sender.id) {
@@ -494,11 +478,9 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         })
     }
 
-    //初始化APP下拉列表
     private fun initAppSpinner() {
         if (ruleType != "app") return
 
-        //未开启异步获取已安装App信息开关时，规则编辑不显示已安装APP下拉框
         // Rule selection must work independently of startup preloading preferences.
         val includeUserApps = SettingUtils.enableLoadUserAppList || !SettingUtils.enableLoadSystemAppList
 
@@ -523,7 +505,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
             }
         }
 
-        //列表为空也不显示下拉框
         if (appListSpinnerList.isEmpty()) return
 
         appListSpinnerAdapter = AppListSpinnerAdapter(appListSpinnerList).setIsFilterKey(true).setFilterColor("#EF5362").setBackgroundSelector(R.drawable.selector_custom_spinner_bg)
@@ -541,7 +522,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
 
     }
 
-    //初始化表单
     private fun initForm() {
         Core.rule.get(ruleId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Rule> {
             override fun onSubscribe(d: Disposable) {}
@@ -590,10 +570,8 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                 binding!!.sbStatus.isChecked = rule.statusChecked
                 silentPeriodStart = rule.silentPeriodStart
                 silentPeriodEnd = rule.silentPeriodEnd
-                //初始化发送通道下拉框
                 initSenderSpinner()
 
-                //绑定免打扰日期
                 val silentPeriodDays = rule.silentDayOfWeek.split(",").filter { it.isNotEmpty() }.map { it.toInt() }
                 if (silentPeriodDays.isNotEmpty()) {
                     val map = mapOf(
@@ -622,7 +600,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         }
     }
 
-    //提交前检查表单
     private fun checkForm(): Rule {
         if (senderListSelected.isEmpty() || senderId == 0L) {
             throw Exception(getString(R.string.new_sender_first))
@@ -722,7 +699,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         )
     }
 
-    //检查多重匹配规则是否正确
     private fun checkMultiMatch(ruleStr: String?): Int {
         if (TextUtils.isEmpty(ruleStr)) return 0
 
@@ -739,7 +715,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         return 0
     }
 
-    //检查正则替换填写是否正确
     private fun checkRegexReplace(regexReplace: String?): Int {
         if (TextUtils.isEmpty(regexReplace)) return 0
 
@@ -749,7 +724,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
             val position = line.indexOf("===")
             if (position < 1) return lineNum
 
-            // 校验正则表达式部分是否合法
             try {
                 line.substring(0, position).toRegex()
             } catch (e: Exception) {
@@ -771,20 +745,17 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
         val etTitle = dialogTest.findViewById<EditText>(R.id.et_title)
         val tvContent = dialogTest.findViewById<TextView>(R.id.tv_content)
         val etContent = dialogTest.findViewById<EditText>(R.id.et_content)
-        //通话类型
         val tvCallType = dialogTest.findViewById<TextView>(R.id.tv_call_type)
         val spCallType = dialogTest.findViewById<MaterialSpinner>(R.id.sp_call_type)
         var callTypeTest = callType
         var callTypeIndexTest = callTypeIndex
 
-        //测试弹窗填写内容缓存（按ruleType区分）
         var cacheSimSlot: Int by SharedPreference(SP_RULE_TEST_SIM_SLOT + ruleType, 0)
         var cacheFrom: String by SharedPreference(SP_RULE_TEST_FROM + ruleType, "")
         var cacheTitle: String by SharedPreference(SP_RULE_TEST_TITLE + ruleType, "")
         var cacheContent: String by SharedPreference(SP_RULE_TEST_CONTENT + ruleType, "")
         var cacheCallType: Int by SharedPreference(SP_RULE_TEST_CALL_TYPE + ruleType, callType)
 
-        //自动填充上次填写的内容
         rgSimSlot.check(if (cacheSimSlot == 1) R.id.rb_sim_slot_2 else R.id.rb_sim_slot_1)
         etFrom.setText(cacheFrom)
         etTitle.setText(cacheTitle)
@@ -833,7 +804,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                     else -> -1
                 }
 
-                //缓存本次填写的内容
                 cacheSimSlot = if (simSlot == 1) 1 else 0
                 cacheFrom = etFrom.text.toString()
                 cacheTitle = etTitle.text.toString()
@@ -846,7 +816,6 @@ class RulesEditFragment : BaseFragment<FragmentRulesEditBinding?>(), View.OnClic
                     throw Exception(getString(R.string.card_slot_does_not_match))
                 }
 
-                //获取卡槽信息
                 val simInfo = when (simSlot) {
                     0 -> "SIM1_" + SettingUtils.extraSim1
                     1 -> "SIM2_" + SettingUtils.extraSim2

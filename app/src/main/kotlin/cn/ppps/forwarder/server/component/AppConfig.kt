@@ -15,19 +15,17 @@ class AppConfig : WebConfig {
 
         val serverWebPath = HttpServerUtils.serverWebPath
         if (!TextUtils.isEmpty(serverWebPath)) {
-            // 增加一个位于/sdcard/Download/目录下的网站
             delegate.addWebsite(StorageWebsite(serverWebPath))
         } else {
-            // 增加一个位于assets的web目录的网站
             delegate.addWebsite(AssetsWebsite(context, "/web/"))
         }
 
         /*delegate.setMultipart(
             Multipart.newBuilder()
-                .allFileMaxSize(1024 * 1024 * 20) // 单个请求所有文件总大小
-                .fileMaxSize(1024 * 1024 * 5) // 单个请求每个文件大小
-                .maxInMemorySize(1024 * 20) // 内存缓存大小
-                .uploadTempDir(context.cacheDir) // 上传文件保存目录
+                .allFileMaxSize(1024 * 1024 * 20)
+                .fileMaxSize(1024 * 1024 * 5)
+                .maxInMemorySize(1024 * 20)
+                .uploadTempDir(context.cacheDir)
                 .build()
         )*/
     }

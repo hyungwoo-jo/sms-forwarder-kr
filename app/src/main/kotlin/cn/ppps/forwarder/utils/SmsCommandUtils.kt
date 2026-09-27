@@ -27,12 +27,10 @@ class SmsCommandUtils {
 
         var TAG = "SmsCommandUtils"
 
-        //检查短信指令
         fun check(smsContent: String): Boolean {
             return smsContent.startsWith("smsf#")
         }
 
-        //执行短信指令
         fun execute(context: Context, smsCommand: String): Boolean {
             val cmdList = smsCommand.split("#", limit = 3)
             Log.d(TAG, "smsCommand = $smsCommand, cmdList = $cmdList")
@@ -89,13 +87,11 @@ class SmsCommandUtils {
                 }
 
                 "system" -> {
-                    //判断是否已root
                     if (!DeviceUtils.isDeviceRooted()) return false
 
-                    // 过滤重复消息机制
                     var duplicateMessagesLimits = SettingUtils.duplicateMessagesLimits * 1000L
                     if (duplicateMessagesLimits > 0L) {
-                        duplicateMessagesLimits += 10000L //系统指令多加10秒避免误操作
+                        duplicateMessagesLimits += 10000L
                         val key = CipherUtils.md5(smsCommand)
                         val timestamp: Long = System.currentTimeMillis()
                         var timestampPrev: Long by HistoryUtils(key, timestamp)
@@ -133,15 +129,12 @@ class SmsCommandUtils {
                             val smsSendData = gson.fromJson(param, SmsSendData::class.java)
                             Log.d(TAG, smsSendData.toString())
 
-                            //获取卡槽信息
                             if (App.SimInfoList.isEmpty()) {
                                 App.SimInfoList = PhoneUtils.getSimMultiInfo()
                             }
                             Log.d(TAG, App.SimInfoList.toString())
 
-                            //发送卡槽: 1=SIM1, 2=SIM2
                             val simSlotIndex = smsSendData.simSlot - 1
-                            //TODO：取不到卡槽信息时，采用默认卡槽发送
                             val mSubscriptionId: Int = App.SimInfoList[simSlotIndex]?.mSubscriptionId ?: -1
 
                             if (ActivityCompat.checkSelfPermission(XUtil.getContext(), Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {

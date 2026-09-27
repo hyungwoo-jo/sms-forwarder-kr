@@ -29,7 +29,6 @@ class AppMessageConverter : MessageConverter {
     private val TAG: String = "AppMessageConverter"
 
     override fun convert(output: Any?, mediaType: MediaType?): ResponseBody {
-        //返回统一结构报文
         var response = HttpServerUtils.response(output)
         Log.d(TAG, "response: $response")
 
@@ -82,7 +81,6 @@ class AppMessageConverter : MessageConverter {
             Log.d(TAG, "Json: $json")
         }
 
-        //修改接口数据中的null、“”为默认值
         val builder = GsonBuilder()
         builder.registerTypeAdapter(Int::class.java, IntegerDefaultAdapter())
         builder.registerTypeAdapter(String::class.java, StringDefaultAdapter())
@@ -90,7 +88,6 @@ class AppMessageConverter : MessageConverter {
         val t: T? = gson.fromJson(json, type)
         Log.d(TAG, "Bean: $t")
 
-        //校验时间戳（时间误差不能超过1小时）&& 签名
         if (HttpServerUtils.safetyMeasures == 1) {
             HttpServerUtils.checkSign(t as BaseRequest<*>)
         }

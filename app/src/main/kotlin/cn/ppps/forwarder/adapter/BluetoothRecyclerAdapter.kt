@@ -59,11 +59,9 @@ class BluetoothRecyclerAdapter(
 
         @SuppressLint("MissingPermission")
         fun bind(device: BluetoothDevice) {
-            // 设置设备名称和地址
             textDeviceName.text = device.name ?: "Unknown Device"
             textDeviceAddress.text = device.address
 
-            // 根据设备类型设置图标
             val deviceType = getDeviceType(device)
             val iconResId = when (deviceType) {
                 DeviceType.CELLPHONE -> R.drawable.ic_bt_cellphone

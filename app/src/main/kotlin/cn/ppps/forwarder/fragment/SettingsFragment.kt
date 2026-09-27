@@ -96,7 +96,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
     private val mTimeOption = DataProvider.timePeriodOption
     private var initViewsFinished = false
 
-    //已安装App信息列表
     private val appListSpinnerList = ArrayList<AppListAdapterItem>()
     private lateinit var appListSpinnerAdapter: AppListSpinnerAdapter<*>
     private val appListObserver = Observer { it: String ->
@@ -156,83 +155,53 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 }
             }
         }
-        //转发短信广播
         switchEnableSms(binding!!.sbEnableSms)
-        //转发通话记录
         switchEnablePhone(binding!!.sbEnablePhone, binding!!.scbCallType1, binding!!.scbCallType2, binding!!.scbCallType3, binding!!.scbCallType4, binding!!.scbCallType5, binding!!.scbCallType6)
         binding!!.sbEnablePhoneAreaLookup.isChecked = SettingUtils.enablePhoneAreaLookup
         binding!!.sbEnablePhoneAreaLookup.setOnCheckedChangeListener { _, isChecked ->
             SettingUtils.enablePhoneAreaLookup = isChecked
         }
-        //转发应用通知
         switchEnableAppNotify(binding!!.sbEnableAppNotify, binding!!.scbCancelAppNotify, binding!!.scbNotUserPresent)
 
-        //发现蓝牙设备服务
         switchEnableBluetooth(binding!!.sbEnableBluetooth, binding!!.layoutBluetoothSetting, binding!!.xsbScanInterval, binding!!.scbIgnoreAnonymous)
-        //GPS定位功能
         switchEnableLocation(binding!!.sbEnableLocation, binding!!.layoutLocationSetting, binding!!.rgAccuracy, binding!!.rgPowerRequirement, binding!!.xsbMinInterval, binding!!.xsbMinDistance)
-        //短信指令
         switchEnableSmsCommand(binding!!.sbEnableSmsCommand, binding!!.etSafePhone)
-        //靠近听筒关屏
         switchEnableCloseToEarpieceTurnOffScreen(binding!!.layoutEnableCloseToEarpieceTurnOffScreen, binding!!.sbEnableCloseToEarpieceTurnOffScreen)
-        //启动时异步获取已安装App信息
         switchEnableLoadAppList(binding!!.sbEnableLoadAppList, binding!!.scbLoadUserApp, binding!!.scbLoadSystemApp)
-        //设置自动消除额外APP通知
         editExtraAppList(binding!!.etAppList)
-        //设置APP通知关键词黑名单
         editAppNotifyBlacklist(binding!!.etAppNotifyBlacklist)
-        //自动过滤多久内重复消息
         binding!!.xsbDuplicateMessagesLimits.setDefaultValue(SettingUtils.duplicateMessagesLimits)
         binding!!.xsbDuplicateMessagesLimits.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
             SettingUtils.duplicateMessagesLimits = newValue
         }
-        //免打扰(禁用转发)时间段
         binding!!.tvSilentPeriod.text = mTimeOption[SettingUtils.silentPeriodStart] + " ~ " + mTimeOption[SettingUtils.silentPeriodEnd]
         binding!!.scbSilentPeriodLogs.isChecked = SettingUtils.enableSilentPeriodLogs
         binding!!.scbSilentPeriodLogs.setOnCheckedChangeListener { _: SmoothCheckBox, isChecked: Boolean ->
             SettingUtils.enableSilentPeriodLogs = isChecked
         }
 
-        //开机启动
         checkWithReboot(binding!!.sbWithReboot, binding!!.tvAutoStartup)
-        //忽略电池优化设置
         batterySetting(binding!!.layoutBatterySetting, binding!!.sbBatterySetting)
-        //不在最近任务列表中显示
         switchExcludeFromRecents(binding!!.layoutExcludeFromRecents, binding!!.sbExcludeFromRecents)
-        //Cactus增强保活措施
         switchEnableCactus(binding!!.sbEnableCactus, binding!!.scbPlaySilenceMusic, binding!!.scbOnePixelActivity, binding!!.layoutMusicInterval, binding!!.xsbMusicInterval)
-        //接口请求失败重试时间间隔
         editRetryDelayTime(binding!!.xsbRetryTimes, binding!!.xsbDelayTime, binding!!.xsbTimeout)
 
-        //设备备注
         editAddExtraDeviceMark(binding!!.etExtraDeviceMark)
-        //SIM1主键
         editAddSubidSim1(binding!!.etSubidSim1)
-        //SIM1备注
         editAddExtraSim1(binding!!.etExtraSim1)
 
-        // sim 槽只有一个的时候不显示 SIM2 设置
         if (PhoneUtils.getSimSlotCount() != 1) {
-            //SIM2主键
             editAddSubidSim2(binding!!.etSubidSim2)
-            //SIM2备注
             editAddExtraSim2(binding!!.etExtraSim2)
         } else {
             binding!!.layoutSim2.visibility = View.GONE
         }
-        //通知内容
         editNotifyContent(binding!!.etNotifyContent)
-        //启用自定义模版
         switchSmsTemplate(binding!!.sbSmsTemplate)
-        //自定义模板
         editSmsTemplate(binding!!.etSmsTemplate)
-        //纯客户端模式
         switchDirectlyToClient(binding!!.sbDirectlyToClient)
-        //纯自动任务模式
         switchDirectlyToTask(binding!!.sbDirectlyToTask)
-        //调试模式
         switchDebugMode(binding!!.sbDebugMode)
-        //多语言设置
         switchLanguage(binding!!.rgMainLanguages)
 
         initViewsFinished = true
@@ -240,7 +209,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
 
     override fun onResume() {
         super.onResume()
-        //初始化APP下拉列表
         initAppSpinner()
     }
 
@@ -251,7 +219,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         binding!!.btnExtraSim2.setOnClickListener(this)
         binding!!.btnExportLog.setOnClickListener(this)
 
-        //监听已安装App信息列表加载完成事件
         LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observeStickyForever(appListObserver)
     }
 
@@ -330,7 +297,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //转发短信
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnableSms(sbEnableSms: SwitchButton) {
         sbEnableSms.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -338,34 +304,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             getContainer()?.refreshForwardingStatus()
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 接收 WAP 推送消息
                     .permission(PermissionLists.getReceiveWapPushPermission())
-                    // 接收彩信
                     .permission(PermissionLists.getReceiveMmsPermission())
-                    // 接收短信
                     .permission(PermissionLists.getReceiveSmsPermission())
-                    // 发送短信
                     //.permission(PermissionLists.getSendSmsPermission())
-                    // 读取短信
                     .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
-                                    // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.warning(getString(R.string.forward_sms) + ": " + getString(R.string.toast_granted_part))
                                 SettingUtils.enableSms = false
                                 sbEnableSms.isChecked = false
                                 return
                             }
-                            // 处理权限请求成功的逻辑
                             XToastUtils.info(R.string.toast_granted_all)
                         }
                     })
@@ -374,7 +331,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         sbEnableSms.isChecked = SettingUtils.enableSms
     }
 
-    //转发通话
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnablePhone(sbEnablePhone: SwitchButton, scbCallType1: SmoothCheckBox, scbCallType2: SmoothCheckBox, scbCallType3: SmoothCheckBox, scbCallType4: SmoothCheckBox, scbCallType5: SmoothCheckBox, scbCallType6: SmoothCheckBox) {
         scbCallType1.isChecked = SettingUtils.enableCallType1
@@ -394,23 +350,18 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             getContainer()?.refreshForwardingStatus()
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 读取电话状态
                     .permission(PermissionLists.getReadPhoneStatePermission())
-                    // 读取手机号码
                     .permission(PermissionLists.getReadPhoneNumbersPermission())
-                    // 读取通话记录
                     .permission(PermissionLists.getReadCallLogPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.error(getString(R.string.forward_calls) + ": " + getString(R.string.toast_denied))
                                 SettingUtils.enablePhone = false
                                 sbEnablePhone.isChecked = false
@@ -471,7 +422,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //转发应用通知
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnableAppNotify(sbEnableAppNotify: SwitchButton, scbCancelAppNotify: SmoothCheckBox, scbNotUserPresent: SmoothCheckBox) {
         sbEnableAppNotify.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -495,7 +445,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                                 XToastUtils.error(R.string.tips_notification_listener)
                                 return
                             }
-                            // 处理权限请求成功的逻辑
                             SettingUtils.enableAppNotify = true
                             sbEnableAppNotify.isChecked = true
                             CommonUtils.toggleNotificationListenerService(requireContext())
@@ -517,7 +466,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //发现蓝牙设备服务
     private fun switchEnableBluetooth(@SuppressLint("UseSwitchCompatOrMaterialCode") sbEnableBluetooth: SwitchButton, layoutBluetoothSetting: LinearLayout, xsbScanInterval: XSeekBar, scbIgnoreAnonymous: SmoothCheckBox) {
         sbEnableBluetooth.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             SettingUtils.enableBluetooth = isChecked
@@ -532,13 +480,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.warning(getString(R.string.enable_bluetooth) + ": " + getString(R.string.toast_granted_part))
                                 SettingUtils.enableBluetooth = false
                                 sbEnableBluetooth.isChecked = false
@@ -556,7 +502,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         sbEnableBluetooth.isChecked = isEnable
         layoutBluetoothSetting.visibility = if (isEnable) View.VISIBLE else View.GONE
 
-        //扫描蓝牙设备间隔
         xsbScanInterval.setDefaultValue((SettingUtils.bluetoothScanInterval / 1000).toInt())
         xsbScanInterval.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
             if (newValue * 1000L != SettingUtils.bluetoothScanInterval) {
@@ -565,7 +510,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             }
         }
 
-        //是否忽略匿名设备
         scbIgnoreAnonymous.isChecked = SettingUtils.bluetoothIgnoreAnonymous
         scbIgnoreAnonymous.setOnCheckedChangeListener { _: SmoothCheckBox, isChecked: Boolean ->
             SettingUtils.bluetoothIgnoreAnonymous = isChecked
@@ -574,12 +518,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
 
     }
 
-    //重启蓝牙扫描服务
     private fun restartBluetoothService(action: String = ACTION_RESTART) {
         if (!initViewsFinished) return
         Log.d(TAG, "restartBluetoothService, action: $action")
         val serviceIntent = Intent(requireContext(), BluetoothScanService::class.java)
-        //如果蓝牙功能已启用，但是系统蓝牙功能不可用，则关闭蓝牙功能
         if (SettingUtils.enableBluetooth && (!BluetoothUtils.isBluetoothEnabled() || !BluetoothUtils.hasBluetoothCapability(App.context))) {
             XToastUtils.error(getString(R.string.toast_bluetooth_not_enabled))
             SettingUtils.enableBluetooth = false
@@ -592,7 +534,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         requireContext().startService(serviceIntent)
     }
 
-    //GPS定位服务
     private fun switchEnableLocation(@SuppressLint("UseSwitchCompatOrMaterialCode") sbEnableLocation: SwitchButton, layoutLocationSetting: LinearLayout, rgAccuracy: RadioGroup, rgPowerRequirement: RadioGroup, xsbMinInterval: XSeekBar, xsbMinDistance: XSeekBar) {
         sbEnableLocation.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
             SettingUtils.enableLocation = isChecked
@@ -606,13 +547,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(getString(R.string.enable_location) + ": " + getString(R.string.toast_denied_never))
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.error(getString(R.string.enable_location) + ": " + getString(R.string.toast_denied))
                                 SettingUtils.enableLocation = false
                                 sbEnableLocation.isChecked = false
@@ -630,7 +569,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         sbEnableLocation.isChecked = isEnable
         layoutLocationSetting.visibility = if (isEnable) View.VISIBLE else View.GONE
 
-        //设置位置精度：高精度（默认）
         rgAccuracy.check(
             when (SettingUtils.locationAccuracy) {
                 Criteria.ACCURACY_FINE -> R.id.rb_accuracy_fine
@@ -649,7 +587,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             restartLocationService()
         }
 
-        //设置电量消耗：低电耗（默认）
         rgPowerRequirement.check(
             when (SettingUtils.locationPowerRequirement) {
                 Criteria.POWER_HIGH -> R.id.rb_power_requirement_high
@@ -670,7 +607,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             restartLocationService()
         }
 
-        //设置位置更新最小时间间隔（单位：毫秒）； 默认间隔：10000毫秒，最小间隔：1000毫秒
         xsbMinInterval.setDefaultValue((SettingUtils.locationMinInterval / 1000).toInt())
         xsbMinInterval.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
             if (newValue * 1000L != SettingUtils.locationMinInterval) {
@@ -679,7 +615,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             }
         }
 
-        //设置位置更新最小距离（单位：米）；默认距离：0米
         xsbMinDistance.setDefaultValue(SettingUtils.locationMinDistance)
         xsbMinDistance.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
             if (newValue != SettingUtils.locationMinDistance) {
@@ -689,12 +624,10 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //重启定位服务
     private fun restartLocationService(action: String = ACTION_RESTART) {
         if (!initViewsFinished) return
         Log.d(TAG, "restartLocationService, action: $action")
         val serviceIntent = Intent(requireContext(), LocationService::class.java)
-        //如果定位功能已启用，但是系统定位功能不可用，则关闭定位功能
         if (SettingUtils.enableLocation && (!LocationUtils.isLocationEnabled(App.context) || !LocationUtils.hasLocationCapability(App.context))) {
             XToastUtils.error(getString(R.string.toast_location_not_enabled))
             SettingUtils.enableLocation = false
@@ -707,7 +640,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         requireContext().startService(serviceIntent)
     }
 
-    //接受短信指令
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnableSmsCommand(sbEnableSmsCommand: SwitchButton, etSafePhone: EditText) {
         sbEnableSmsCommand.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -715,25 +647,19 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             etSafePhone.visibility = if (isChecked) View.VISIBLE else View.GONE
             if (isChecked) {
                 XXPermissions.with(this)
-                    // 系统设置
                     .permission(PermissionLists.getWriteSettingsPermission())
-                    // 接收短信
                     .permission(PermissionLists.getReceiveSmsPermission())
-                    // 发送短信
                     .permission(PermissionLists.getSendSmsPermission())
-                    // 读取短信
                     .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.error(getString(R.string.sms_command) + ": " + getString(R.string.toast_denied))
                                 SettingUtils.enableSmsCommand = false
                                 sbEnableSmsCommand.isChecked = false
@@ -757,7 +683,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //靠近听筒关屏
     private fun switchEnableCloseToEarpieceTurnOffScreen(
         layoutEnableCloseToEarpieceTurnOffScreen: View,
         sbEnableCloseToEarpieceTurnOffScreen: SwitchButton
@@ -774,7 +699,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             SettingUtils.enableCloseToEarpieceTurnOffScreen
     }
 
-    //设置自动消除额外APP通知
     private fun editExtraAppList(textAppList: EditText) {
         textAppList.setText(SettingUtils.cancelExtraAppNotify)
         textAppList.addTextChangedListener(object : TextWatcher {
@@ -786,7 +710,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置APP通知关键词黑名单
     private fun editAppNotifyBlacklist(textBlacklist: EditText) {
         textBlacklist.setText(SettingUtils.appNotifyBlacklist)
         textBlacklist.addTextChangedListener(object : TextWatcher {
@@ -798,7 +721,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //启动时异步获取已安装App信息
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnableLoadAppList(sbEnableLoadAppList: SwitchButton, scbLoadUserApp: SmoothCheckBox, scbLoadSystemApp: SmoothCheckBox) {
         val isEnable: Boolean = SettingUtils.enableLoadAppList
@@ -848,11 +770,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //开机启动
     private fun checkWithReboot(@SuppressLint("UseSwitchCompatOrMaterialCode") sbWithReboot: SwitchButton, tvAutoStartup: TextView) {
         tvAutoStartup.text = getAutoStartTips()
 
-        //获取组件
         val cm = ComponentName(getAppPackageName(), BootCompletedReceiver::class.java.name)
         val pm: PackageManager = getPackageManager()
         val state = pm.getComponentEnabledSetting(cm)
@@ -868,11 +788,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //电池优化设置
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint("UseSwitchCompatOrMaterialCode", "ObsoleteSdkInt")
     private fun batterySetting(layoutBatterySetting: LinearLayout, sbBatterySetting: SwitchButton) {
-        //安卓6.0以下没有忽略电池优化
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             layoutBatterySetting.visibility = View.GONE
             return
@@ -897,10 +815,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //不在最近任务列表中显示
     @SuppressLint("ObsoleteSdkInt,UseSwitchCompatOrMaterialCode")
     private fun switchExcludeFromRecents(layoutExcludeFromRecents: LinearLayout, sbExcludeFromRecents: SwitchButton) {
-        //安卓6.0以下没有不在最近任务列表中显示
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             layoutExcludeFromRecents.visibility = View.GONE
             return
@@ -920,7 +836,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //Cactus增强保活措施
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun switchEnableCactus(sbEnableCactus: SwitchButton, scbPlaySilenceMusic: SmoothCheckBox, scbOnePixelActivity: SmoothCheckBox, layoutMusicInterval: LinearLayout, xsbMusicInterval: XSeekBar) {
         val layoutCactusOptional: LinearLayout = binding!!.layoutCactusOptional
@@ -961,7 +876,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //接口请求失败重试时间间隔
     private fun editRetryDelayTime(xsbRetryTimes: XSeekBar, xsbDelayTime: XSeekBar, xsbTimeout: XSeekBar) {
         xsbRetryTimes.setDefaultValue(SettingUtils.requestRetryTimes)
         xsbRetryTimes.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
@@ -978,7 +892,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //设置设备名称
     private fun editAddExtraDeviceMark(etExtraDeviceMark: EditText) {
         etExtraDeviceMark.setText(SettingUtils.extraDeviceMark)
         etExtraDeviceMark.addTextChangedListener(object : TextWatcher {
@@ -990,7 +903,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置SIM1主键
     private fun editAddSubidSim1(etSubidSim1: EditText) {
         etSubidSim1.setText("${SettingUtils.subidSim1}")
         etSubidSim1.addTextChangedListener(object : TextWatcher {
@@ -1007,7 +919,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置SIM2主键
     private fun editAddSubidSim2(etSubidSim2: EditText) {
         etSubidSim2.setText("${SettingUtils.subidSim2}")
         etSubidSim2.addTextChangedListener(object : TextWatcher {
@@ -1024,7 +935,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置SIM1备注
     private fun editAddExtraSim1(etExtraSim1: EditText) {
         etExtraSim1.setText(SettingUtils.extraSim1)
         etExtraSim1.addTextChangedListener(object : TextWatcher {
@@ -1036,7 +946,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置SIM2备注
     private fun editAddExtraSim2(etExtraSim2: EditText) {
         etExtraSim2.setText(SettingUtils.extraSim2)
         etExtraSim2.addTextChangedListener(object : TextWatcher {
@@ -1048,7 +957,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置通知内容
     private fun editNotifyContent(etNotifyContent: EditText) {
         etNotifyContent.setText(SettingUtils.notifyContent)
         etNotifyContent.addTextChangedListener(object : TextWatcher {
@@ -1065,7 +973,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //设置转发时启用自定义模版
     @SuppressLint("UseSwitchCompatOrMaterialCode", "SetTextI18n")
     private fun switchSmsTemplate(sbSmsTemplate: SwitchButton) {
         val isOn: Boolean = SettingUtils.enableSmsTemplate
@@ -1091,9 +998,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //设置转发信息模版
     private fun editSmsTemplate(textSmsTemplate: EditText) {
-        //创建标签按钮
         CommonUtils.createTagButtons(requireContext(), binding!!.glSmsTemplate, textSmsTemplate, "all")
         textSmsTemplate.setText(SettingUtils.smsTemplate)
         textSmsTemplate.addTextChangedListener(object : TextWatcher {
@@ -1105,7 +1010,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         })
     }
 
-    //纯客户端模式
     private fun switchDirectlyToClient(@SuppressLint("UseSwitchCompatOrMaterialCode") switchDirectlyToClient: SwitchButton) {
         switchDirectlyToClient.isChecked = SettingUtils.enablePureClientMode
         switchDirectlyToClient.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -1118,7 +1022,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //纯自动任务模式
     private fun switchDirectlyToTask(@SuppressLint("UseSwitchCompatOrMaterialCode") switchDirectlyToTask: SwitchButton) {
         switchDirectlyToTask.isChecked = SettingUtils.enablePureTaskMode
         switchDirectlyToTask.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -1131,7 +1034,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //调试模式
     private fun switchDebugMode(@SuppressLint("UseSwitchCompatOrMaterialCode") switchDebugMode: SwitchButton) {
         switchDebugMode.isChecked = SettingUtils.enableDebugMode
         switchDebugMode.setOnCheckedChangeListener { _: CompoundButton?, isChecked: Boolean ->
@@ -1140,7 +1042,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //多语言设置
     private fun switchLanguage(rgMainLanguages: RadioGroup) {
         rgMainLanguages.check(R.id.rb_main_language_ko)
         rgMainLanguages.setOnCheckedChangeListener { _, _ ->
@@ -1164,7 +1065,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //Intent跳转到[自启动]页面全网最全适配机型解决方案
     private val hashMap = object : HashMap<String?, List<String?>?>() {
         init {
             put(
@@ -1180,20 +1080,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             )
             put(
                 "HUAWEI", listOf(
-                    "com.huawei.systemmanager/.startupmgr.ui.StartupNormalAppListActivity",  //EMUI9.1.0(方舟,9.0)
-                    "com.huawei.systemmanager/.appcontrol.activity.StartupAppControlActivity", "com.huawei.systemmanager/.optimize.process.ProtectActivity", "com.huawei.systemmanager/.optimize.bootstart.BootStartActivity", "com.huawei.systemmanager" //最后一行可以写包名, 这样如果签名的类路径在某些新版本的ROM中没找到 就直接跳转到对应的安全中心/手机管家 首页.
+                    "com.huawei.systemmanager/.startupmgr.ui.StartupNormalAppListActivity",
+                    "com.huawei.systemmanager/.appcontrol.activity.StartupAppControlActivity", "com.huawei.systemmanager/.optimize.process.ProtectActivity", "com.huawei.systemmanager/.optimize.bootstart.BootStartActivity", "com.huawei.systemmanager"
                 )
             )
             put(
                 "vivo", listOf(
-                    "com.iqoo.secure/.ui.phoneoptimize.BgStartUpManager", "com.iqoo.secure/.safeguard.PurviewTabActivity", "com.vivo.permissionmanager/.activity.BgStartUpManagerActivity",  //"com.iqoo.secure/.ui.phoneoptimize.AddWhiteListActivity", //这是白名单, 不是自启动
+                    "com.iqoo.secure/.ui.phoneoptimize.BgStartUpManager", "com.iqoo.secure/.safeguard.PurviewTabActivity", "com.vivo.permissionmanager/.activity.BgStartUpManagerActivity",
                     "com.iqoo.secure", "com.vivo.permissionmanager"
                 )
             )
             put(
                 "Meizu", listOf(
                     "com.meizu.safe/.permission.SmartBGActivity",  //Flyme7.3.0(7.1.2)
-                    "com.meizu.safe/.permission.PermissionMainActivity",  //网上的
+                    "com.meizu.safe/.permission.PermissionMainActivity",
                     "com.meizu.safe"
                 )
             )
@@ -1209,7 +1109,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             )
             put(
                 "letv", listOf(
-                    "com.letv.android.letvsafe/.AutobootManageActivity", "com.letv.android.letvsafe/.BackgroundAppManageActivity",  //应用保护
+                    "com.letv.android.letvsafe/.AutobootManageActivity", "com.letv.android.letvsafe/.BackgroundAppManageActivity",
                     "com.letv.android.letvsafe"
                 )
             )
@@ -1219,14 +1119,12 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 )
             )
 
-            //金立
             put(
                 "F", listOf(
                     "com.gionee.softmanager/.MainActivity", "com.gionee.softmanager"
                 )
             )
 
-            //以下为未确定(厂商名也不确定)
             put(
                 "smartisanos", listOf(
                     "com.smartisanos.security/.invokeHistory.InvokeHistoryActivity", "com.smartisanos.security"
@@ -1247,35 +1145,31 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                 )
             )
 
-            //酷派
             put(
-                "coolpad" /*厂商名称不确定是否正确*/, listOf(
+                "coolpad" , listOf(
                     "com.yulong.android.security/com.yulong.android.seccenter.tabbarmain", "com.yulong.android.security"
                 )
             )
 
-            //联想
             put(
-                "lenovo" /*厂商名称不确定是否正确*/, listOf(
+                "lenovo" , listOf(
                     "com.lenovo.security/.purebackground.PureBackgroundActivity", "com.lenovo.security"
                 )
             )
             put(
-                "htc" /*厂商名称不确定是否正确*/, listOf(
+                "htc" , listOf(
                     "com.htc.pitroad/.landingpage.activity.LandingPageActivity", "com.htc.pitroad"
                 )
             )
 
-            //华硕
             put(
-                "asus" /*厂商名称不确定是否正确*/, listOf(
+                "asus" , listOf(
                     "com.asus.mobilemanager/.MainActivity", "com.asus.mobilemanager"
                 )
             )
         }
     }
 
-    //跳转自启动页面
     private fun startToAutoStartSetting(context: Context) {
         Log.e("Util", "******************The current phone model is:" + Build.MANUFACTURER)
         val entries: MutableSet<MutableMap.MutableEntry<String?, List<String?>?>> = hashMap.entries
@@ -1292,8 +1186,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                                 val componentName = ComponentName.unflattenFromString(act)
                                 intent.component = componentName
                             } else {
-                                //找不到? 网上的做法都是跳转到设置... 这基本上是没意义的 基本上自启动这个功能是第三方厂商自己写的安全管家类app
-                                //所以我是直接跳转到对应的安全管家/安全中心
                                 intent = act?.let { context.packageManager.getLaunchIntentForPackage(it) }
                             }
                             context.startActivity(intent)
@@ -1325,10 +1217,8 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
         }
     }
 
-    //初始化APP下拉列表
     private fun initAppSpinner() {
 
-        //未开启异步获取已安装App信息开关时，不显示已安装APP下拉框
         if (!SettingUtils.enableLoadAppList) return
 
         if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
@@ -1352,7 +1242,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
             }
         }
 
-        //列表为空也不显示下拉框
         if (appListSpinnerList.isEmpty()) return
 
         appListSpinnerAdapter = AppListSpinnerAdapter(appListSpinnerList).setIsFilterKey(true).setFilterColor("#EF5362").setBackgroundSelector(R.drawable.selector_custom_spinner_bg)

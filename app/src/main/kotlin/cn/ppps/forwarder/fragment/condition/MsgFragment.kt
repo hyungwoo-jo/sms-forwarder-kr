@@ -78,7 +78,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
     private var callTypeIndex = 0
     private var resultCode: Int = TASK_CONDITION_SMS
 
-    //已安装App信息列表
     private val appListSpinnerList = ArrayList<AppListAdapterItem>()
     private lateinit var appListSpinnerAdapter: AppListSpinnerAdapter<*>
     private val appListObserver = Observer { it: String ->
@@ -111,7 +110,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         when (ruleType) {
@@ -124,9 +122,7 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
                 binding!!.rbCallType.visibility = View.GONE
                 binding!!.rbContent.visibility = View.GONE
                 binding!!.tvMuRuleTips.setText(R.string.mu_rule_app_tips)
-                //初始化APP下拉列表
                 initAppSpinner()
-                //监听已安装App信息列表加载完成事件
                 LiveEventBus.get(EVENT_LOAD_APP_LIST, String::class.java).observeStickyForever(appListObserver)
             }
 
@@ -140,7 +136,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
                 binding!!.rbInformContent.visibility = View.GONE
                 binding!!.tvMuRuleTips.setText(R.string.mu_rule_call_tips)
 
-                //通话类型：1.来电挂机 2.去电挂机 3.未接来电 4.来电提醒 5.来电接通 6.去电拨出
                 binding!!.spCallType.setItems(CALL_TYPE_MAP.values.toList())
                 binding!!.spCallType.setOnItemSelectedListener { _: MaterialSpinner?, _: Int, _: Long, item: Any ->
                     CALL_TYPE_MAP.forEach {
@@ -278,11 +273,9 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
         }
     }
 
-    //初始化APP下拉列表
     private fun initAppSpinner() {
         if (ruleType != "app") return
 
-        //未开启异步获取已安装App信息开关时，规则编辑不显示已安装APP下拉框
         if (!SettingUtils.enableLoadUserAppList && !SettingUtils.enableLoadSystemAppList) return
 
         if (App.UserAppList.isEmpty() && App.SystemAppList.isEmpty()) {
@@ -306,7 +299,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
             }
         }
 
-        //列表为空也不显示下拉框
         if (appListSpinnerList.isEmpty()) return
 
         appListSpinnerAdapter = AppListSpinnerAdapter(appListSpinnerList).setIsFilterKey(true).setFilterColor("#EF5362").setBackgroundSelector(R.drawable.selector_custom_spinner_bg)
@@ -323,7 +315,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
 
     }
 
-    //提交前检查表单
     private fun checkForm(): Rule {
         val filed = when (binding!!.rgFiled.checkedRadioButtonId) {
             R.id.rb_content -> FILED_MSG_CONTENT
@@ -368,7 +359,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
         return Rule(0, ruleType, filed, check, value, 0, "", "", simSlot, STATUS_ON, Date(), listOf())
     }
 
-    //检查多重匹配规则是否正确
     private fun checkMultiMatch(ruleStr: String?): Int {
         if (TextUtils.isEmpty(ruleStr)) return 0
 
@@ -395,7 +385,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
         val etTitle = dialogTest.findViewById<EditText>(R.id.et_title)
         val tvContent = dialogTest.findViewById<TextView>(R.id.tv_content)
         val etContent = dialogTest.findViewById<EditText>(R.id.et_content)
-        //通话类型
         val tvCallType = dialogTest.findViewById<TextView>(R.id.tv_call_type)
         val spCallType = dialogTest.findViewById<MaterialSpinner>(R.id.sp_call_type)
         var callTypeTest = callType
@@ -445,7 +434,6 @@ class MsgFragment : BaseFragment<FragmentTasksConditionMsgBinding?>(), View.OnCl
                     throw Exception(getString(R.string.card_slot_does_not_match))
                 }
 
-                //获取卡槽信息
                 val simInfo = when (simSlot) {
                     0 -> "SIM1_" + SettingUtils.extraSim1
                     1 -> "SIM2_" + SettingUtils.extraSim2

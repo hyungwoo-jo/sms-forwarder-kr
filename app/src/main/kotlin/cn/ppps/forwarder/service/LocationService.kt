@@ -60,7 +60,6 @@ class LocationService : Service() {
 
         if (!SettingUtils.enableLocation) return
 
-        //注册广播接收器
         registerReceiver(locationStatusReceiver, IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION))
         startService()
     }
@@ -84,36 +83,30 @@ class LocationService : Service() {
 
         if (!SettingUtils.enableLocation) return
         stopService()
-        //在 Service 销毁时记得注销广播接收器
         unregisterReceiver(locationStatusReceiver)
     }
 
     private fun startService() {
         try {
-            //清空缓存
             HttpServerUtils.apiLocationCache = LocationInfo()
             TaskUtils.locationInfoOld = LocationInfo()
 
             if (SettingUtils.enableLocation && PermissionUtils.isGranted(android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                //设置定位监听
                 App.LocationClient.setOnLocationListener(object : OnLocationListener() {
                     override fun onLocationChanged(location: Location) {
-                        //位置信息
                         Log.d(TAG, "onLocationChanged(location = ${location})")
 
                         val locationInfoNew = LocationInfo(
                             location.longitude, location.latitude, "", App.DateFormat.format(Date(location.time)), location.provider.toString()
                         )
 
-                        //根据坐标经纬度获取位置地址信息（WGS-84坐标系）
                         locationInfoNew.address = ""
 
                         Log.d(TAG, "locationInfoNew = $locationInfoNew")
                         HttpServerUtils.apiLocationCache = locationInfoNew
                         TaskUtils.locationInfoNew = locationInfoNew
 
-                        //触发自动任务
                         val locationInfoOld = TaskUtils.locationInfoOld
                         if (locationInfoOld.longitude != locationInfoNew.longitude || locationInfoOld.latitude != locationInfoNew.latitude || locationInfoOld.address != locationInfoNew.address) {
                             Log.d(TAG, "locationInfoOld = $locationInfoOld")
@@ -129,10 +122,8 @@ class LocationService : Service() {
                     }
                 })
 
-                //设置异常监听
                 App.LocationClient.setOnExceptionListener(object : OnExceptionListener {
                     override fun onException(@LocationErrorCode errorCode: Int, e: Exception) {
-                        //定位出现异常 && 尝试重启定位
                         Log.w(TAG, "onException(errorCode = ${errorCode}, e = ${e})")
                         restartLocation()
                     }
@@ -153,12 +144,10 @@ class LocationService : Service() {
     }
 
     private fun stopService() {
-        //清空缓存
         HttpServerUtils.apiLocationCache = LocationInfo()
         TaskUtils.locationInfoOld = LocationInfo()
 
         isRunning = try {
-            //如果已经开始定位，则先停止定位
             if (SettingUtils.enableLocation && App.LocationClient.isStarted()) {
                 App.LocationClient.stopLocation()
             }
@@ -173,19 +162,16 @@ class LocationService : Service() {
     }
 
     private fun restartLocation() {
-        //如果已经开始定位，则先停止定位
         if (App.LocationClient.isStarted()) {
             App.LocationClient.stopLocation()
         }
         if (LocationUtils.isLocationEnabled(App.context) && LocationUtils.hasLocationCapability(App.context)) {
-            //可根据具体需求设置定位配置参数（这里只列出一些主要的参数）
-            val locationOption = App.LocationClient.getLocationOption().setAccuracy(SettingUtils.locationAccuracy)//设置位置精度：高精度
-                .setPowerRequirement(SettingUtils.locationPowerRequirement) //设置电量消耗：低电耗
-                .setMinTime(SettingUtils.locationMinInterval)//设置位置更新最小时间间隔（单位：毫秒）； 默认间隔：10000毫秒，最小间隔：1000毫秒
-                .setMinDistance(SettingUtils.locationMinDistance)//设置位置更新最小距离（单位：米）；默认距离：0米
-                .setOnceLocation(false)//设置是否只定位一次，默认为 false，当设置为 true 时，则只定位一次后，会自动停止定位
-                .setLastKnownLocation(false)//设置是否获取最后一次缓存的已知位置，默认为 true
-            //设置定位配置参数
+            val locationOption = App.LocationClient.getLocationOption().setAccuracy(SettingUtils.locationAccuracy)
+                .setPowerRequirement(SettingUtils.locationPowerRequirement)
+                .setMinTime(SettingUtils.locationMinInterval)
+                .setMinDistance(SettingUtils.locationMinDistance)
+                .setOnceLocation(false)
+                .setLastKnownLocation(false)
             App.LocationClient.setLocationOption(locationOption)
             App.LocationClient.startLocation()
         } else {
@@ -206,15 +192,12 @@ class LocationService : Service() {
     }
 
     private fun handleLocationStatusChanged() {
-        //处理状态变化
         if (LocationUtils.isLocationEnabled(App.context) && LocationUtils.hasLocationCapability(App.context)) {
-            //已启用
             Log.d(TAG, "handleLocationStatusChanged: 사용 중")
             if (SettingUtils.enableLocation && !App.LocationClient.isStarted()) {
                 App.LocationClient.startLocation()
             }
         } else {
-            //已停用
             Log.d(TAG, "handleLocationStatusChanged: 사용 중지")
             if (SettingUtils.enableLocation && App.LocationClient.isStarted()) {
                 App.LocationClient.stopLocation()

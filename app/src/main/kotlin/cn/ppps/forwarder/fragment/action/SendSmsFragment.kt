@@ -76,11 +76,9 @@ class SendSmsFragment : BaseFragment<FragmentTasksActionSendSmsBinding?>(), View
     }
 
     /**
-     * 初始化控件
      */
     @SuppressLint("SetTextI18n")
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object :
             CountDownButtonHelper.OnCountDownListener {
@@ -93,7 +91,6 @@ class SendSmsFragment : BaseFragment<FragmentTasksActionSendSmsBinding?>(), View
             }
         })
 
-        //卡槽信息
         val serverConfigStr = HttpServerUtils.serverConfig
         if (!TextUtils.isEmpty(serverConfigStr)) {
             val serverConfig: ConfigData =
@@ -143,21 +140,17 @@ class SendSmsFragment : BaseFragment<FragmentTasksActionSendSmsBinding?>(), View
                 R.id.btn_test -> {
                     mCountDownHelper?.start()
 
-                    //检查发送短信权限是否获取
                     XXPermissions.with(this)
                         .permission(PermissionLists.getSendSmsPermission())
                         .request(object : OnPermissionCallback {
                             override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                                 val allGranted = deniedList.isEmpty()
                                 if (!allGranted) {
-                                    // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                     val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                     if (doNotAskAgain) {
                                         XToastUtils.error(R.string.toast_denied_never)
-                                        // 如果是被永久拒绝就跳转到应用权限系统设置页面
                                         XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                     }
-                                    // 处理权限请求失败的逻辑
                                     XToastUtils.error(
                                         getString(R.string.no_sms_sending_permission),
                                         30000
@@ -165,7 +158,6 @@ class SendSmsFragment : BaseFragment<FragmentTasksActionSendSmsBinding?>(), View
                                     return
                                 }
 
-                                // 处理权限请求成功的逻辑
                                 mCountDownHelper?.start()
                                 try {
                                     val settingVo = checkSetting()
@@ -227,7 +219,6 @@ class SendSmsFragment : BaseFragment<FragmentTasksActionSendSmsBinding?>(), View
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): SmsSetting {
         phoneNumbers = binding!!.etPhoneNumbers.text.toString().trim()

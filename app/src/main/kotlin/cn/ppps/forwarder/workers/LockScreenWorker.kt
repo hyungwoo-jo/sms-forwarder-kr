@@ -32,7 +32,6 @@ class LockScreenWorker(context: Context, params: WorkerParameters) : CoroutineWo
             for (task in taskList) {
                 Log.d(TAG, "task = $task")
 
-                // 根据任务信息执行相应操作
                 val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                 if (conditionList.isEmpty()) {
                     Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -55,13 +54,11 @@ class LockScreenWorker(context: Context, params: WorkerParameters) : CoroutineWo
                     continue
                 }
 
-                //TODO：判断其他条件是否满足
                 if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                     Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                     continue
                 }
 
-                //TODO: 组装消息体 && 执行具体任务
                 val duration = when (action) {
                     Intent.ACTION_SCREEN_ON -> lockScreenSetting.timeAfterScreenOn * 60000L
                     Intent.ACTION_SCREEN_OFF -> lockScreenSetting.timeAfterScreenOff * 60000L
@@ -77,7 +74,7 @@ class LockScreenWorker(context: Context, params: WorkerParameters) : CoroutineWo
                     .putString(TaskWorker.MSG_INFO, Gson().toJson(msgInfo))
                     .build()
                 val actionRequest = OneTimeWorkRequestBuilder<ActionWorker>()
-                    .setInitialDelay(duration, TimeUnit.MILLISECONDS)  //TODO: 延迟时间不够精确
+                    .setInitialDelay(duration, TimeUnit.MILLISECONDS)
                     .setInputData(actionData).build()
                 WorkManager.getInstance().enqueue(actionRequest)
             }

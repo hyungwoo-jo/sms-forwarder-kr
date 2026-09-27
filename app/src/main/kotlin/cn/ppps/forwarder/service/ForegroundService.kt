@@ -94,47 +94,36 @@ class ForegroundService : Service() {
         })
     }
 
-    // 振动控制
     private lateinit var vibrationUtils: VibrationUtils
     private var isVibrating = false
 
-    // 闪光灯控制
     private lateinit var flashUtils: FlashUtils
     private var isFlash = false
 
-    // 音乐播放器
     private var alarmPlayer: MediaPlayer? = null
     private var alarmPlayTimes = 0
     private val alarmObserver = Observer<AlarmSetting> { alarm ->
         Log.d(TAG, "Received alarm: $alarm")
-        //停止振动
         if (vibrationUtils.isVibrating) {
             vibrationUtils.stopVibration()
         }
-        //停止闪光灯
         if (::flashUtils.isInitialized && flashUtils.isFlashing) {
             flashUtils.stopFlashing()
         }
-        //停止播放音乐
         alarmPlayer?.release()
         alarmPlayer = null
         if (alarm.action == "start") {
-            //播放音乐
             if (alarm.playTimes >= 0) {
-                //获取音量
                 val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
                 val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
                 val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
                 Log.d(TAG, "maxVolume=$maxVolume, currentVolume=$currentVolume")
-                //设置音量
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (maxVolume * alarm.volume / 100), 0)
-                //播放音乐
                 alarmPlayer = MediaPlayer().apply {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         val audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()
                         setAudioAttributes(audioAttributes)
                     } else {
-                        // 对于 Android 5.0 之前的版本，使用 setAudioStreamType
                         val audioStreamType = AudioManager.STREAM_ALARM
                         setAudioStreamType(audioStreamType)
                     }
@@ -151,7 +140,6 @@ class ForegroundService : Service() {
                             Log.d(TAG, "MediaPlayer prepared")
                             start()
                             alarmPlayTimes++
-                            //更新通知栏
                             updateNotification(alarm.description, R.drawable.auto_task_icon_alarm, true)
                         }
 
@@ -166,9 +154,7 @@ class ForegroundService : Service() {
                                 release()
                                 alarmPlayer = null
                                 alarmPlayTimes = 0
-                                //恢复音量
                                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
-                                //恢复通知栏
                                 updateNotification(SettingUtils.notifyContent)
                             }
                         }
@@ -186,12 +172,10 @@ class ForegroundService : Service() {
                     }
                 }
             }
-            //振动提醒
             if (alarm.repeatTimes >= 0) {
                 isVibrating = true
                 vibrationUtils.startVibration(alarm.vibrate, alarm.repeatTimes)
             }
-            //闪光灯提醒
             if (alarm.flashTimes >= 0 && ::flashUtils.isInitialized && flashUtils.isFlashSupported) {
                 isFlash = true
                 flashUtils.startFlashing(alarm.flash, alarm.flashTimes)
@@ -206,22 +190,17 @@ class ForegroundService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return
 
-        //创建通知渠道
         createNotificationChannel()
 
-        //初始化振动
         vibrationUtils = VibrationUtils(this)
 
-        //初始化闪光灯
         flashUtils = FlashUtils(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) return START_NOT_STICKY
 
         if (intent != null) {
@@ -250,7 +229,6 @@ class ForegroundService : Service() {
     }
 
     override fun onDestroy() {
-        //非纯客户端模式
         if (!SettingUtils.enablePureClientMode) stopForegroundService()
         if (::flashUtils.isInitialized) {
             flashUtils.release()
@@ -270,7 +248,6 @@ class ForegroundService : Service() {
         startForeground(FRONT_NOTIFY_ID, notification)
 
         try {
-            //开关通知监听服务
             if (SettingUtils.enableAppNotify && CommonUtils.isNotificationListenerServiceEnabled(this)) {
                 CommonUtils.toggleNotificationListenerService(this)
             }
@@ -285,17 +262,13 @@ class ForegroundService : Service() {
                 }
             }
 
-            //异步获取所有已安装 App 信息
             if (SettingUtils.enableLoadAppList) {
                 val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
                 WorkManager.getInstance(XUtil.getContext()).enqueue(request)
             }
 
-            //启动 Frpc
             if (App.FrpclibInited) {
-                //监听Frpc启动指令
                 LiveEventBus.get(INTENT_FRPC_APPLY_FILE, String::class.java).observeForever(frpcObserver)
-                //自启动的Frpc
                 GlobalScope.async(Dispatchers.IO) {
                     val frpcList = Core.frpc.getAutorun()
 
@@ -317,7 +290,6 @@ class ForegroundService : Service() {
                 }
             }
 
-            //播放警报
             LiveEventBus.get<AlarmSetting>(EVENT_ALARM_ACTION).observeForever(alarmObserver)
 
         } catch (e: Exception) {
@@ -334,11 +306,9 @@ class ForegroundService : Service() {
             isRunning = false
             alarmPlayer?.release()
             alarmPlayer = null
-            //停止振动
             if (vibrationUtils.isVibrating) {
                 vibrationUtils.stopVibration()
             }
-            //停止闪光灯
             if (::flashUtils.isInitialized && flashUtils.isFlashing) {
                 flashUtils.stopFlashing()
             }
@@ -370,14 +340,12 @@ class ForegroundService : Service() {
 
         val builder = NotificationCompat.Builder(this, FRONT_CHANNEL_ID).setContentTitle(getString(R.string.app_name)).setContentText(content).setSmallIcon(R.drawable.ic_forwarder).setContentIntent(pendingIntent).setWhen(System.currentTimeMillis())
 
-        // 设置大图标（可选）
         if (largeIconResId != null) {
             builder.setLargeIcon(BitmapFactory.decodeResource(resources, largeIconResId))
         } else {
             builder.setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_menu_frpc))
         }
 
-        // 添加停止按钮（可选）
         if (showStopButton) {
             val stopIntent = Intent(this, ForegroundService::class.java).apply {
                 action = ACTION_STOP_ALARM

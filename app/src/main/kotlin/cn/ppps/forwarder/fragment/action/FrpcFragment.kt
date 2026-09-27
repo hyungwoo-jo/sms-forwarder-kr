@@ -54,12 +54,10 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
     private var titleBar: TitleBar? = null
     private var mCountDownHelper: CountDownButtonHelper? = null
 
-    //所有Frpc下拉框
     private var frpcListAll = mutableListOf<Frpc>()
     private val frpcSpinnerList = mutableListOf<FrpcSpinnerItem>()
     private lateinit var frpcSpinnerAdapter: FrpcSpinnerAdapter<*>
 
-    //已选Frpc列表
     private var frpcUid = ""
     private var frpcListSelected = mutableListOf<Frpc>()
     private lateinit var frpcRecyclerView: RecyclerView
@@ -86,10 +84,8 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 2)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -98,7 +94,6 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
 
             override fun onFinished() {
                 binding!!.btnTest.text = getString(R.string.test)
-                //获取Frpc列表
                 getFrpcList()
             }
         })
@@ -110,7 +105,6 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
             Log.d(TAG, "initViews settingVo:$settingVo")
         }
 
-        //初始化Frpc下拉框
         initFrpc()
     }
 
@@ -172,10 +166,8 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
         }
     }
 
-    //初始化Frpc
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initFrpc() {
-        //初始化Frpc下拉框
         binding!!.spFrpc.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = frpcSpinnerAdapter.getItemSource(position) as FrpcSpinnerItem
@@ -199,12 +191,11 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
             }
         }
 
-        // 初始化已选Frpc列表 RecyclerView 和 Adapter
         frpcRecyclerView = binding!!.recyclerFrpcs
         frpcRecyclerAdapter = FrpcRecyclerAdapter(frpcListSelected, { position ->
             frpcListSelected.removeAt(position)
             frpcRecyclerAdapter.notifyItemRemoved(position)
-            frpcRecyclerAdapter.notifyItemRangeChanged(position, frpcListSelected.size) // 更新索引
+            frpcRecyclerAdapter.notifyItemRangeChanged(position, frpcListSelected.size)
         })
         frpcRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -227,11 +218,9 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
         frpcTouchHelper.attachToRecyclerView(frpcRecyclerView)
         frpcRecyclerAdapter.setTouchHelper(frpcTouchHelper)
 
-        //获取Frpc列表
         getFrpcList()
     }
 
-    //获取Frpc列表
     private fun getFrpcList() {
         Core.frpc.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Frpc>> {
             override fun onSubscribe(d: Disposable) {}
@@ -258,7 +247,6 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
                 binding!!.spFrpc.setAdapter(frpcSpinnerAdapter)
                 //frpcSpinnerAdapter.notifyDataSetChanged()
 
-                //更新frpcListSelected的状态与名称
                 frpcListSelected.forEach {
                     frpcListAll.forEach { frpc ->
                         if (it.uid == frpc.uid) {
@@ -273,7 +261,6 @@ class FrpcFragment : BaseFragment<FragmentTasksActionFrpcBinding?>(), View.OnCli
         })
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): FrpcSetting {
         val description = StringBuilder()

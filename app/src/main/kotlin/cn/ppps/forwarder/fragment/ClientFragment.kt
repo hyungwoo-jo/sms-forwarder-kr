@@ -86,7 +86,6 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
     override fun initViews() {
         appContext = requireActivity().application as App
 
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnServerTest, 3)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -103,7 +102,6 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
         widgetItemAdapter.setOnItemClickListener(this)
         binding!!.recyclerView.adapter = widgetItemAdapter
 
-        //取出历史记录
         val history = HttpServerUtils.serverHistory
         if (!TextUtils.isEmpty(history)) {
             serverHistory = Gson().fromJson(history, object : TypeToken<MutableMap<String, String>>() {}.type)
@@ -114,7 +112,6 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
 
     override fun initTitle(): TitleBar? {
         val titleBar = super.initTitle()!!.setImmersive(false)
-        //纯客户端模式
         if (SettingUtils.enablePureClientMode) {
             titleBar.setTitle(R.string.app_name).setSubTitle(getString(R.string.menu_client)).disableLeftView()
             titleBar.addAction(object : TitleBar.ImageAction(R.drawable.ic_logout) {
@@ -123,7 +120,7 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
                     XToastUtils.success(getString(R.string.exit_pure_client_mode))
                     SettingUtils.enablePureClientMode = false
                     try {
-                        Thread.sleep(500) //延迟500毫秒，避免退出时enablePureClientMode还没保存
+                        Thread.sleep(500)
                         XUtil.exitApp()
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
@@ -154,7 +151,6 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
             }
         })
 
-        //安全措施
         var safetyMeasuresId = R.id.rb_safety_measures_none
         when (HttpServerUtils.clientSafetyMeasures) {
             1 -> {
@@ -406,9 +402,7 @@ class ClientFragment : BaseFragment<FragmentClientBinding?>(), View.OnClickListe
                     if (resp.code == 200) {
                         serverConfig = resp.data!!
                         if (needToast) XToastUtils.success(getString(R.string.request_succeeded))
-                        //删除3.0.8之前保存的记录
                         serverHistory.remove(HttpServerUtils.serverAddress)
-                        //添加到历史记录
                         val key = "【${serverConfig?.extraDeviceMark}】${HttpServerUtils.serverAddress}"
                         if (TextUtils.isEmpty(HttpServerUtils.clientSignKey)) {
                             serverHistory[key] = "SMSFORWARDER##" + HttpServerUtils.clientSafetyMeasures.toString()

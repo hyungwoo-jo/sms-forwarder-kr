@@ -49,10 +49,8 @@ class WolSendFragment : BaseFragment<FragmentClientWolSendBinding?>(), View.OnCl
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //发送按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnSubmit, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object :
             CountDownButtonHelper.OnCountDownListener {
@@ -65,7 +63,6 @@ class WolSendFragment : BaseFragment<FragmentClientWolSendBinding?>(), View.OnCl
             }
         })
 
-        //取出历史记录
         val history = HttpServerUtils.wolHistory
         if (!TextUtils.isEmpty(history)) {
             wolHistory =
@@ -214,7 +211,6 @@ class WolSendFragment : BaseFragment<FragmentClientWolSendBinding?>(), View.OnCl
                             val resp: BaseResponse<String> = Gson().fromJson(json, object : TypeToken<BaseResponse<String>>() {}.type)
                             if (resp.code == 200) {
                                 XToastUtils.success(getString(R.string.request_succeeded))
-                                //添加到历史记录
                                 wolHistory[mac] = ip
                                 HttpServerUtils.wolHistory = Gson().toJson(wolHistory)
                             } else {

@@ -5,10 +5,10 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable
 
 data class NetworkSetting(
-    var description: String = "", //描述
-    var networkState: Int = 0, //网络状态：0-没有网络，1-移动网络，2-WiFi，3-以太网, 4-未知
-    var dataSimSlot: Int = 0, //数据卡槽：0-不限，1-卡1，2-卡2
-    var wifiSsid: String = "", //WiFi名称
+    var description: String = "",
+    var networkState: Int = 0,
+    var dataSimSlot: Int = 0,
+    var wifiSsid: String = "",
 ) : Serializable {
 
     constructor(networkStateCheckId: Int, dataSimSlotCheckId: Int, ssid: String) : this() {

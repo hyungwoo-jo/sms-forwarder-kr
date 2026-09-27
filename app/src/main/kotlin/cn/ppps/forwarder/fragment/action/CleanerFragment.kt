@@ -60,10 +60,8 @@ class CleanerFragment : BaseFragment<FragmentTasksActionCleanerBinding?>(), View
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -137,7 +135,6 @@ class CleanerFragment : BaseFragment<FragmentTasksActionCleanerBinding?>(), View
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): CleanerSetting {
         val days = binding!!.xsbDays.selectedNumber

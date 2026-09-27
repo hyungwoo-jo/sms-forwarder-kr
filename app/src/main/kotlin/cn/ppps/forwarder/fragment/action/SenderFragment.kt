@@ -54,12 +54,10 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
     private var titleBar: TitleBar? = null
     private var mCountDownHelper: CountDownButtonHelper? = null
 
-    //所有发送通道下拉框
     private var senderListAll = mutableListOf<Sender>()
     private val senderSpinnerList = mutableListOf<SenderSpinnerItem>()
     private lateinit var senderSpinnerAdapter: SenderSpinnerAdapter<*>
 
-    //已选发送通道列表
     private var senderId = 0L
     private var senderListSelected = mutableListOf<Sender>()
     private lateinit var senderRecyclerView: RecyclerView
@@ -86,11 +84,9 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
     }
 
     /**
-     * 初始化控件
      */
     @SuppressLint("NotifyDataSetChanged")
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -99,7 +95,6 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
 
             override fun onFinished() {
                 binding!!.btnTest.text = getString(R.string.test)
-                //获取发送通道列表
                 getSenderList()
             }
         })
@@ -116,7 +111,6 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
             Log.d(TAG, "initViews settingVo:$settingVo")
         }
 
-        //初始化发送通道下拉框
         initSender()
     }
 
@@ -178,10 +172,8 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
         }
     }
 
-    //初始化发送通道
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initSender() {
-        //初始化发送通道下拉框
         binding!!.spSender.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = senderSpinnerAdapter.getItemSource(position) as SenderSpinnerItem
@@ -205,12 +197,11 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
             }
         }
 
-        // 初始化已选发送通道列表 RecyclerView 和 Adapter
         senderRecyclerView = binding!!.recyclerSenders
         senderRecyclerAdapter = SenderRecyclerAdapter(senderListSelected, { position ->
             senderListSelected.removeAt(position)
             senderRecyclerAdapter.notifyItemRemoved(position)
-            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size) // 更新索引
+            senderRecyclerAdapter.notifyItemRangeChanged(position, senderListSelected.size)
         })
         senderRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -233,11 +224,9 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
         senderTouchHelper.attachToRecyclerView(senderRecyclerView)
         senderRecyclerAdapter.setTouchHelper(senderTouchHelper)
 
-        //获取发送通道列表
         getSenderList()
     }
 
-    //获取发送通道列表
     private fun getSenderList() {
         Core.sender.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Sender>> {
             override fun onSubscribe(d: Disposable) {}
@@ -264,7 +253,6 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
                 binding!!.spSender.setAdapter(senderSpinnerAdapter)
                 //senderSpinnerAdapter.notifyDataSetChanged()
 
-                //更新senderListSelected的状态与名称
                 senderListSelected.forEach {
                     senderListAll.forEach { sender ->
                         if (it.id == sender.id) {
@@ -279,7 +267,6 @@ class SenderFragment : BaseFragment<FragmentTasksActionSenderBinding?>(), View.O
         })
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): SenderSetting {
         if (senderListSelected.isEmpty() || senderId == 0L) {

@@ -61,7 +61,6 @@ class TasksFragment : BaseFragment<FragmentTasksBinding?>(), TaskPagingAdapter.O
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         val virtualLayoutManager = VirtualLayoutManager(requireContext())
@@ -72,7 +71,6 @@ class TasksFragment : BaseFragment<FragmentTasksBinding?>(), TaskPagingAdapter.O
 
         binding!!.tabBar.setTabTitles(getStringArray(R.array.task_type_option))
         binding!!.tabBar.setOnTabClickListener { _, position ->
-            //XToastUtils.toast("点击了$title--$position")
             currentType = when (position) {
                 1 -> "fixed"
                 else -> "mine"
@@ -86,7 +84,6 @@ class TasksFragment : BaseFragment<FragmentTasksBinding?>(), TaskPagingAdapter.O
     override fun initListeners() {
         binding!!.recyclerView.adapter = adapter
 
-        //下拉刷新
         binding!!.refreshLayout.setOnRefreshListener { refreshLayout: RefreshLayout ->
             refreshLayout.layout.postDelayed({
                 //adapter!!.refresh()

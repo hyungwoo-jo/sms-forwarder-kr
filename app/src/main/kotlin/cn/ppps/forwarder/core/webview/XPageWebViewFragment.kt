@@ -56,7 +56,6 @@ import com.xuexiang.xutil.common.logger.Logger
 import com.xuexiang.xutil.net.JsonUtil
 
 /**
- * 使用XPageFragment
  *
  * @author xuexiang
  * @since 2019-05-26 18:15
@@ -79,10 +78,9 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        mAgentWeb = AgentWeb.with(this) //传入AgentWeb的父控件。
+        mAgentWeb = AgentWeb.with(this)
             .setAgentWebParent(
                 (rootView as LinearLayout),
                 -1,
@@ -90,32 +88,29 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-            ) //设置进度条颜色与高度，-1为默认值，高度为2，单位为dp。
-            .useDefaultIndicator(-1, 3) //设置 IAgentWebSettings。
-            .setAgentWebWebSettings(settings) //WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
+            )
+            .useDefaultIndicator(-1, 3)
+            .setAgentWebWebSettings(settings)
             .setWebViewClient(mWebViewClient) //WebChromeClient
-            .setWebChromeClient(mWebChromeClient) //设置WebChromeClient中间件，支持多个WebChromeClient，AgentWeb 3.0.0 加入。
-            .useMiddlewareWebChrome(middlewareWebChrome) //设置WebViewClient中间件，支持多个WebViewClient， AgentWeb 3.0.0 加入。
-            .useMiddlewareWebClient(middlewareWebClient) //权限拦截 2.0.0 加入。
-            .setPermissionInterceptor(mPermissionInterceptor) //严格模式 Android 4.2.2 以下会放弃注入对象 ，使用AgentWebView没影响。
-            .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK) //自定义UI  AgentWeb3.0.0 加入。
-            .setAgentWebUIController(UIController(requireActivity())) //参数1是错误显示的布局，参数2点击刷新控件ID -1表示点击整个布局都刷新， AgentWeb 3.0.0 加入。
+            .setWebChromeClient(mWebChromeClient)
+            .useMiddlewareWebChrome(middlewareWebChrome)
+            .useMiddlewareWebClient(middlewareWebClient)
+            .setPermissionInterceptor(mPermissionInterceptor)
+            .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
+            .setAgentWebUIController(UIController(requireActivity()))
             .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
-            .setWebLayout(webLayout) //打开其他页面时，弹窗质询用户前往其他应用 AgentWeb 3.0.0 加入。
-            .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DISALLOW) //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
-            .interceptUnkownUrl() //创建AgentWeb。
+            .setWebLayout(webLayout)
+            .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DISALLOW)
+            .interceptUnkownUrl()
             .createAgentWeb()
-            .ready() //设置 WebSettings。
-            //WebView载入该url地址的页面并显示。
+            .ready()
             .go(url)
         if (App.isDebug) {
             AgentWebConfig.debug()
         }
         pageNavigator(View.GONE)
-        // 得到 AgentWeb 最底层的控件
         addBackgroundChild(mAgentWeb!!.webCreator.webParentLayout)
 
-        // AgentWeb 没有把WebView的功能全面覆盖 ，所以某些设置 AgentWeb 没有提供，请从WebView方面入手设置。
         mAgentWeb!!.webCreator.webView.overScrollMode = WebView.OVER_SCROLL_NEVER
     }
 
@@ -142,7 +137,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     private fun pageNavigator(tag: Int) {
-        //返回的导航按钮
         binding!!.includeTitle.ivBack.visibility = tag
         binding!!.includeTitle.viewLine.visibility = tag
     }
@@ -151,7 +145,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     override fun onClick(view: View) {
         val id = view.id
         if (id == R.id.iv_back) {
-            // true表示AgentWeb处理了该事件
             if (!mAgentWeb!!.back()) {
                 popToBack()
             }
@@ -161,21 +154,14 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
             showPoPup(view)
         }
     }
-    //=====================下载============================//
     /**
-     * 更新于 AgentWeb 4.0.0，下载监听
      */
     private var mDownloadListenerAdapter: DownloadListenerAdapter =
         object : DownloadListenerAdapter() {
             /**
              *
-             * @param url                下载链接
              * @param userAgent          UserAgent
              * @param contentDisposition ContentDisposition
-             * @param mimeType           资源的媒体类型
-             * @param contentLength      文件长度
-             * @param extra              下载配置 ， 用户可以通过 Extra 修改下载icon ， 关闭进度条 ， 是否强制下载。
-             * @return true 表示用户处理了该下载事件 ， false 交给 AgentWeb 下载
              */
             override fun onStart(
                 url: String,
@@ -186,24 +172,21 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
                 extra: Extra,
             ): Boolean {
                 Logger.i("onStart:$url")
-                // 是否开启断点续传
-                extra.setOpenBreakPointDownload(true) //下载通知的icon
-                    .setIcon(R.drawable.ic_file_download_black_24dp) // 连接的超时时间
-                    .setConnectTimeOut(6000) // 以8KB位单位，默认60s ，如果60s内无法从网络流中读满8KB数据，则抛出异常
-                    .setBlockMaxTime(10 * 60 * 1000) // 下载的超时时间
-                    .setDownloadTimeOut(Long.MAX_VALUE) // 串行下载更节省资源哦
-                    .setParallelDownload(false) // false 关闭进度通知
-                    .setEnableIndicator(true) // 自定义请求头
-                    .addHeader("Cookie", "xx") // 下载完成自动打开
+                extra.setOpenBreakPointDownload(true)
+                    .setIcon(R.drawable.ic_file_download_black_24dp)
+                    .setConnectTimeOut(6000)
+                    .setBlockMaxTime(10 * 60 * 1000)
+                    .setDownloadTimeOut(Long.MAX_VALUE)
+                    .setParallelDownload(false)
+                    .setEnableIndicator(true)
+                    .addHeader("Cookie", "xx")
                     .setAutoOpen(true).isForceDownload = true
                 return false
             }
 
             /**
              *
-             * 不需要暂停或者停止下载该方法可以不必实现
              * @param url
-             * @param downloadingService  用户可以通过 DownloadingService#shutdownNow 终止下载
              */
             override fun onBindService(url: String, downloadingService: DownloadingService) {
                 super.onBindService(url, downloadingService)
@@ -212,7 +195,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
             }
 
             /**
-             * 回调onUnbindService方法，让用户释放掉 DownloadingService。
              * @param url
              * @param downloadingService
              */
@@ -224,11 +206,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
 
             /**
              *
-             * @param url  下载链接
-             * @param loaded  已经下载的长度
-             * @param length    文件的总大小
-             * @param usedTime   耗时 ，单位ms
-             * 注意该方法回调在子线程 ，线程名 AsyncTask #XX 或者 AgentWeb # XX
              */
             override fun onProgress(url: String, loaded: Long, length: Long, usedTime: Long) {
                 val mProgress = (loaded / length.toFloat() * 100).toInt()
@@ -238,30 +215,18 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
 
             /**
              *
-             * @param path 文件的绝对路径
-             * @param url  下载地址
-             * @param throwable    如果异常，返回给用户异常
-             * @return true 表示用户处理了下载完成后续的事件 ，false 默认交给AgentWeb 处理
              */
             override fun onResult(path: String, url: String, throwable: Throwable): Boolean {
-                //下载成功
                 //if (null == throwable) {
                 //do you work
-                //} else { //下载失败
                 //}
-                // true  不会发出下载完成的通知 , 或者打开文件
                 return false
             }
         }
     /**
-     * AgentWeb 4.0.0 内部删除了 DownloadListener 监听 ，以及相关API ，将 Download 部分完全抽离出来独立一个库，
-     * 如果你需要使用 AgentWeb Download 部分 ， 请依赖上 compile 'com.just.agentweb:download:4.0.0 ，
-     * 如果你需要监听下载结果，请自定义 AgentWebSetting ， New 出 DefaultDownloadImpl，传入DownloadListenerAdapter
-     * 实现进度或者结果监听，例如下面这个例子，如果你不需要监听进度，或者下载结果，下面 setDownloader 的例子可以忽略。
      * @return WebListenerManager
      */
     /**
-     * 下载服务设置
      *
      * @return IAgentWebSettings
      */
@@ -273,10 +238,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
             }
 
             /**
-             * AgentWeb 4.0.0 内部删除了 DownloadListener 监听 ，以及相关API ，将 Download 部分完全抽离出来独立一个库，
-             * 如果你需要使用 AgentWeb Download 部分 ， 请依赖上 compile 'com.just.agentweb:download:4.0.0 ，
-             * 如果你需要监听下载结果，请自定义 AgentWebSetting ， New 出 DefaultDownloadImpl，传入DownloadListenerAdapter
-             * 实现进度或者结果监听，例如下面这个例子，如果你不需要监听进度，或者下载结果，下面 setDownloader 的例子可以忽略。
              * @return WebListenerManager
              */
             override fun setDownloader(
@@ -296,9 +257,7 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
                 )
             }
         }
-    //===================WebChromeClient 和 WebViewClient===========================//
     /**
-     * 页面空白，请检查scheme是否加上， scheme://host:port/path?query&query 。
      *
      * @return mUrl
      */
@@ -316,12 +275,10 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         }
 
     /**
-     * 和浏览器相关，包括和JS的交互
      */
     private var mWebChromeClient: WebChromeClient = object : WebChromeClient() {
         override fun onProgressChanged(view: WebView, newProgress: Int) {
             super.onProgressChanged(view, newProgress)
-            //网页加载进度
         }
 
         override fun onReceivedTitle(view: WebView, title: String) {
@@ -337,7 +294,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     /**
-     * 和网页url加载相关，统计加载时间
      */
     @Suppress("DEPRECATION")
     private var mWebViewClient: WebViewClient = object : WebViewClient() {
@@ -363,9 +319,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         }
 
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            //intent:// scheme的处理 如果返回false ， 则交给 DefaultWebClient 处理 ， 默认会打开该Activity  ， 如果Activity不存在则跳到应用市场上去.  true 表示拦截
-            //例如优酷视频播放 ，intent://play?...package=com.youku.phone;end;
-            //优酷想唤起自己应用播放该视频 ， 下面拦截地址返回 true  则会在应用内 H5 播放 ，禁止优酷唤起播放该视频， 如果返回 false ， DefaultWebClient  会根据intent 协议处理 该地址 ， 首先匹配该应用存不存在 ，如果存在 ， 唤起该应用播放 ， 如果不存在 ， 则跳到应用市场下载该应用 .
             return url.startsWith("intent://") && url.contains("com.youku.phone")
         }
 
@@ -383,7 +336,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
             if (mTimer[url] != null) {
                 val overTime = System.currentTimeMillis()
                 val startTime = mTimer[url]
-                //统计页面的使用时长
                 Logger.i(" page mUrl:" + url + "  used time:" + (overTime - startTime!!))
             }
         }
@@ -405,11 +357,8 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
             super.onReceivedError(view, errorCode, description, failingUrl)
         }
     }
-    //=====================菜单========================//
     /**
-     * 显示更多菜单
      *
-     * @param view 菜单依附在该View下面
      */
     private fun showPoPup(view: View) {
         if (mPopupMenu == null) {
@@ -421,13 +370,12 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     /**
-     * 菜单事件
      */
     private val mOnMenuItemClickListener = PopupMenu.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.refresh -> {
                 if (mAgentWeb != null) {
-                    mAgentWeb!!.urlLoader.reload() // 刷新
+                    mAgentWeb!!.urlLoader.reload()
                 }
                 return@OnMenuItemClickListener true
             }
@@ -458,9 +406,7 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     /**
-     * 打开浏览器
      *
-     * @param targetUrl 外部浏览器打开的地址
      */
     private fun openBrowser(targetUrl: String) {
         if (TextUtils.isEmpty(targetUrl) || targetUrl.startsWith("file://")) {
@@ -475,21 +421,17 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
     }
 
     /**
-     * 分享网页链接
      *
-     * @param url 网页链接
      */
     private fun shareWebUrl(url: String) {
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
         shareIntent.putExtra(Intent.EXTRA_TEXT, url)
         shareIntent.type = "text/plain"
-        //设置分享列表的标题，并且每次都显示分享列表
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_to)))
     }
 
     /**
-     * 复制字符串
      *
      * @param context
      * @param text
@@ -500,17 +442,16 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         manager.setPrimaryClip(ClipData.newPlainText(null, text))
     }
 
-    //===================生命周期管理===========================//
     override fun onResume() {
         if (mAgentWeb != null) {
-            mAgentWeb!!.webLifeCycle.onResume() //恢复
+            mAgentWeb!!.webLifeCycle.onResume()
         }
         super.onResume()
     }
 
     override fun onPause() {
         if (mAgentWeb != null) {
-            mAgentWeb!!.webLifeCycle.onPause() //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
+            mAgentWeb!!.webLifeCycle.onPause()
         }
         super.onPause()
     }
@@ -525,23 +466,15 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         }
         super.onDestroyView()
     }
-    //===================中间键===========================//// 拦截 url，不执行 DefaultWebClient#shouldOverrideUrlLoading
-    // 执行 DefaultWebClient#shouldOverrideUrlLoading
     // do you work
     /**
-     * MiddlewareWebClientBase 是 AgentWeb 3.0.0 提供一个强大的功能，
-     * 如果用户需要使用 AgentWeb 提供的功能， 不想重写 WebClientView方
-     * 法覆盖AgentWeb提供的功能，那么 MiddlewareWebClientBase 是一个
-     * 不错的选择 。
      */
     private val middlewareWebClient: MiddlewareWebClientBase
         get() = object : MiddlewareWebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                // 拦截 url，不执行 DefaultWebClient#shouldOverrideUrlLoading
                 if (url.startsWith("agentweb")) {
                     return true
                 }
-                // 执行 DefaultWebClient#shouldOverrideUrlLoading
                 return super.shouldOverrideUrlLoading(view, url)
                 // do you work
             }
@@ -558,23 +491,18 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         get() = object : MiddlewareChromeClient() {}
 
     /**
-     * 权限申请拦截器
      */
     private var mPermissionInterceptor = PermissionInterceptor { url, permissions, action ->
 
         /**
-         * PermissionInterceptor 能达到 url1 允许授权， url2 拒绝授权的效果。
          * @param url
          * @param permissions
          * @param action
-         * @return true 该Url对应页面请求权限进行拦截 ，false 表示不拦截。
          */
         /**
-         * PermissionInterceptor 能达到 url1 允许授权， url2 拒绝授权的效果。
          * @param url
          * @param permissions
          * @param action
-         * @return true 该Url对应页面请求权限进行拦截 ，false 表示不拦截。
          */
         Logger.i("mUrl:" + url + "  permission:" + JsonUtil.toJson(permissions) + " action:" + action)
         false
@@ -582,7 +510,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
 
     companion object {
         /**
-         * 打开网页
          *
          * @param xPageActivity
          * @param url
@@ -595,7 +522,6 @@ class XPageWebViewFragment : BaseFragment<FragmentAgentwebBinding?>(), View.OnCl
         }
 
         /**
-         * 打开网页
          *
          * @param fragment
          * @param url

@@ -23,7 +23,7 @@ class FrpcUtils private constructor() {
 
         fun isServiceRunning(serviceName: String, context: Context): Boolean {
             val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-            val runningServices = am.getRunningServices(Int.MAX_VALUE) //获取运行的服务,参数表示最多返回的数量
+            val runningServices = am.getRunningServices(Int.MAX_VALUE)
             for (runningServiceInfo in runningServices) {
                 val className = runningServiceInfo.service.className
                 if (className == serviceName) {

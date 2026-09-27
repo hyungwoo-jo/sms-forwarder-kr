@@ -74,14 +74,12 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
     private var titleBar: TitleBar? = null
     private val viewModel by viewModels<SenderViewModel> { BaseViewModelFactory(context) }
     private var mCountDownHelper: CountDownButtonHelper? = null
-    private var mailType: String = getString(R.string.other_mail_type) //邮箱类型
+    private var mailType: String = getString(R.string.other_mail_type)
     private var recipientItemMap: MutableMap<Int, LinearLayout> = mutableMapOf()
     private val downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path
 
-    //加密协议: S/MIME、OpenPGP、OpenKeychain、Plain（不传证书）
     private var encryptionProtocol: String = "Plain"
 
-    //OpenKeychain签名密钥（0=只加密不签名）
     private var openKeychainSignKeyId: Long = 0L
     private var openKeychainSignKeyDesc: String = ""
     private var openKeychainHelper: OpenKeychainHelper? = null
@@ -115,10 +113,8 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -184,26 +180,21 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                 }
             }
 
-            //遍历 layout_recipients 子元素，设置 layout_recipient_keystore 可见性
-            //Plain 无需证书；OpenKeychain 公钥由其按邮箱自动匹配，也无需证书
             for (recipientItem in recipientItemMap.values) {
                 val layoutRecipientKeystore = recipientItem.findViewById<LinearLayout>(R.id.layout_recipient_keystore)
                 layoutRecipientKeystore.visibility = if (encryptionProtocol == "Plain" || encryptionProtocol == "OpenKeychain") View.GONE else View.VISIBLE
             }
         }
 
-        //创建标签按钮
         CommonUtils.createTagButtons(requireContext(), binding!!.glTitleTemplate, binding!!.etTitleTemplate)
         CommonUtils.createTagButtons(requireContext(), binding!!.glNickname, binding!!.etNickname)
 
-        //新增
         if (senderId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_sender))
             binding!!.btnDel.setText(R.string.discard)
             return
         }
 
-        //编辑
         binding!!.btnDel.setText(R.string.del)
         Core.sender.get(senderId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Sender> {
             override fun onSubscribe(d: Disposable) {}
@@ -227,8 +218,7 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                 if (settingVo != null) {
                     if (!TextUtils.isEmpty(settingVo.mailType)) {
                         mailType = settingVo.mailType
-                        //TODO: 替换mailType为当前语言，避免切换语言后失效，历史包袱怎么替换比较优雅？
-                        if (mailType == "other" || mailType == "其他邮箱" || mailType == "其他郵箱") {
+                        if (mailType == "other" || mailType == "\\u5176\\u4ED6\\u90AE\\u7BB1" || mailType == "\\u5176\\u4ED6\\u90F5\\u7BB1") {
                             mailType = getString(R.string.other_mail_type)
                         }
                         binding!!.spMailType.setSelectedItem(mailType)
@@ -252,7 +242,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                             addRecipientItem(email, cert)
                         }
                     } else {
-                        //兼容旧版本
                         val emails = settingVo.toEmail.split(",")
                         if (emails.isNotEmpty()) {
                             for (email in emails.toTypedArray()) {
@@ -377,7 +366,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                     when {
                         cert.first.isNotEmpty() && cert.second.isNotEmpty() -> {
                             try {
-                                // 判断是否有效的PKCS12私钥证书
                                 val fileInputStream = if (cert.first.startsWith("/")) {
                                     FileInputStream(cert.first)
                                 } else {
@@ -397,7 +385,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
 
                         cert.first.isNotEmpty() && cert.second.isEmpty() -> {
                             try {
-                                // 判断是否有效的X.509公钥证书
                                 val fileInputStream = if (cert.first.startsWith("/")) {
                                     FileInputStream(cert.first)
                                 } else {
@@ -419,7 +406,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                     when {
                         cert.first.isNotEmpty() && cert.second.isNotEmpty() -> {
                             try {
-                                //从私钥证书文件提取公钥
                                 val recipientPrivateKeyStream = if (cert.first.startsWith("/")) {
                                     FileInputStream(cert.first)
                                 } else {
@@ -438,7 +424,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
 
                         cert.first.isNotEmpty() && cert.second.isEmpty() -> {
                             try {
-                                //从证书文件提取公钥
                                 val recipientPublicKeyStream = if (cert.first.startsWith("/")) {
                                     FileInputStream(cert.first)
                                 } else {
@@ -483,7 +468,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
             when (encryptionProtocol) {
                 "S/MIME" -> {
                     try {
-                        // 判断是否有效的PKCS12私钥证书
                         val keyStore = KeyStore.getInstance("PKCS12")
                         keyStore.load(senderPrivateKeyStream, password.toCharArray())
                         val alias = keyStore.aliases().nextElement()
@@ -512,14 +496,10 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
         return EmailSetting(mailType, fromEmail, pwd, nickname, host, port, ssl, startTls, title, recipients, "", keystore, password, encryptionProtocol, fromEmailAlias, openKeychainSignKeyId, openKeychainSignKeyDesc)
     }
 
-    //recipient序号
     private var recipientItemId = 0
 
     /**
-     * 动态增删recipient
      *
-     * @param email            recipient的email
-     * @param cert             recipient的cert，为空则不设置
      */
     private fun addRecipientItem(email: String = "", cert: Any? = null) {
         val itemAddRecipient = View.inflate(requireContext(), R.layout.item_add_recipient, null) as LinearLayout
@@ -563,9 +543,7 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
     }
 
     /**
-     * 从EditText控件中获取全部recipients
      *
-     * @return 全部recipients
      */
     private fun getRecipientsFromRecipientItemMap(): MutableMap<String, Pair<String, String>> {
         val recipients: MutableMap<String, Pair<String, String>> = mutableMapOf()
@@ -582,7 +560,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
         return recipients
     }
 
-    //选择证书文件
     private fun pickCert(etKeyStore: EditText) {
         XXPermissions.with(this)
             .permission(PermissionLists.getManageExternalStoragePermission())
@@ -590,19 +567,15 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
-                            // 如果是被永久拒绝就跳转到应用权限系统设置页面
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         return
                     }
 
-                    // 处理权限请求成功的逻辑
                     val fileList = findSupportedFiles(downloadPath)
                     if (fileList.isEmpty()) {
                         XToastUtils.error(String.format(getString(R.string.download_certificate_first), downloadPath))
@@ -652,7 +625,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
         return Base64.encode(pfxBytes)
     }
 
-    //刷新OpenKeychain签名密钥显示
     private fun updateOpenKeychainSignKeyText() {
         binding?.tvOpenkeychainSignKey?.text = if (openKeychainSignKeyId == 0L) {
             getString(R.string.openkeychain_sign_key_none)
@@ -662,9 +634,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
     }
 
     /**
-     * 选择OpenKeychain签名密钥：
-     * 首次调用返回 USER_INTERACTION_REQUIRED + PendingIntent（OpenKeychain的密钥选择界面），
-     * 用户选择后经 onActivityResult 携带结果Intent重新执行，返回 EXTRA_SIGN_KEY_ID
      */
     private fun pickOpenKeychainSignKey(data: Intent = Intent().apply { action = OpenPgpApi.ACTION_GET_SIGN_KEY_ID }) {
         if (!OpenKeychainHelper.isProviderInstalled(requireContext())) {
@@ -678,7 +647,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
                 when (result.getIntExtra(OpenPgpApi.RESULT_CODE, OpenPgpApi.RESULT_CODE_ERROR)) {
                     OpenPgpApi.RESULT_CODE_SUCCESS -> {
                         val signKeyId = result.getLongExtra(OpenPgpApi.EXTRA_SIGN_KEY_ID, 0L)
-                        //以十六进制KeyId作为描述（openpgp-api 10.0 不返回主用户ID）
                         val keyDesc = "0x" + java.lang.Long.toHexString(signKeyId).uppercase()
                         requireActivity().runOnUiThread {
                             openKeychainSignKeyId = signKeyId
@@ -722,7 +690,6 @@ class EmailFragment : BaseFragment<FragmentSendersEmailBinding?>(), View.OnClick
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_OPENKEYCHAIN_SIGN_KEY && resultCode == Activity.RESULT_OK) {
-            //用户在OpenKeychain完成选择/授权后，携带结果Intent重新执行（需补上action）
             val retryData = (data ?: Intent()).apply { action = OpenPgpApi.ACTION_GET_SIGN_KEY_ID }
             pickOpenKeychainSignKey(retryData)
         }

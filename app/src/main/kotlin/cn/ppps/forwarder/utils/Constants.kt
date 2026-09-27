@@ -21,7 +21,6 @@ object TaskWorker {
     const val ACTION = "action"
 }
 
-//服务相关
 const val ACTION_START = "START"
 const val ACTION_STOP = "STOP"
 const val ACTION_RESTART = "RESTART"
@@ -29,15 +28,12 @@ const val ACTION_STOP_ALARM = "STOP_ALARM"
 const val ACTION_UPDATE_NOTIFICATION = "UPDATE_NOTIFICATION"
 const val EXTRA_UPDATE_NOTIFICATION = "EXTRA_UPDATE_NOTIFICATION"
 
-//初始化相关
 const val IS_AGREE_PRIVACY_KEY = "is_agree_privacy_key"
 
-//数据库
 const val DATABASE_NAME = "sms_forwarder.db"
 val PACKAGE_NAME: String
     get() = BuildConfig.APPLICATION_ID
 
-//通用设置
 const val SP_ENABLE_SMS = "enable_sms"
 
 const val SP_ENABLE_PHONE = "enable_phone"
@@ -107,7 +103,6 @@ const val CACTUS_LAST_TIMER = "cactus_last_timer"
 const val CACTUS_DATE = "cactus_date"
 const val CACTUS_END_DATE = "cactus_end_date"
 
-//规则相关
 const val STATUS_ON = 1
 const val STATUS_OFF = 0
 const val FILED_TRANSPOND_ALL = "transpond_all"
@@ -129,13 +124,11 @@ const val CHECK_SIM_SLOT_ALL = "ALL"
 const val CHECK_SIM_SLOT_1 = "SIM1"
 const val CHECK_SIM_SLOT_2 = "SIM2"
 
-//发送通道执行逻辑：ALL=全部执行, UntilFail=失败即终止, UntilSuccess=成功即终止
 const val SENDER_LOGIC_ALL = "ALL"
 const val SENDER_LOGIC_UNTIL_FAIL = "UntilFail"
 const val SENDER_LOGIC_UNTIL_SUCCESS = "UntilSuccess"
 const val SENDER_LOGIC_RETRY = "Retry"
 
-//发送通道
 const val TYPE_DINGTALK_GROUP_ROBOT = 0
 const val TYPE_EMAIL = 1
 const val TYPE_BARK = 2
@@ -153,12 +146,10 @@ const val TYPE_FEISHU_APP = 13
 const val TYPE_URL_SCHEME = 14
 const val TYPE_SOCKET = 15
 
-//前台服务
 const val FRONT_NOTIFY_ID = 0x1010
 const val FRONT_CHANNEL_ID = "cn.ppps.forwarder"
 const val FRONT_CHANNEL_NAME = "SmsForwarder Foreground Service"
 
-//Frp内网穿透
 const val FRPC_LIB_VERSION = "0.57.0"
 const val EVENT_FRPC_UPDATE_CONFIG = "EVENT_FRPC_UPDATE_CONFIG"
 const val EVENT_FRPC_DELETE_CONFIG = "EVENT_FRPC_DELETE_CONFIG"
@@ -167,10 +158,8 @@ const val EVENT_FRPC_RUNNING_SUCCESS = "EVENT_FRPC_RUNNING_SUCCESS"
 const val INTENT_FRPC_EDIT_FILE = "INTENT_FRPC_EDIT_FILE"
 const val INTENT_FRPC_APPLY_FILE = "INTENT_FRPC_APPLY_FILE"
 
-//声音警报
 const val EVENT_ALARM_ACTION = "EVENT_ALARM_ACTION"
 
-//吐司监听
 const val EVENT_TOAST_SUCCESS = "key_toast_success"
 const val EVENT_TOAST_ERROR = "key_toast_error"
 const val EVENT_TOAST_INFO = "key_toast_info"
@@ -186,7 +175,6 @@ const val KEY_RULE_TYPE = "key_rule_type"
 const val KEY_RULE_CLONE = "key_rule_clone"
 const val KEY_DEFAULT_SELECTION = "key_default_selection"
 
-//转发规则测试弹窗填写内容缓存（key需拼接ruleType后缀区分）
 const val SP_RULE_TEST_SIM_SLOT = "rule_test_sim_slot_"
 const val SP_RULE_TEST_FROM = "rule_test_from_"
 const val SP_RULE_TEST_TITLE = "rule_test_title_"
@@ -202,7 +190,6 @@ const val EVENT_LOAD_APP_LIST = "EVENT_LOAD_APP_LIST"
 const val EVENT_KEY_SIM_SLOT = "EVENT_KEY_SIM_SLOT"
 const val EVENT_KEY_PHONE_NUMBERS = "EVENT_KEY_PHONE_NUMBERS"
 
-//HttpServer相关
 const val HTTP_SERVER_PORT = 5000
 const val HTTP_SERVER_TIME_OUT = 10
 const val HTTP_SUCCESS_CODE: Int = 200
@@ -234,8 +221,7 @@ const val SP_CLIENT_SAFETY_MEASURES = "client_safety_measures"
 const val SP_CLIENT_SIGN_KEY = "client_sign_key"
 
 
-//自动任务
-const val MAX_SETTING_NUM = 5 //最大条件/动作设置条数
+const val MAX_SETTING_NUM = 5
 const val KEY_TEST_CONDITION = "key_test_condition"
 const val KEY_EVENT_DATA_CONDITION = "event_data_condition"
 const val KEY_EVENT_PARAMS_CONDITION = "event_params_condition"
@@ -248,7 +234,6 @@ const val KEY_BACK_CODE_ACTION = 2000
 const val KEY_BACK_DATA_ACTION = "back_data_action"
 const val KEY_BACK_DESCRIPTION_ACTION = "back_description_action"
 
-//注意：TASK_CONDITION_XXX 枚举值 等于 TASK_CONDITION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_CONDITION，不可改变
 const val TASK_CONDITION_CRON = 1000
 const val TASK_CONDITION_TO_ADDRESS = 1001
 const val TASK_CONDITION_LEAVE_ADDRESS = 1002
@@ -262,7 +247,6 @@ const val TASK_CONDITION_CALL = 1009
 const val TASK_CONDITION_APP = 1010
 const val TASK_CONDITION_BLUETOOTH = 1011
 
-//注意：TASK_ACTION_XXX 枚举值 等于 TASK_ACTION_FRAGMENT_LIST 索引加上 KEY_BACK_CODE_ACTION，不可改变
 const val TASK_ACTION_SENDSMS = 2000
 const val TASK_ACTION_NOTIFICATION = 2001
 const val TASK_ACTION_CLEANER = 2002
@@ -299,32 +283,30 @@ const val SP_CONNECTED_DEVICE = "connected_device"
 const val SP_DISCOVERED_DEVICES = "discovered_devices"
 const val SP_BLUETOOTH_STATE = "bluetooth_state"
 
-//SIM卡已准备就绪时，延迟5秒（给够搜索信号时间）才执行任务
 const val DELAY_TIME_AFTER_SIM_READY = 5000L
 
-//切换语言需要替换的自定义模板标签列表
 //val TAG_LANG = arrayOf("zh_CN", "zh_TW", "en")
 val TAG_LIST = arrayOf(
-    mapOf("zh_CN" to "{{来源号码}}", "zh_TW" to "{{來源號碼}}", "en" to "{{FROM}}"),
-    mapOf("zh_CN" to "{{短信内容}}", "zh_TW" to "{{簡訊內容}}", "en" to "{{SMS}}"),
-    mapOf("zh_CN" to "{{APP包名}}", "zh_TW" to "{{APP包名}}", "en" to "{{PACKAGE_NAME}}"),
-    mapOf("zh_CN" to "{{APP名称}}", "zh_TW" to "{{APP名稱}}", "en" to "{{APP_NAME}}"),
-    mapOf("zh_CN" to "{{通知内容}}", "zh_TW" to "{{通知內容}}", "en" to "{{MSG}}"),
-    mapOf("zh_CN" to "{{卡槽信息}}", "zh_TW" to "{{卡槽信息}}", "en" to "{{CARD_SLOT}}"),
-    mapOf("zh_CN" to "{{卡槽主键}}", "zh_TW" to "{{卡槽主鍵}}", "en" to "{{CARD_SUBID}}"),
-    mapOf("zh_CN" to "{{接收时间}}", "zh_TW" to "{{接收時間}}", "en" to "{{RECEIVE_TIME}}"),
-    mapOf("zh_CN" to "{{当前时间}}", "zh_TW" to "{{當前時間}}", "en" to "{{CURRENT_TIME}}"),
-    mapOf("zh_CN" to "{{设备名称}}", "zh_TW" to "{{設備名稱}}", "en" to "{{DEVICE_NAME}}"),
-    mapOf("zh_CN" to "{{当前应用版本号}}", "zh_TW" to "{{當前應用版本號}}", "en" to "{{APP_VERSION}}"),
-    mapOf("zh_CN" to "{{通知标题}}", "zh_TW" to "{{通知標題}}", "en" to "{{TITLE}}"),
-    mapOf("zh_CN" to "{{通知Scheme}}", "zh_TW" to "{{通知Scheme}}", "en" to "{{SCHEME}}"),
-    mapOf("zh_CN" to "{{通话类型}}", "zh_TW" to "{{通話類型}}", "en" to "{{CALL_TYPE}}"),
-    mapOf("zh_CN" to "{{定位信息}}", "zh_TW" to "{{定位信息}}", "en" to "{{LOCATION}}"),
-    mapOf("zh_CN" to "{{定位信息_经度}}", "zh_TW" to "{{定位信息_經度}}", "en" to "{{LOCATION_LONGITUDE}}"),
-    mapOf("zh_CN" to "{{定位信息_纬度}}", "zh_TW" to "{{定位信息_緯度}}", "en" to "{{LOCATION_LATITUDE}}"),
-    mapOf("zh_CN" to "{{定位信息_地址}}", "zh_TW" to "{{定位信息_地址}}", "en" to "{{LOCATION_ADDRESS}}"),
-    mapOf("zh_CN" to "{{电池电量}}", "zh_TW" to "{{電池電量}}", "en" to "{{BATTERY_PCT}}"),
-    mapOf("zh_CN" to "{{电池状态}}", "zh_TW" to "{{電池狀態}}", "en" to "{{BATTERY_STATUS}}"),
-    mapOf("zh_CN" to "{{充电方式}}", "zh_TW" to "{{充電方式}}", "en" to "{{BATTERY_PLUGGED}}"),
-    mapOf("zh_CN" to "{{电池信息}}", "zh_TW" to "{{電池信息}}", "en" to "{{BATTERY_INFO}}")
+    mapOf("zh_CN" to "{{\\u6765\\u6E90\\u53F7\\u7801}}", "zh_TW" to "{{\\u4F86\\u6E90\\u865F\\u78BC}}", "en" to "{{FROM}}"),
+    mapOf("zh_CN" to "{{\\u77ED\\u4FE1\\u5185\\u5BB9}}", "zh_TW" to "{{\\u7C21\\u8A0A\\u5167\\u5BB9}}", "en" to "{{SMS}}"),
+    mapOf("zh_CN" to "{{APP\\u5305\\u540D}}", "zh_TW" to "{{APP\\u5305\\u540D}}", "en" to "{{PACKAGE_NAME}}"),
+    mapOf("zh_CN" to "{{APP\\u540D\\u79F0}}", "zh_TW" to "{{APP\\u540D\\u7A31}}", "en" to "{{APP_NAME}}"),
+    mapOf("zh_CN" to "{{\\u901A\\u77E5\\u5185\\u5BB9}}", "zh_TW" to "{{\\u901A\\u77E5\\u5167\\u5BB9}}", "en" to "{{MSG}}"),
+    mapOf("zh_CN" to "{{\\u5361\\u69FD\\u4FE1\\u606F}}", "zh_TW" to "{{\\u5361\\u69FD\\u4FE1\\u606F}}", "en" to "{{CARD_SLOT}}"),
+    mapOf("zh_CN" to "{{\\u5361\\u69FD\\u4E3B\\u952E}}", "zh_TW" to "{{\\u5361\\u69FD\\u4E3B\\u9375}}", "en" to "{{CARD_SUBID}}"),
+    mapOf("zh_CN" to "{{\\u63A5\\u6536\\u65F6\\u95F4}}", "zh_TW" to "{{\\u63A5\\u6536\\u6642\\u9593}}", "en" to "{{RECEIVE_TIME}}"),
+    mapOf("zh_CN" to "{{\\u5F53\\u524D\\u65F6\\u95F4}}", "zh_TW" to "{{\\u7576\\u524D\\u6642\\u9593}}", "en" to "{{CURRENT_TIME}}"),
+    mapOf("zh_CN" to "{{\\u8BBE\\u5907\\u540D\\u79F0}}", "zh_TW" to "{{\\u8A2D\\u5099\\u540D\\u7A31}}", "en" to "{{DEVICE_NAME}}"),
+    mapOf("zh_CN" to "{{\\u5F53\\u524D\\u5E94\\u7528\\u7248\\u672C\\u53F7}}", "zh_TW" to "{{\\u7576\\u524D\\u61C9\\u7528\\u7248\\u672C\\u865F}}", "en" to "{{APP_VERSION}}"),
+    mapOf("zh_CN" to "{{\\u901A\\u77E5\\u6807\\u9898}}", "zh_TW" to "{{\\u901A\\u77E5\\u6A19\\u984C}}", "en" to "{{TITLE}}"),
+    mapOf("zh_CN" to "{{\\u901A\\u77E5Scheme}}", "zh_TW" to "{{\\u901A\\u77E5Scheme}}", "en" to "{{SCHEME}}"),
+    mapOf("zh_CN" to "{{\\u901A\\u8BDD\\u7C7B\\u578B}}", "zh_TW" to "{{\\u901A\\u8A71\\u985E\\u578B}}", "en" to "{{CALL_TYPE}}"),
+    mapOf("zh_CN" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F}}", "zh_TW" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F}}", "en" to "{{LOCATION}}"),
+    mapOf("zh_CN" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u7ECF\\u5EA6}}", "zh_TW" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u7D93\\u5EA6}}", "en" to "{{LOCATION_LONGITUDE}}"),
+    mapOf("zh_CN" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u7EAC\\u5EA6}}", "zh_TW" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u7DEF\\u5EA6}}", "en" to "{{LOCATION_LATITUDE}}"),
+    mapOf("zh_CN" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u5730\\u5740}}", "zh_TW" to "{{\\u5B9A\\u4F4D\\u4FE1\\u606F_\\u5730\\u5740}}", "en" to "{{LOCATION_ADDRESS}}"),
+    mapOf("zh_CN" to "{{\\u7535\\u6C60\\u7535\\u91CF}}", "zh_TW" to "{{\\u96FB\\u6C60\\u96FB\\u91CF}}", "en" to "{{BATTERY_PCT}}"),
+    mapOf("zh_CN" to "{{\\u7535\\u6C60\\u72B6\\u6001}}", "zh_TW" to "{{\\u96FB\\u6C60\\u72C0\\u614B}}", "en" to "{{BATTERY_STATUS}}"),
+    mapOf("zh_CN" to "{{\\u5145\\u7535\\u65B9\\u5F0F}}", "zh_TW" to "{{\\u5145\\u96FB\\u65B9\\u5F0F}}", "en" to "{{BATTERY_PLUGGED}}"),
+    mapOf("zh_CN" to "{{\\u7535\\u6C60\\u4FE1\\u606F}}", "zh_TW" to "{{\\u96FB\\u6C60\\u4FE1\\u606F}}", "en" to "{{BATTERY_INFO}}")
 )

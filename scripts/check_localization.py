@@ -23,6 +23,10 @@ for element in strings:
         errors.append(f"Empty string: {element.attrib['name']}")
 if any((ROOT / "app/src/main/res").glob("values-zh*")):
     errors.append("Chinese locale resources remain")
+for path in (ROOT / "app/src").rglob("*"):
+    if path.is_file() and path.suffix in (".kt", ".java", ".xml", ".json", ".txt"):
+        if HAN.search(path.read_text(encoding="utf-8")):
+            errors.append(f"Chinese source text remains: {path.relative_to(ROOT)}")
 # Third-party methods can return Chinese even when all XML resources are Korean.
 for path in (ROOT / "app/src/main/kotlin").rglob("*.kt"):
     if "DateUtils.getFriendlyTimeSpanByNow(" in path.read_text():

@@ -85,10 +85,8 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -100,14 +98,12 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
             }
         })
 
-        //新增
         if (senderId <= 0) {
             titleBar?.setSubTitle(getString(R.string.add_sender))
             binding!!.btnDel.setText(R.string.discard)
             return
         }
 
-        //编辑
         binding!!.btnDel.setText(R.string.del)
         Core.sender.get(senderId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<Sender> {
             override fun onSubscribe(d: Disposable) {}
@@ -174,7 +170,6 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        //注意：因为只有一个监听，暂不需要判断id
         binding!!.layoutProxyAuthenticator.visibility = if (isChecked) View.VISIBLE else View.GONE
     }
 
@@ -280,16 +275,10 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
     }
 
 
-    //header序号
     private var headerItemId = 0
 
     /**
-     * 动态增删header
      *
-     * @param headerItemMap                管理item的map，用于删除指定header
-     * @param linearLayoutWebNotifyHeaders 需要挂载item的LinearLayout
-     * @param key                          header的key，为空则不设置
-     * @param value                        header的value，为空则不设置
      */
     private fun addHeaderItemLinearLayout(
         headerItemMap: MutableMap<Int, LinearLayout>, linearLayoutWebNotifyHeaders: LinearLayout, key: String?, value: String?
@@ -314,10 +303,7 @@ class WebhookFragment : BaseFragment<FragmentSendersWebhookBinding?>(), View.OnC
     }
 
     /**
-     * 从EditText控件中获取全部headers
      *
-     * @param headerItemMap 管理item的map
-     * @return 全部headers
      */
     private fun getHeadersFromHeaderItemMap(headerItemMap: Map<Int, LinearLayout>): Map<String, String> {
         val headers: MutableMap<String, String> = HashMap()

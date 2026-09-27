@@ -10,7 +10,6 @@ import com.xuexiang.xui.adapter.recyclerview.RecyclerViewHolder
 import me.samlss.broccoli.Broccoli
 
 /**
- * 使用Broccoli占位的基础适配器
  *
  * @author xuexiang
  * @since 2021/1/9 4:52 PM
@@ -18,7 +17,6 @@ import me.samlss.broccoli.Broccoli
 @Suppress("unused")
 abstract class BroccoliSimpleDelegateAdapter<T> : SimpleDelegateAdapter<T> {
     /**
-     * 是否已经加载成功
      */
     private var mHasLoad = false
     private val mBroccoliMap: MutableMap<View, Broccoli> = HashMap()
@@ -52,7 +50,6 @@ abstract class BroccoliSimpleDelegateAdapter<T> : SimpleDelegateAdapter<T> {
     }
 
     /**
-     * 绑定控件
      *
      * @param holder
      * @param model
@@ -61,7 +58,6 @@ abstract class BroccoliSimpleDelegateAdapter<T> : SimpleDelegateAdapter<T> {
     protected abstract fun onBindData(holder: RecyclerViewHolder, model: T, position: Int)
 
     /**
-     * 绑定占位控件
      *
      * @param holder
      * @param broccoli
@@ -74,7 +70,6 @@ abstract class BroccoliSimpleDelegateAdapter<T> : SimpleDelegateAdapter<T> {
     }
 
     /**
-     * 资源释放，防止内存泄漏
      */
     fun recycle() {
         for (broccoli in mBroccoliMap.values) {

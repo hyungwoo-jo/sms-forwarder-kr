@@ -55,12 +55,10 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
     private var titleBar: TitleBar? = null
     private var mCountDownHelper: CountDownButtonHelper? = null
 
-    //所有自动任务下拉框
     private var taskListAll = mutableListOf<Task>()
     private val taskSpinnerList = mutableListOf<TaskSpinnerItem>()
     private lateinit var taskSpinnerAdapter: TaskSpinnerAdapter<*>
 
-    //已选自动任务列表
     private var taskId = 0L
     private var taskListSelected = mutableListOf<Task>()
     private lateinit var taskRecyclerView: RecyclerView
@@ -87,10 +85,8 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //测试按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnTest, 1)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {
@@ -99,7 +95,6 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
 
             override fun onFinished() {
                 binding!!.btnTest.text = getString(R.string.test)
-                //获取自动任务列表
                 getTaskList()
             }
         })
@@ -116,7 +111,6 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
             Log.d(TAG, "initViews settingVo:$settingVo")
         }
 
-        //初始化自动任务下拉框
         initTask()
     }
 
@@ -178,10 +172,8 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
         }
     }
 
-    //初始化自动任务
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun initTask() {
-        //初始化自动任务下拉框
         binding!!.spTask.setOnItemClickListener { _: AdapterView<*>, _: View, position: Int, _: Long ->
             try {
                 val item = taskSpinnerAdapter.getItemSource(position) as TaskSpinnerItem
@@ -205,12 +197,11 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
             }
         }
 
-        // 初始化已选自动任务列表 RecyclerView 和 Adapter
         taskRecyclerView = binding!!.recyclerTasks
         taskRecyclerAdapter = TaskRecyclerAdapter(taskListSelected, { position ->
             taskListSelected.removeAt(position)
             taskRecyclerAdapter.notifyItemRemoved(position)
-            taskRecyclerAdapter.notifyItemRangeChanged(position, taskListSelected.size) // 更新索引
+            taskRecyclerAdapter.notifyItemRangeChanged(position, taskListSelected.size)
         })
         taskRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -233,11 +224,9 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
         taskTouchHelper.attachToRecyclerView(taskRecyclerView)
         taskRecyclerAdapter.setTouchHelper(taskTouchHelper)
 
-        //获取自动任务列表
         getTaskList()
     }
 
-    //获取自动任务列表
     private fun getTaskList() {
         Core.task.getAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<Task>> {
             override fun onSubscribe(d: Disposable) {}
@@ -264,7 +253,6 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
                 binding!!.spTask.setAdapter(taskSpinnerAdapter)
                 //taskSpinnerAdapter.notifyDataSetChanged()
 
-                //更新taskListSelected的状态与名称
                 taskListSelected.forEach {
                     taskListAll.forEach { task ->
                         if (it.id == task.id) {
@@ -279,7 +267,6 @@ class TaskActionFragment : BaseFragment<FragmentTasksActionTaskBinding?>(), View
         })
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(): TaskActionSetting {
         if (taskListSelected.isEmpty() || taskId == 0L) {

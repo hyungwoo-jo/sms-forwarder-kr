@@ -30,7 +30,6 @@ class RuleSpinnerItem(
         return this
     }
 
-    // 注意：自定义实体需要重写对象的 toString 方法
     override fun toString(): String {
         return title.toString()
     }

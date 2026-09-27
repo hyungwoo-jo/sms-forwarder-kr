@@ -26,13 +26,10 @@ import java.lang.reflect.Type
 
 
 /**
- * 基础fragment，使用XPage框架搭建
  *
  *
- * 具体使用参见：https://github.com/xuexiangjys/XPage/wiki
  *
  * @author xuexiang
- * @since 2018/5/25 下午3:44
  */
 @Suppress("MemberVisibilityCanBePrivate", "EmptyMethod")
 abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
@@ -50,10 +47,8 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 构建ViewBinding
      *
      * @param inflater  inflater
-     * @param container 容器
      * @return ViewBinding
      */
     protected abstract fun viewBindingInflate(
@@ -84,9 +79,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     override fun initListeners() {}
 
     /**
-     * 获取进度条加载者
      *
-     * @return 进度条加载者
      */
     val progressLoader: IProgressLoader?
         get() {
@@ -97,10 +90,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
         }
 
     /**
-     * 获取进度条加载者
      *
-     * @param message 提示信息
-     * @return 进度条加载者
      */
     fun getProgressLoader(message: String?): IProgressLoader? {
         if (mIProgressLoader == null) {
@@ -112,7 +102,6 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        //屏幕旋转时刷新一下title
         super.onConfigurationChanged(newConfig)
         val root = rootView as ViewGroup
         if (root.getChildAt(0) is TitleBar) {
@@ -129,11 +118,8 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
         binding = null
     }
 
-    //==============================页面跳转api===================================//
     /**
-     * 打开一个新的页面【建议只在主tab页使用】
      *
-     * @param clazz 页面的类
      * @param <T>
      * @return
     </T> */
@@ -144,9 +130,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开一个新的页面【建议只在主tab页使用】
      *
-     * @param pageName 页面名
      * @param <T>
      * @return
     </T> */
@@ -158,10 +142,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开一个新的页面【建议只在主tab页使用】
      *
-     * @param clazz                页面的类
-     * @param containActivityClazz 页面容器
      * @param <T>
      * @return
     </T> */
@@ -176,11 +157,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开一个新的页面【建议只在主tab页使用】
      *
-     * @param clazz 页面的类
-     * @param key   入参的键
-     * @param value 入参的值
      * @param <T>
      * @return
     </T> */
@@ -231,12 +208,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面
      *
-     * @param clazz          页面的类
-     * @param addToBackStack 是否加入回退栈
-     * @param key            入参的键
-     * @param value          入参的值
      * @param <T>
      * @return
     </T> */
@@ -253,11 +225,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面
      *
-     * @param clazz 页面的类
-     * @param key   入参的键
-     * @param value 入参的值
      * @param <T>
      * @return
     </T> */
@@ -266,12 +234,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面
      *
-     * @param clazz          页面的类
-     * @param addToBackStack 是否加入回退栈
-     * @param key            入参的键
-     * @param value          入参的值
      * @param <T>
      * @return
     </T> */
@@ -286,11 +249,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面
      *
-     * @param clazz 页面的类
-     * @param key   入参的键
-     * @param value 入参的值
      * @param <T>
      * @return
     </T> */
@@ -301,12 +260,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面,需要结果返回
      *
-     * @param clazz       页面的类
-     * @param key         入参的键
-     * @param value       入参的值
-     * @param requestCode 请求码
      * @param <T>
      * @return
     </T> */
@@ -321,12 +275,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面,需要结果返回
      *
-     * @param clazz       页面的类
-     * @param key         入参的键
-     * @param value       入参的值
-     * @param requestCode 请求码
      * @param <T>
      * @return
     </T> */
@@ -343,10 +292,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 打开页面,需要结果返回
      *
-     * @param clazz       页面的类
-     * @param requestCode 请求码
      * @param <T>
      * @return
     </T> */
@@ -357,10 +303,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 序列化对象
      *
-     * @param object 需要序列化的对象
-     * @return 序列化结果
      */
     fun serializeObject(`object`: Any?): String {
         return XRouter.getInstance().navigation(SerializationService::class.java)
@@ -368,11 +311,7 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
     }
 
     /**
-     * 反序列化对象
      *
-     * @param input 反序列化的内容
-     * @param clazz 类型
-     * @return 反序列化结果
      */
     fun <T> deserializeObject(input: String?, clazz: Type?): T {
         return XRouter.getInstance().navigation(SerializationService::class.java)
@@ -383,7 +322,6 @@ abstract class BaseFragment<Binding : ViewBinding?> : XPageFragment() {
         if (activity == null) {
             return
         }
-        // 记住，要在xml的父布局加上android:focusable="true" 和 android:focusableInTouchMode="true"
         Utils.hideSoftInputClearFocus(requireActivity().currentFocus)
     }
 }

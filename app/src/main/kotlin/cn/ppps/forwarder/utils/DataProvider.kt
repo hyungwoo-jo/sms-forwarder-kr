@@ -12,7 +12,6 @@ import java.util.Date
 @Suppress("SameParameterValue")
 object DataProvider {
 
-    //用于占位的空信息
     @JvmStatic
     @get:MemoryCache
     val emptySmsInfo: List<SmsInfo>
@@ -24,7 +23,6 @@ object DataProvider {
             return list
         }
 
-    //用于占位的空信息
     @JvmStatic
     @get:MemoryCache
     val emptyCallInfo: List<CallInfo>
@@ -36,7 +34,6 @@ object DataProvider {
             return list
         }
 
-    //用于占位的空信息
     @JvmStatic
     @get:MemoryCache
     val emptyContactInfo: List<ContactInfo>
@@ -48,18 +45,15 @@ object DataProvider {
             return list
         }
 
-    //获取时间段
     @JvmStatic
     @get:MemoryCache
     val timePeriodOption: List<String>
         get() {
-            return getTimePeriod(24, 10) //修改时请注意会不会造成旧版下标越界
+            return getTimePeriod(24, 10)
         }
 
     /**
-     * 获取时间段
      *
-     * @param interval 时间间隔（分钟）
      * @return
      */
     private fun getTimePeriod(totalHour: Int, interval: Int): List<String> {
@@ -77,17 +71,14 @@ object DataProvider {
     }
 
     /**
-     * 判断当前时间是否在时间段内
      */
     @SuppressLint("SimpleDateFormat")
     fun isCurrentTimeInPeriod(periodStartIndex: Int, periodEndIndex: Int): Boolean {
         val periodStartStr = timePeriodOption[periodStartIndex]
         val periodEndStr = timePeriodOption[periodEndIndex]
 
-        // 定义时间格式
         val formatter = SimpleDateFormat("HH:mm")
 
-        // 解析时间字符串
         val periodStart = Calendar.getInstance().apply {
             time = formatter.parse(periodStartStr) as Date
             set(Calendar.SECOND, 0)
@@ -99,18 +90,14 @@ object DataProvider {
             set(Calendar.MILLISECOND, 0)
         }
 
-        // 获取当前时间
         val currentTime = Calendar.getInstance()
         val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
         val currentMinute = currentTime.get(Calendar.MINUTE)
 
-        // 判断是否跨天
         return if (periodEnd.before(periodStart)) {
-            // 跨天的情况
             (currentHour > periodStart.get(Calendar.HOUR_OF_DAY) || (currentHour == periodStart.get(Calendar.HOUR_OF_DAY) && currentMinute >= periodStart.get(Calendar.MINUTE))) ||
                     (currentHour < periodEnd.get(Calendar.HOUR_OF_DAY) || (currentHour == periodEnd.get(Calendar.HOUR_OF_DAY) && currentMinute < periodEnd.get(Calendar.MINUTE)))
         } else {
-            // 不跨天的情况
             (currentHour > periodStart.get(Calendar.HOUR_OF_DAY) || (currentHour == periodStart.get(Calendar.HOUR_OF_DAY) && currentMinute >= periodStart.get(Calendar.MINUTE))) &&
                     (currentHour < periodEnd.get(Calendar.HOUR_OF_DAY) || (currentHour == periodEnd.get(Calendar.HOUR_OF_DAY) && currentMinute < periodEnd.get(Calendar.MINUTE)))
         }

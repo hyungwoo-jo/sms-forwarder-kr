@@ -53,7 +53,7 @@ class WebhookUtils {
                 msgInfo.getContentForSend(SettingUtils.smsTemplate)
             }
 
-            var requestUrl: String = setting.webServer //推送地址
+            var requestUrl: String = setting.webServer
             Log.i(TAG, SensitiveLogRedactor.redact("requestUrl:$requestUrl"))
 
             val timestamp = System.currentTimeMillis()
@@ -78,10 +78,8 @@ class WebhookUtils {
             }
 
             var webParams = setting.webParams.trim()
-            //提取 webParams 中 md5([变量名1]+[变量名2]+[变量名3]+'自定义内容') 替换为 md5 值
             webParams = replaceMd5Template(webParams, msgInfo, from, content, orgContent, deviceMark, appVersion, simInfo, receiveTimeTag, timestamp, sign)
 
-            //支持HTTP基本认证(Basic Authentication)
             val regex = "^(https?://)([^:]+):([^@]+)@(.+)"
             val matches = Regex(regex, RegexOption.IGNORE_CASE).findAll(requestUrl).toList()
                 .flatMap(MatchResult::groupValues)
@@ -91,9 +89,7 @@ class WebhookUtils {
                 Log.i(TAG, SensitiveLogRedactor.redact("requestUrl:$requestUrl"))
             }
 
-            //通过`Content-Type=applicaton/json`指定请求体为`json`格式
             var isJson = false
-            //通过`Content-Type=text/plain、text/html、text/css、text/javascript、text/xml`指定请求体为`文本`格式
             var isText = false
             var mediaType = "text/plain"
             for ((key, value) in setting.headers.entries) {
@@ -214,33 +210,27 @@ class WebhookUtils {
                 postRequest
             }
 
-            //添加headers
             for ((key, value) in setting.headers.entries) {
                 request.headers(key, value)
             }
 
-            //支持HTTP基本认证(Basic Authentication)
             if (matches.isNotEmpty()) {
                 request.addInterceptor(BasicAuthInterceptor(matches[2], matches[3]))
             }
 
-            //设置代理
             if ((setting.proxyType == Proxy.Type.HTTP || setting.proxyType == Proxy.Type.SOCKS)
                 && !TextUtils.isEmpty(setting.proxyHost) && !TextUtils.isEmpty(setting.proxyPort)
             ) {
-                //代理服务器的IP和端口号
                 val proxyPort = setting.proxyPort.toIntOrNull()
                     ?: throw IllegalArgumentException("Invalid proxy port")
 
                 Log.d(TAG, "proxyHost = ${setting.proxyHost}, proxyPort = $proxyPort")
                 request.okproxy(Proxy(setting.proxyType, InetSocketAddress(setting.proxyHost, proxyPort)))
 
-                //代理的鉴权账号密码
                 if (setting.proxyAuthenticator && (!TextUtils.isEmpty(setting.proxyUsername) || !TextUtils.isEmpty(setting.proxyPassword))
                 ) {
                     if (setting.proxyType == Proxy.Type.HTTP) {
                         request.okproxyAuthenticator { _: Route?, response: Response ->
-                            //设置代理服务器账号密码
                             val credential = Credentials.basic(setting.proxyUsername, setting.proxyPassword)
                             response.request().newBuilder()
                                 .header("Proxy-Authorization", credential)
@@ -256,12 +246,12 @@ class WebhookUtils {
                 }
             }
 
-            request.retryCount(SettingUtils.requestRetryTimes) //超时重试的次数
-                .retryDelay(SettingUtils.requestDelayTime * 1000) //超时重试的延迟时间
-                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000) //超时重试叠加延时
-                .timeStamp(true) //url自动追加时间戳，避免缓存
-                .addInterceptor(LoggingInterceptor(logId)) //增加一个log拦截器, 记录请求日志
-                .addInterceptor(NoContentInterceptor(logId)) //拦截 HTTP 204 响应
+            request.retryCount(SettingUtils.requestRetryTimes)
+                .retryDelay(SettingUtils.requestDelayTime * 1000)
+                .retryIncreaseDelay(SettingUtils.requestDelayTime * 1000)
+                .timeStamp(true)
+                .addInterceptor(LoggingInterceptor(logId))
+                .addInterceptor(NoContentInterceptor(logId))
                 .execute(object : SimpleCallBack<String>() {
 
                     override fun onError(e: ApiException) {
@@ -290,14 +280,12 @@ class WebhookUtils {
             return dateFormat.format(currentTime)
         }
 
-        //提取 webParams 中 md5([变量名1]+[变量名2]+[变量名3]+'自定义内容') 替换为 md5 值
         fun replaceMd5Template(
             webParams: String, msgInfo: MsgInfo,
             from: String, content: String, orgContent: String, deviceMark: String, appVersion: String, simInfo: String,
             receiveTimeTag: Regex, timestamp: Long, sign: String
         ): String {
             val regex = Regex("md5\\((.*?)\\)")
-            //去掉拼接符 + 并去掉自定义内容的单引号（引号内的 + 保留）
             val separatorRegex = Regex("'(.*?)'|\\+")
             return regex.replace(webParams) { matchResult ->
                 val md5String = matchResult.groupValues[1].replace(separatorRegex) { it.groupValues[1] }

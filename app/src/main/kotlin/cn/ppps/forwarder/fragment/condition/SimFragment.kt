@@ -50,7 +50,6 @@ class SimFragment : BaseFragment<FragmentTasksConditionSimBinding?>(), View.OnCl
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         Log.d(TAG, "initViews eventData:$eventData")
@@ -98,7 +97,6 @@ class SimFragment : BaseFragment<FragmentTasksConditionSimBinding?>(), View.OnCl
         }
     }
 
-    //检查设置
     private fun checkSetting(updateView: Boolean = false): SimSetting {
         val simStateCheckId = binding!!.rgSimState.checkedRadioButtonId
         val settingVo = SimSetting(simStateCheckId)

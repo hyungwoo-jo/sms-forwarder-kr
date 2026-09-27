@@ -41,21 +41,18 @@ import java.util.Properties
 class SmimeUtils(
     private val properties: Properties,
     private val authenticator: Authenticator,
-    // 邮件参数
-    private val from: String, // 发件人邮箱
-    private val fromAlias: String, // 发件人邮箱别名
-    private val nickname: String, // 发件人昵称
-    private val subject: String, // 邮件主题
-    private val body: String, // 邮件正文
-    private val attachFiles: MutableList<File> = mutableListOf(), // 附件
-    // 收件人参数
-    private val toAddress: MutableList<String> = mutableListOf(), // 收件人邮箱
-    private val ccAddress: MutableList<String> = mutableListOf(), // 抄送者邮箱
-    private val bccAddress: MutableList<String> = mutableListOf(), // 密送者邮箱
-    // 邮件 S/MIME 加密和签名
-    private val recipientX509Cert: X509Certificate? = null, //收件人公钥（用于加密）
-    private val senderPrivateKey: PrivateKey? = null, //发件人私玥（用于签名）
-    private val senderX509Cert: X509Certificate? = null, //发件人公玥（用于签名）
+    private val from: String,
+    private val fromAlias: String,
+    private val nickname: String,
+    private val subject: String,
+    private val body: String,
+    private val attachFiles: MutableList<File> = mutableListOf(),
+    private val toAddress: MutableList<String> = mutableListOf(),
+    private val ccAddress: MutableList<String> = mutableListOf(),
+    private val bccAddress: MutableList<String> = mutableListOf(),
+    private val recipientX509Cert: X509Certificate? = null,
+    private val senderPrivateKey: PrivateKey? = null,
+    private val senderX509Cert: X509Certificate? = null,
 ) {
 
     private val TAG: String = SmimeUtils::class.java.simpleName
@@ -64,7 +61,6 @@ class SmimeUtils(
         Security.addProvider(BouncyCastleProvider())
     }
 
-    // 发送明文邮件
     suspend fun sendPlainEmail(): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         Log.d(TAG, "sendPlainEmail")
         try {
@@ -77,7 +73,6 @@ class SmimeUtils(
         }
     }
 
-    // 发送签名后的邮件
     suspend fun sendSignedEmail(): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         Log.d(TAG, "sendSignedEmail")
         try {
@@ -91,7 +86,6 @@ class SmimeUtils(
         }
     }
 
-    // 发送加密邮件
     suspend fun sendEncryptedEmail(): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         Log.d(TAG, "sendEncryptedEmail")
         try {
@@ -105,7 +99,6 @@ class SmimeUtils(
         }
     }
 
-    // 发送签名加密邮件
     suspend fun sendSignedAndEncryptedEmail(): Pair<Boolean, String> = withContext(Dispatchers.IO) {
         Log.d(TAG, "sendSignedAndEncryptedEmail")
         try {
@@ -120,21 +113,16 @@ class SmimeUtils(
         }
     }
 
-    // 获取原始邮件
     private fun getOriginalMessage(): MimeMessage {
         val session = Session.getInstance(properties, authenticator)
         session.debug = true
         val message = MimeMessage(session)
-        // 设置直接接收者收件箱
         val toAddress = toAddress.map { InternetAddress(it) }.toTypedArray()
         message.setRecipients(Message.RecipientType.TO, toAddress)
-        // 设置抄送者收件箱
         val ccAddress = ccAddress.map { InternetAddress(it) }.toTypedArray()
         message.setRecipients(Message.RecipientType.CC, ccAddress)
-        // 设置密送者收件箱
         val bccAddress = bccAddress.map { InternetAddress(it) }.toTypedArray()
         message.setRecipients(Message.RecipientType.BCC, bccAddress)
-        // 设置发件箱
         when {
             nickname.isEmpty() -> message.setFrom(InternetAddress(fromAlias))
             else -> try {
@@ -146,7 +134,6 @@ class SmimeUtils(
                 message.setFrom(InternetAddress(fromAlias))
             }
         }
-        // 邮件主题
         try {
             message.subject = MimeUtility.encodeText(subject.replace(":", "-").replace("\n", "-"))
         } catch (e: Exception) {
@@ -154,15 +141,12 @@ class SmimeUtils(
             message.subject = subject
         }
 
-        // 邮件内容
         val contentPart = MimeMultipart("mixed")
 
-        // 邮件正文
         val textBodyPart = MimeBodyPart()
         textBodyPart.setContent(body, "text/html;charset=UTF-8")
         contentPart.addBodyPart(textBodyPart)
 
-        // 邮件附件
         attachFiles.forEach {
             val fileBodyPart = MimeBodyPart()
             val ds = FileDataSource(it)
@@ -178,31 +162,25 @@ class SmimeUtils(
         return message
     }
 
-    // 获取签名邮件
     private fun getSignedMessage(originalMessage: MimeMessage): MimeMessage {
-        // 创建签名者信息生成器
         val contentSigner = JcaContentSignerBuilder("SHA256withRSA").build(senderPrivateKey)
         val certificateHolder = JcaX509CertificateHolder(senderX509Cert)
         val signerInfoGenerator = JcaSignerInfoGeneratorBuilder(
             JcaDigestCalculatorProviderBuilder().setProvider(BouncyCastleProvider()).build()
         ).build(contentSigner, certificateHolder)
 
-        // 创建 CMSSignedDataGenerator 并添加签名者信息和证书
         val generator = CMSSignedDataGenerator()
         generator.addSignerInfoGenerator(signerInfoGenerator)
         val certStore = JcaCertStore(listOf(senderX509Cert))
         generator.addCertificates(certStore)
 
-        // 将邮件内容转换为 CMSSignedData
         val outputStream = ByteArrayOutputStream()
         originalMessage.writeTo(outputStream)
         val contentData = CMSProcessableByteArray(outputStream.toByteArray())
         val signedData = generator.generate(contentData, true)
 
-        // 创建 MimeMessage 并设置签名后的内容
         val signedMessage = MimeMessage(originalMessage.session, ByteArrayInputStream(signedData.encoded))
         /*
-        //TODO: 为什么不需要再设置这些？
         signedMessage.setRecipients(Message.RecipientType.TO, originalMessage.getRecipients(Message.RecipientType.TO))
         signedMessage.setRecipients(Message.RecipientType.CC, originalMessage.getRecipients(Message.RecipientType.CC))
         signedMessage.setRecipients(Message.RecipientType.BCC, originalMessage.getRecipients(Message.RecipientType.BCC))
@@ -216,14 +194,11 @@ class SmimeUtils(
         return signedMessage
     }
 
-    // 获取加密邮件
     private fun getEncryptedMessage(originalMessage: MimeMessage): MimeMessage {
-        // 使用收件人的证书进行加密
         val cmsEnvelopedDataGenerator = CMSEnvelopedDataGenerator()
         val recipientInfoGenerator = JceKeyTransRecipientInfoGenerator(recipientX509Cert)
         cmsEnvelopedDataGenerator.addRecipientInfoGenerator(recipientInfoGenerator)
 
-        // 使用 3DES 加密
         val outputEncryptor: OutputEncryptor = JceCMSContentEncryptorBuilder(CMSAlgorithm.DES_EDE3_CBC).build()
         val originalContent = ByteArrayOutputStream()
         originalMessage.writeTo(originalContent)
@@ -233,7 +208,6 @@ class SmimeUtils(
             outputEncryptor
         )
 
-        // 创建加密邮件
         val encryptedMessage = MimeMessage(originalMessage.session)
         encryptedMessage.setRecipients(Message.RecipientType.TO, originalMessage.getRecipients(Message.RecipientType.TO))
         encryptedMessage.setRecipients(Message.RecipientType.CC, originalMessage.getRecipients(Message.RecipientType.CC))

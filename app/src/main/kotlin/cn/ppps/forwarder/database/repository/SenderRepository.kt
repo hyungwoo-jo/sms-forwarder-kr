@@ -32,7 +32,6 @@ class SenderRepository(private val senderDao: SenderDao) {
 
     fun getByIds(ids: List<Long>, instr: String): List<Sender> {
         val senders = senderDao.getByIds(ids)
-        // 将结果按照 instr() 的顺序进行排序
         return senders.sortedBy { instr.indexOf(it.id.toString()) }
     }
 

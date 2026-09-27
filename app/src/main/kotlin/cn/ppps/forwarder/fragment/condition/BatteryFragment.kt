@@ -53,7 +53,6 @@ class BatteryFragment : BaseFragment<FragmentTasksConditionBatteryBinding?>(), V
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
         binding!!.rgStatus.setOnCheckedChangeListener { _, checkedId ->
@@ -124,7 +123,6 @@ class BatteryFragment : BaseFragment<FragmentTasksConditionBatteryBinding?>(), V
         }
     }
 
-    //检查设置
     @SuppressLint("SetTextI18n")
     private fun checkSetting(updateView: Boolean = false): BatterySetting {
         val levelMin = binding!!.xsbLevelMin.selectedNumber

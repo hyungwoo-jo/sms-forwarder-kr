@@ -14,7 +14,6 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.util.DensityUtil
 
 /**
- * Material风格的上拉加载
  *
  * @author xuexiang
  * @since 2019-08-03 11:14
@@ -40,7 +39,6 @@ class MaterialFooter @JvmOverloads constructor(context: Context?, attrs: Attribu
     }
 
     override fun getSpinnerStyle(): SpinnerStyle {
-        //指定为平移，不能null
         return SpinnerStyle.Translate
     }
 

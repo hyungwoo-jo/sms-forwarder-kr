@@ -50,11 +50,10 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
     private var appContext: App? = null
     private var inetAddress: InetAddress? = null
 
-    //定时更新界面
     private val handler: Handler = Handler(Looper.getMainLooper())
     private val runnable: Runnable = object : Runnable {
         override fun run() {
-            handler.postDelayed(this, 1000) //每隔1秒刷新一次
+            handler.postDelayed(this, 1000)
             refreshButtonText()
         }
     }
@@ -85,10 +84,8 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
         binding!!.scbServerAutorun.setOnCheckedChangeListener { _: SmoothCheckBox, isChecked: Boolean ->
             HttpServerUtils.enableServerAutorun = isChecked
         }
-        //启动更新UI定时器
         handler.post(runnable)
 
-        //监听端口
         binding!!.etServerPort.setText(HttpServerUtils.serverPort.toString())
         binding!!.etServerPort.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -108,7 +105,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             }
         })
 
-        //安全措施
         var safetyMeasuresId = R.id.rb_safety_measures_none
         when (HttpServerUtils.safetyMeasures) {
             1 -> {
@@ -161,7 +157,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             HttpServerUtils.safetyMeasures = safetyMeasures
         }
 
-        //SM4密钥
         binding!!.btnSm4Key.setOnClickListener(this)
         binding!!.etSm4Key.setText(HttpServerUtils.serverSm4Key)
         binding!!.etSm4Key.addTextChangedListener(object : TextWatcher {
@@ -172,7 +167,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             }
         })
 
-        //RSA公私钥
         binding!!.btnCopyPublicKey.setOnClickListener(this)
         binding!!.btnGenerateKey.setOnClickListener(this)
         binding!!.etPublicKey.setText(HttpServerUtils.serverPublicKey)
@@ -192,7 +186,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             }
         })
 
-        //签名密钥
         binding!!.btnSignKey.setOnClickListener(this)
         binding!!.btnPathPicker.setOnClickListener(this)
         binding!!.etSignKey.setText(HttpServerUtils.serverSignKey)
@@ -203,13 +196,11 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
                 HttpServerUtils.serverSignKey = binding!!.etSignKey.text.toString().trim()
             }
         })
-        //时间容差
         binding!!.xsbTimeTolerance.setDefaultValue(HttpServerUtils.timeTolerance)
         binding!!.xsbTimeTolerance.setOnSeekBarListener { _: XSeekBar?, newValue: Int ->
             HttpServerUtils.timeTolerance = newValue
         }
 
-        //web客户端
         binding!!.etWebPath.setText(HttpServerUtils.serverWebPath)
         binding!!.etWebPath.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -282,7 +273,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
                 }
                 refreshButtonText()
             }
-            //重启前台服务，启动/停止定位服务
             val serviceIntent = Intent(requireContext(), LocationService::class.java)
             serviceIntent.action = ACTION_RESTART
             requireContext().startService(serviceIntent)
@@ -294,7 +284,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btn_toggle_server -> {
-                //检查权限是否获取
                 checkSendSmsPermission()
                 checkReadSmsPermission()
                 checkCallPermission()
@@ -319,7 +308,7 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             }
 
             R.id.btn_generate_key -> {
-                val generator = KeyPairGenerator.getInstance("RSA") //密钥生成器
+                val generator = KeyPairGenerator.getInstance("RSA")
                 generator.initialize(2048)
                 val keyPair = generator.genKeyPair()
                 val publicKey = keyPair.public
@@ -359,26 +348,22 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             }
 
             R.id.btn_path_picker -> {
-                // 申请储存权限
                 XXPermissions.with(this)
                     .permission(PermissionLists.getManageExternalStoragePermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
                             if (!allGranted) {
-                                // 判断请求失败的权限是否被用户勾选了不再询问的选项
                                 val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                                 if (doNotAskAgain) {
                                     XToastUtils.error(R.string.toast_denied_never)
                                     XXPermissions.startPermissionActivity(requireContext(), deniedList)
                                 }
-                                // 处理权限请求失败的逻辑
                                 XToastUtils.error(R.string.toast_denied)
                                 binding!!.etWebPath.setText(getString(R.string.storage_permission_tips))
                                 return
                             }
 
-                            // 处理权限请求成功的逻辑
                             val downloadPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path
                             val dirList = listSubDir(downloadPath)
                             if (dirList.isEmpty()) {
@@ -411,7 +396,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
         }
     }
 
-    //刷新按钮
     private fun refreshButtonText() {
         if (ServiceUtils.isServiceRunning("cn.ppps.forwarder.service.HttpServerService")) {
             binding!!.btnToggleServer.text = resources.getText(R.string.stop_server)
@@ -431,22 +415,18 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
         }
     }
 
-    //发送短信权限
     private fun checkSendSmsPermission() {
         XXPermissions.with(this)
-            // 发送短信
             .permission(PermissionLists.getSendSmsPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiSmsSend = false
                         binding!!.sbApiSendSms.isChecked = false
@@ -456,26 +436,20 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             })
     }
 
-    //读取短信权限
     private fun checkReadSmsPermission() {
         XXPermissions.with(this)
-            // 接收短信
             .permission(PermissionLists.getReceiveSmsPermission())
-            // 发送短信
             .permission(PermissionLists.getSendSmsPermission())
-            // 读取短信
             .permission(PermissionLists.getReadSmsPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiSmsQuery = false
                         binding!!.sbApiQuerySms.isChecked = false
@@ -485,26 +459,20 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             })
     }
 
-    //电话权限
     private fun checkCallPermission() {
         XXPermissions.with(this)
-            // 读取电话状态
             .permission(PermissionLists.getReadPhoneStatePermission())
-            // 读取手机号码
             .permission(PermissionLists.getReadPhoneNumbersPermission())
-            // 读取通话记录
             .permission(PermissionLists.getReadCallLogPermission())
             .request(object : OnPermissionCallback {
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiCallQuery = false
                         binding!!.sbApiQueryCall.isChecked = false
@@ -514,7 +482,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             })
     }
 
-    //联系人权限
     private fun checkContactsPermission() {
         XXPermissions.with(this)
             .permission(PermissionLists.getReadContactsPermission())
@@ -523,13 +490,11 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiCallQuery = false
                         binding!!.sbApiQueryCall.isChecked = false
@@ -539,7 +504,6 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
             })
     }
 
-    //定位权限
     private fun checkLocationPermission() {
         XXPermissions.with(this)
             .permission(PermissionLists.getAccessCoarseLocationPermission())
@@ -550,13 +514,11 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
                 override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                     val allGranted = deniedList.isEmpty()
                     if (!allGranted) {
-                        // 判断请求失败的权限是否被用户勾选了不再询问的选项
                         val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
                         if (doNotAskAgain) {
                             XToastUtils.error(R.string.toast_denied_never)
                             XXPermissions.startPermissionActivity(requireContext(), deniedList)
                         }
-                        // 处理权限请求失败的逻辑
                         XToastUtils.error(R.string.toast_denied)
                         HttpServerUtils.enableApiLocation = false
                         binding!!.sbApiLocation.isChecked = false
@@ -568,11 +530,9 @@ class ServerFragment : BaseFragment<FragmentServerBinding?>(), View.OnClickListe
 
     override fun onDestroy() {
         super.onDestroy()
-        //取消定时器
         handler.removeCallbacks(runnable)
     }
 
-    //获取Download的子目录
     private fun listSubDir(downloadPath: String): List<String> {
         val dirList = mutableListOf<String>()
         val downloadDir = File(downloadPath)

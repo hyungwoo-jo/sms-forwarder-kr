@@ -47,10 +47,8 @@ class LocationFragment : BaseFragment<FragmentClientLocationBinding?>(), View.On
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
-        //发送按钮增加倒计时，避免重复点击
         mCountDownHelper = CountDownButtonHelper(binding!!.btnRefresh, SettingUtils.requestTimeout)
         mCountDownHelper!!.setOnCountDownListener(object : CountDownButtonHelper.OnCountDownListener {
             override fun onCountDown(time: Int) {

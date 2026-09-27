@@ -44,7 +44,6 @@ class BatteryQueryFragment : BaseFragment<FragmentClientBatteryQueryBinding?>() 
     }
 
     /**
-     * 初始化控件
      */
     override fun initViews() {
 

@@ -44,7 +44,6 @@ class BatteryWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                     for (task in taskList) {
                         Log.d(TAG, "task = $task")
 
-                        // 根据任务信息执行相应操作
                         val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                         if (conditionList.isEmpty()) {
                             Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -68,13 +67,11 @@ class BatteryWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                             continue
                         }
 
-                        //TODO：判断其他条件是否满足
                         if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                             Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                             continue
                         }
 
-                        //TODO: 组装消息体 && 执行具体任务
                         val msgInfo = MsgInfo("task", task.name, msg, Date(), task.name)
                         val actionData = Data.Builder()
                             .putLong(TaskWorker.TASK_ID, task.id)
@@ -107,7 +104,6 @@ class BatteryWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                     for (task in taskList) {
                         Log.d(TAG, "task = $task")
 
-                        // 根据任务信息执行相应操作
                         val conditionList = Gson().fromJson(task.conditions, Array<TaskSetting>::class.java).toMutableList()
                         if (conditionList.isEmpty()) {
                             Log.d(TAG, "TASK-${task.id}：conditionList is empty")
@@ -131,13 +127,11 @@ class BatteryWorker(context: Context, params: WorkerParameters) : CoroutineWorke
                             continue
                         }
 
-                        //TODO：判断其他条件是否满足
                         if (!ConditionUtils.checkCondition(task.id, conditionList)) {
                             Log.d(TAG, "TASK-${task.id}：other condition is not satisfied")
                             continue
                         }
 
-                        //TODO: 组装消息体 && 执行具体任务
                         val msgInfo = MsgInfo("task", task.name, msg, Date(), task.description)
                         val actionData = Data.Builder()
                             .putLong(TaskWorker.TASK_ID, task.id)

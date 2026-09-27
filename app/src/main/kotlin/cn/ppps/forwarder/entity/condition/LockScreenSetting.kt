@@ -6,13 +6,13 @@ import com.xuexiang.xutil.resource.ResUtils.getString
 import java.io.Serializable
 
 data class LockScreenSetting(
-    var description: String = "", //描述
-    var action: String = Intent.ACTION_SCREEN_OFF, //事件
-    var timeAfterScreenOff: Int = 5, //熄屏后时间
-    var timeAfterScreenOn: Int = 5, //开锁后时间
-    var timeAfterScreenLocked: Int = 5, //锁屏后时间
-    var timeAfterScreenUnlocked: Int = 5, //解锁后时间
-    var checkAgain: Boolean = false, //是否再次校验
+    var description: String = "",
+    var action: String = Intent.ACTION_SCREEN_OFF,
+    var timeAfterScreenOff: Int = 5,
+    var timeAfterScreenOn: Int = 5,
+    var timeAfterScreenLocked: Int = 5,
+    var timeAfterScreenUnlocked: Int = 5,
+    var checkAgain: Boolean = false,
 ) : Serializable {
 
     constructor(actionCheckId: Int, timeAfterOff: Int, timeAfterOn: Int, timeAfterLocked: Int, timeAfterUnlocked: Int, checkAgain: Boolean = false) : this() {

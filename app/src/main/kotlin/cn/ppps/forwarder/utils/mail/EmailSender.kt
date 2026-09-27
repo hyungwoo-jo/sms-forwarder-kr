@@ -17,60 +17,45 @@ import java.util.Properties
 
 @Suppress("PrivatePropertyName", "DEPRECATION")
 class EmailSender(
-    // SMTP参数
-    private val host: String, // SMTP服务器地址
-    private val port: String, // SMTP服务器端口
-    private val from: String, // 发件人邮箱
-    private val password: String, // 发件人邮箱密码/授权码
-    // 邮件参数
-    private val fromAlias: String, // 发件人邮箱别名
-    private val nickname: String, // 发件人昵称
-    private val subject: String, // 邮件主题
-    private val body: CharSequence, // 邮件正文
-    private val attachFiles: MutableList<File> = mutableListOf(), // 附件
-    // 收件人参数
-    private val toAddress: MutableList<String> = mutableListOf(), // 收件人邮箱
-    private val ccAddress: MutableList<String> = mutableListOf(), // 抄送者邮箱
-    private val bccAddress: MutableList<String> = mutableListOf(), // 密送者邮箱
-    // 监听器
+    private val host: String,
+    private val port: String,
+    private val from: String,
+    private val password: String,
+    private val fromAlias: String,
+    private val nickname: String,
+    private val subject: String,
+    private val body: CharSequence,
+    private val attachFiles: MutableList<File> = mutableListOf(),
+    private val toAddress: MutableList<String> = mutableListOf(),
+    private val ccAddress: MutableList<String> = mutableListOf(),
+    private val bccAddress: MutableList<String> = mutableListOf(),
     private val listener: EmailTaskListener? = null,
-    // 安全选项
-    private val openSSL: Boolean = false, //是否开启ssl验证 默认关闭
-    private val startTls: Boolean = false, //是否开启starttls加密方式 默认关闭
-    // 邮件加密方式: S/MIME、OpenPGP、OpenKeychain、Plain（不传证书）
+    private val openSSL: Boolean = false,
+    private val startTls: Boolean = false,
     private val encryptionProtocol: String = "S/MIME",
-    // 邮件 S/MIME 加密和签名
-    private val recipientX509Cert: X509Certificate? = null, //收件人公钥（用于加密）
-    private val senderPrivateKey: PrivateKey? = null, //发件人私玥（用于签名）
-    private val senderX509Cert: X509Certificate? = null, //发件人公玥（用于签名）
-    //邮件 PGP 加密和签名
-    private var recipientPGPPublicKeyRing: PGPPublicKeyRing? = null, // 收件人公钥（用于加密）
-    private var senderPGPSecretKeyRing: PGPSecretKeyRing? = null, // 发件人私钥（用于签名）
-    private val senderPGPSecretKeyPassword: String = "", // 发件人私钥密码
-    //邮件 OpenKeychain 加密和签名（密钥全部由OpenKeychain管理，按收件人邮箱匹配公钥）
+    private val recipientX509Cert: X509Certificate? = null,
+    private val senderPrivateKey: PrivateKey? = null,
+    private val senderX509Cert: X509Certificate? = null,
+    private var recipientPGPPublicKeyRing: PGPPublicKeyRing? = null,
+    private var senderPGPSecretKeyRing: PGPSecretKeyRing? = null,
+    private val senderPGPSecretKeyPassword: String = "",
     private val openKeychainHelper: OpenKeychainHelper? = null,
-    private val openKeychainSignKeyId: Long = 0L, // 签名密钥ID，0表示只加密不签名
+    private val openKeychainSignKeyId: Long = 0L,
 ) {
 
     private val TAG: String = EmailSender::class.java.simpleName
 
     private val properties: Properties = Properties().apply {
-        // 设置邮件服务器的主机名
         put("mail.smtp.host", host)
-        // 设置邮件服务器的端口号
         put("mail.smtp.port", port)
-        // 设置是否需要身份验证
         put("mail.smtp.auth", "true")
-        // 设置是否启用 SSL 连接
         if (openSSL) {
             put("mail.smtp.ssl.enable", "true")
-            // 使用 TLSv1.2 协议 & 信任所有主机
             val sf = MailSSLSocketFactory("TLSv1.2")
             sf.setTrustedHosts("*")
             put("mail.smtp.ssl.socketFactory", sf)
             put("mail.smtp.ssl.protocols", "TLSv1.2")
         }
-        // 设置是否启用 TLS 连接
         if (startTls) {
             put("mail.smtp.starttls.enable", "true")
         }
@@ -79,14 +64,12 @@ class EmailSender(
     suspend fun sendEmail() {
         try {
             val authenticator = MailAuthenticator(from, password)
-            // 邮件正文
             val html = try {
                 if (body is Spanned) Html.toHtml(body) else body.toString()
             } catch (e: Exception) {
                 body.toString()
             }
 
-            // 发送 S/MIME 邮件
             when (encryptionProtocol) {
                 "S/MIME" -> {
                     val smimeUtils = SmimeUtils(
@@ -118,7 +101,6 @@ class EmailSender(
                 }
 
                 "OpenPGP" -> {
-                    // 发送 PGP 邮件
                     val pgpEmail = PgpUtils(
                         properties = properties,
                         session = Session.getInstance(properties, authenticator),
@@ -148,7 +130,6 @@ class EmailSender(
                 }
 
                 "OpenKeychain" -> {
-                    // 通过 OpenKeychain（OpenPGP API）加密发送，公钥按收件人邮箱自动匹配
                     if (openKeychainHelper == null) {
                         listener?.onEmailSent(false, "OpenKeychainHelper is null")
                         return
@@ -171,7 +152,6 @@ class EmailSender(
                 }
 
                 else -> {
-                    // 发送普通邮件
                     val simpleEmail = SmimeUtils(
                         properties,
                         authenticator,
@@ -199,7 +179,6 @@ class EmailSender(
     }
 
     /**
-     * 发件箱auth校验
      */
     private class MailAuthenticator(username: String, private var password: String) : Authenticator() {
         private var userName: String? = username
