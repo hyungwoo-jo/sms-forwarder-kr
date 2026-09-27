@@ -53,3 +53,8 @@ DEVICE_PENDING: 연결 기기가 없어 UI 화면 배치·큰 글자·앱 검색
 - 외부 서비스나 라이브러리가 한국어가 아닌 중국어 오류를 돌려주면, 전달 로그와 공통 오류 토스트는 한국어 점검 안내로 대체한다. 해당 동작의 단위 테스트를 추가했다.
 - JVM 테스트 18개, 실패·오류 0개. debug lint 오류 0개, 경고 285개.
 - 이 검사는 이 저장소의 앱 소스를 대상으로 한다. 서드파티 AAR/DEX 내부 문자열까지 중국어 0개임을 의미하지는 않는다.
+
+릴리스 소스: `03dbfa2600dfe2282139e81bb9ec5a6144357162`.
+
+- [universal APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-03dbfa2/SmsKR_3.5.0.260927-kr-03dbfa2_100060_universal_release.apk) — SHA-256 `e269d711c1567457330040c2db71203f368ad720b5d8743ff3113103e5e6cb44`
+- [arm64-v8a APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-03dbfa2/SmsKR_3.5.0.260927-kr-03dbfa2_300060_arm64-v8a_release.apk) — SHA-256 `58c7898a084418e399f3a88d45fcc9182afe531ef3901bcba90607ddfbc625e5`

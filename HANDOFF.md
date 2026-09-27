@@ -31,4 +31,4 @@ DEVICE_PENDING: 기기 연결/사용자 설치 결과를 받아 UI 배치·실�
 - versionCode 60으로 앱 Kotlin/Java/XML/JSON/TXT 소스와 테스트 소스의 실제 중국어 문자를 0개로 만들었다. 원본 중국어 주석은 제거했다.
 - 구형 데이터 이관·구형 이메일 유형·Bark OTP 정규식의 중국어 값은 Unicode 이스케이프로 유지해 기존 설정의 동작을 보존한다.
 - 외부 서비스나 라이브러리 오류가 중국어를 포함하면 전달 로그와 공통 오류 토스트는 한국어 점검 안내를 표시한다.
-- JVM 테스트 18개 성공, debug lint 오류 0. 다음 작업은 커밋 후 `bash scripts/build-local.sh`로 서명 APK를 만들고 GitHub 릴리스를 발행하는 것이다.
+- 릴리스 소스 `03dbfa2600dfe2282139e81bb9ec5a6144357162`: JVM 테스트 18개 성공, debug/release lint 오류 0, 서명 APK 생성·검사 완료. GitHub 릴리스 발행 후 실제 기기 설치·WORKS 전달 검증은 DEVICE_PENDING으로 남긴다.
