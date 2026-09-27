@@ -32,3 +32,9 @@ DEVICE_PENDING: 기기 연결/사용자 설치 결과를 받아 UI 배치·실�
 - 구형 데이터 이관·구형 이메일 유형·Bark OTP 정규식의 중국어 값은 Unicode 이스케이프로 유지해 기존 설정의 동작을 보존한다.
 - 외부 서비스나 라이브러리 오류가 중국어를 포함하면 전달 로그와 공통 오류 토스트는 한국어 점검 안내를 표시한다.
 - 릴리스 소스 `03dbfa2600dfe2282139e81bb9ec5a6144357162`: JVM 테스트 18개 성공, debug/release lint 오류 0, 서명 APK 생성·검사 완료. GitHub 릴리스 발행 후 실제 기기 설치·WORKS 전달 검증은 DEVICE_PENDING으로 남긴다.
+
+## 2026-09-27 ABI 업데이트 호환 수정
+
+- universal 100060은 기존 arm64 300059보다 낮아 Android가 다운그레이드로 거부했다. ABI별 versionCode 접두어를 제거하고 universal·arm64 모두 `300061`로 빌드했다.
+- 릴리스 소스 `7361b767e323fcfade64409a107d8322204f1196`: 테스트 18개 성공, debug/release lint 오류 0, APK 서명·권한·리소스 검사 완료.
+- 빌드 수집기가 두 배포 APK의 versionCode 불일치를 실패 처리한다. 다음 작업은 공개 릴리스 발행 후 실제 기기에서 기존 universal/arm64 설치본 위 업데이트를 확인하는 것이다.

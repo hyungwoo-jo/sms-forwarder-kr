@@ -58,3 +58,15 @@ DEVICE_PENDING: 연결 기기가 없어 UI 화면 배치·큰 글자·앱 검색
 
 - [universal APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-03dbfa2/SmsKR_3.5.0.260927-kr-03dbfa2_100060_universal_release.apk) — SHA-256 `e269d711c1567457330040c2db71203f368ad720b5d8743ff3113103e5e6cb44`
 - [arm64-v8a APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-03dbfa2/SmsKR_3.5.0.260927-kr-03dbfa2_300060_arm64-v8a_release.apk) — SHA-256 `58c7898a084418e399f3a88d45fcc9182afe531ef3901bcba90607ddfbc625e5`
+
+## 2026-09-27 ABI 업데이트 호환 수정 검증
+
+릴리스 소스: `7361b767e323fcfade64409a107d8322204f1196`.
+
+- universal과 arm64-v8a APK 모두 versionCode `300061`을 사용한다. 이전 universal `100060` 및 arm64 `300060`보다 높다.
+- 두 APK의 versionCode가 다르면 수집 검사가 실패하도록 했다.
+- 저장소 앱·빌드 설정의 실제 중국어 문자는 0개이며, 검사 범위에 Gradle·ProGuard·채널 설정 파일을 추가했다.
+- JVM 테스트 18개, 실패·오류 0개. debug/release lint 오류 0개.
+
+- [universal APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-7361b76/SmsKR_3.5.0.260927-kr-7361b76_300061_universal_release.apk) — SHA-256 `b20045729db67ee43154c7458c4d7ef5bc661d8735d2adfb977567405ce9685d`
+- [arm64-v8a APK](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260927-kr-7361b76/SmsKR_3.5.0.260927-kr-7361b76_300061_arm64-v8a_release.apk) — SHA-256 `cdef27a05c1c5885ced891562da7b3452721d89c063d7bd3f5815ddadc3360b0`
