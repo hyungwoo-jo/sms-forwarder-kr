@@ -16,7 +16,7 @@ import cn.ppps.forwarder.adapter.TaskPagingAdapter.MyViewHolder
 import cn.ppps.forwarder.database.entity.Task
 import cn.ppps.forwarder.databinding.AdapterTasksCardViewListItemBinding
 import cn.ppps.forwarder.entity.TaskSetting
-import com.xuexiang.xutil.data.DateUtils
+import cn.ppps.forwarder.utils.KoreanTimeFormatter
 
 @Suppress("EmptyMethod")
 class TaskPagingAdapter(private val itemClickListener: OnItemClickListener) : PagingDataAdapter<Task, MyViewHolder>(diffCallback) {
@@ -33,7 +33,7 @@ class TaskPagingAdapter(private val itemClickListener: OnItemClickListener) : Pa
             if (item.type >= 1000) {
                 holder.binding.layoutImage.visibility = View.GONE
 
-                holder.binding.tvTime.text = DateUtils.getFriendlyTimeSpanByNow(item.lastExecTime.time)
+                holder.binding.tvTime.text = KoreanTimeFormatter.format(item.lastExecTime.time)
 
                 //遍历conditions显示图标
                 holder.binding.layoutConditionsIcons.removeAllViews()

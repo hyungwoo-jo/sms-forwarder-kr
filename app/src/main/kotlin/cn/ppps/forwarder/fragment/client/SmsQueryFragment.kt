@@ -43,7 +43,7 @@ import com.xuexiang.xui.widget.actionbar.TitleBar
 import com.xuexiang.xui.widget.searchview.MaterialSearchView
 import com.xuexiang.xui.widget.searchview.MaterialSearchView.SearchViewListener
 import com.xuexiang.xutil.data.ConvertTools
-import com.xuexiang.xutil.data.DateUtils
+import cn.ppps.forwarder.utils.KoreanTimeFormatter
 import com.xuexiang.xutil.resource.ResUtils.getColor
 import com.xuexiang.xutil.resource.ResUtils.getStringArray
 import me.samlss.broccoli.Broccoli
@@ -99,7 +99,7 @@ class SmsQueryFragment : BaseFragment<FragmentClientSmsQueryBinding?>() {
                 position: Int,
             ) {
                 holder.text(R.id.tv_from, model.number)
-                holder.text(R.id.tv_time, DateUtils.getFriendlyTimeSpanByNow(model.date))
+                holder.text(R.id.tv_time, KoreanTimeFormatter.format(model.date))
                 holder.image(R.id.iv_image, model.typeImageId)
                 holder.image(R.id.iv_sim_image, model.simImageId)
                 holder.text(R.id.tv_content, model.content)

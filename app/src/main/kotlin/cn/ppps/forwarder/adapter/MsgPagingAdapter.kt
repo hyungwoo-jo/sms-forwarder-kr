@@ -16,7 +16,7 @@ import cn.ppps.forwarder.adapter.MsgPagingAdapter.MyViewHolder
 import cn.ppps.forwarder.database.entity.LogsDetail
 import cn.ppps.forwarder.database.entity.MsgAndLogs
 import cn.ppps.forwarder.databinding.AdapterLogsCardViewListItemBinding
-import com.xuexiang.xutil.data.DateUtils
+import cn.ppps.forwarder.utils.KoreanTimeFormatter
 
 @Suppress("EmptyMethod")
 class MsgPagingAdapter(private val itemClickListener: OnItemClickListener) : PagingDataAdapter<MsgAndLogs, MyViewHolder>(diffCallback) {
@@ -30,7 +30,7 @@ class MsgPagingAdapter(private val itemClickListener: OnItemClickListener) : Pag
         val item = getItem(position)
         if (item != null) {
             holder.binding.tvFrom.text = item.msg.from
-            holder.binding.tvTime.text = DateUtils.getFriendlyTimeSpanByNow(item.msg.time)
+            holder.binding.tvTime.text = KoreanTimeFormatter.format(item.msg.time.time)
             holder.binding.tvContent.text = item.msg.content
             //holder.binding.ivSenderImage.setImageResource(Sender.getImageId(item.sender.type))
             //holder.binding.ivStatusImage.setImageResource(item.msg.statusImageId)

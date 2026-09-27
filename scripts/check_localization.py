@@ -23,6 +23,14 @@ for element in strings:
         errors.append(f"Empty string: {element.attrib['name']}")
 if any((ROOT / "app/src/main/res").glob("values-zh*")):
     errors.append("Chinese locale resources remain")
+# Third-party methods can return Chinese even when all XML resources are Korean.
+for path in (ROOT / "app/src/main/kotlin").rglob("*.kt"):
+    if "DateUtils.getFriendlyTimeSpanByNow(" in path.read_text():
+        errors.append(f"Chinese relative-time formatter used: {path.relative_to(ROOT)}")
+for path in (ROOT / "app/src/main/assets").rglob("*"):
+    if path.is_file() and path.suffix in (".json", ".txt", ".html") and path.name != "LICENSE.txt":
+        if HAN.search(path.read_text()):
+            errors.append(f"Chinese display asset: {path.relative_to(ROOT)}")
 if errors:
     raise SystemExit("\n".join(errors))
 print(f"Korean-only localization check passed: {len(strings)} keys, no Chinese UI resources")

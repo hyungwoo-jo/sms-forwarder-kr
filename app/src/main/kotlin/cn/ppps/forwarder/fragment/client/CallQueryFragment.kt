@@ -43,7 +43,7 @@ import com.xuexiang.xui.utils.SnackbarUtils
 import com.xuexiang.xui.widget.actionbar.TitleBar
 import com.xuexiang.xui.widget.searchview.MaterialSearchView
 import com.xuexiang.xutil.data.ConvertTools
-import com.xuexiang.xutil.data.DateUtils
+import cn.ppps.forwarder.utils.KoreanTimeFormatter
 import com.xuexiang.xutil.resource.ResUtils.getColor
 import com.xuexiang.xutil.resource.ResUtils.getStringArray
 import com.xuexiang.xutil.system.ClipboardUtils
@@ -101,7 +101,7 @@ class CallQueryFragment : BaseFragment<FragmentClientCallQueryBinding?>() {
             ) {
                 val from = if (TextUtils.isEmpty(model.name)) model.number else model.number + " | " + model.name
                 holder.text(R.id.tv_from, from)
-                holder.text(R.id.tv_time, DateUtils.getFriendlyTimeSpanByNow(model.dateLong))
+                holder.text(R.id.tv_time, KoreanTimeFormatter.format(model.dateLong))
                 holder.image(R.id.iv_image, model.typeImageId)
                 holder.image(R.id.iv_sim_image, model.simImageId)
                 holder.text(R.id.tv_duration, getString(R.string.call_duration) + model.duration + getString(R.string.seconds))
