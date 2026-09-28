@@ -9,10 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.hjq.permissions.OnPermissionCallback
-import com.hjq.permissions.XXPermissions
-import com.hjq.permissions.permission.PermissionLists
-import com.hjq.permissions.permission.base.IPermission
 import cn.ppps.forwarder.App
 import cn.ppps.forwarder.R
 import cn.ppps.forwarder.adapter.AppListAdapter
@@ -120,24 +116,9 @@ class AppListFragment : BaseFragment<FragmentAppListBinding?>() {
 
     private fun getAppsList(refresh: Boolean): MutableList<AppInfo> {
         if (refresh || (currentType == "user" && App.UserAppList.isEmpty()) || (currentType == "system" && App.SystemAppList.isEmpty())) {
-            XXPermissions.with(this)
-                .permission(PermissionLists.getGetInstalledAppsPermission())
-                .request(object : OnPermissionCallback {
-                    override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
-                        val allGranted = deniedList.isEmpty()
-                        if (!allGranted) {
-                            val doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(requireActivity(), deniedList)
-                            if (doNotAskAgain) {
-                                XXPermissions.startPermissionActivity(XUI.getContext(), deniedList)
-                            }
-                            XToastUtils.error(R.string.tips_get_installed_apps)
-                            return
-                        }
-                        XToastUtils.info(getString(R.string.loading_app_list))
-                        val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
-                        WorkManager.getInstance(XUI.getContext()).enqueue(request)
-                    }
-                })
+            XToastUtils.info(getString(R.string.loading_app_list))
+            val request = OneTimeWorkRequestBuilder<LoadAppListWorker>().build()
+            WorkManager.getInstance(XUI.getContext()).enqueue(request)
         }
 
         return if (currentType == "system") App.SystemAppList else App.UserAppList

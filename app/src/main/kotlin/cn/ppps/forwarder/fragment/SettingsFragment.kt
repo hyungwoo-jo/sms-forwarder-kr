@@ -308,7 +308,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                     .permission(PermissionLists.getReceiveMmsPermission())
                     .permission(PermissionLists.getReceiveSmsPermission())
                     //.permission(PermissionLists.getSendSmsPermission())
-                    .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()
@@ -650,7 +649,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding?>(), View.OnClickL
                     .permission(PermissionLists.getWriteSettingsPermission())
                     .permission(PermissionLists.getReceiveSmsPermission())
                     .permission(PermissionLists.getSendSmsPermission())
-                    .permission(PermissionLists.getReadSmsPermission())
                     .request(object : OnPermissionCallback {
                         override fun onResult(grantedList: MutableList<IPermission>, deniedList: MutableList<IPermission>) {
                             val allGranted = deniedList.isEmpty()

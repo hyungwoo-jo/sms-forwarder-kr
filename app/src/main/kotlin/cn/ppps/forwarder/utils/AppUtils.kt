@@ -1,6 +1,7 @@
 package cn.ppps.forwarder.utils
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -26,7 +27,12 @@ object AppUtils {
         val packageManager = App.context.packageManager ?: return emptyList()
         val appsInfo = mutableListOf<AppInfo>()
 
-        val apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        // Only apps with a launcher entry are enumerated. Other package names
+        // can still be entered directly in a notification rule.
+        val launcher = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val apps = packageManager.queryIntentActivities(launcher, 0)
+            .map { it.activityInfo.applicationInfo }
+            .distinctBy { it.packageName }
         for (app in apps) {
             try {
                 val packageInfo = packageManager.getPackageInfo(app.packageName, 0)

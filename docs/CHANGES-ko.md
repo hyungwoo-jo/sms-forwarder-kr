@@ -57,3 +57,9 @@
 - universal과 ABI별 APK가 서로 다른 versionCode를 사용해 업데이트가 다운그레이드로 거부될 수 있던 문제를 수정했다.
 - 두 배포 APK에 하나의 단조 증가 versionCode를 사용한다. 기존 universal·arm64 설치본 위에서 어느 배포 파일로도 업데이트할 수 있다.
 - 빌드 수집 검사는 두 APK의 versionCode가 같지 않으면 실패하도록 보완했다.
+
+## 기능 유지·권한 정리 — versionCode 300063
+
+- 기존 전체판의 문자·통화·앱 알림, Telegram·Webhook 및 다른 전송 채널, 자동 작업, 암호화 백업·복원을 유지한다. 경량판 300062에서 빠졌던 기능도 다시 사용할 수 있다.
+- 문자 수신에 쓰지 않는 READ_SMS와 광범위한 QUERY_ALL_PACKAGES·GET_INSTALLED_APPS 선언을 제거한다. 앱 선택 목록은 실행 아이콘이 있는 앱을 조회하며, 목록에 없는 앱은 패키지명을 직접 입력할 수 있다.
+- RECEIVE_SMS와 알림 접근은 문자·앱 알림 전달에 필요하므로 유지한다. 토스 또는 Play Protect의 경고 해제는 실제 기기에서 확인해야 한다.
