@@ -17,3 +17,5 @@ DEVICE_PENDING: 실제 UI·문자/WORKS/통화/연락처·예약·파일 백업/
 2026-09-28: WORKS → HTTPS Webhook 전용 `:lite` APK(versionCode 300062)를 추가했다. 기존 앱 ID와 서명을 유지하면서 APK 권한을 INTERNET/ACCESS_NETWORK_STATE로 줄였다. 기존 Webhook/앱 규칙은 하나로 식별될 때만 비활성 상태로 이관한다. Webhook 성공 후 WORKS 원본 알림을 지우는 옵션은 기본값을 껐다. 빌드·릴리스 lint·APK 권한/서명/DEX 검사 완료. 실제 설치 업데이트, WORKS 알림 형식, 서버 수신, 워치, 토스 실행은 기기 검증 대기. 안내: [README-WORKS-LITE-ko.md](README-WORKS-LITE-ko.md).
 
 2026-09-29: 사용자가 경량판의 기능 축소가 지나치다고 지적했다. 후속 업데이트 300063은 전체판의 문자·통화·앱 알림, Telegram·Webhook 및 다른 전송 채널, 자동 작업과 암호화 백업을 복원한다. 사용하지 않는 READ_SMS와 광범위한 앱 조회 선언만 제거한다. 300062 경량판은 더 이상 권장하지 않는다. 토스의 실제 판정은 기기 검증 대기.
+
+2026-09-29: 사용자가 300063의 Play Protect 차단을 보고했다. Light 300064에는 앱 알림 → Telegram·Webhook 직접 전송을 넣고 원본 알림 삭제를 제거했다. 표준판은 전체 기능을 유지한 300065로 올려 Light에서 복귀 가능하게 한다. Google의 공식 안내에 따르면 사이드로드 앱의 Notification Listener 또는 RECEIVE_SMS 자체가 차단 사유일 수 있으므로 두 APK 모두 차단 해제를 보장하지 않는다. 정확한 경고 문구와 설치 경로를 기다리는 중이다.

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 final class WebhookClient {
-    static boolean send(Context context, String title, String body) {
+    static boolean send(Context context, String appPackage, String title, String body) {
         SharedPreferences prefs = LiteConfig.prefs(context);
         if (!LiteConfig.ready(context)) return false;
         String url = prefs.getString("url", "");
@@ -40,7 +40,7 @@ final class WebhookClient {
             String contentType = declaredType.isEmpty()
                 ? (json ? "application/json; charset=utf-8" : "application/x-www-form-urlencoded; charset=utf-8")
                 : declaredType;
-            String from = prefs.getString("package", "");
+        String from = appPackage;
             String payload;
             if (template.isEmpty()) {
                 payload = plain ? message : "from=" + encode(from) + "&content=" + encode(message);

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import org.json.JSONObject;
 
@@ -56,6 +55,35 @@ final class LiteConfig {
         }
     }
 
+    static void importLegacyTelegram(Context context) {
+        SharedPreferences prefs = prefs(context);
+        if (prefs.getBoolean("legacy_telegram_checked", false)) return;
+        File file = context.getDatabasePath(LEGACY_DATABASE);
+        if (!file.exists()) return;
+        try (SQLiteDatabase db = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+             Cursor rows = db.rawQuery("SELECT id, json_setting FROM Sender WHERE type = 7 AND status = 1", null)) {
+            if (rows.getCount() == 1 && rows.moveToFirst()) {
+                long senderId = rows.getLong(0);
+                JSONObject setting = new JSONObject(rows.getString(1));
+                if ("DIRECT".equals(setting.optString("proxyType", "DIRECT"))) {
+                    SharedPreferences.Editor edit = prefs.edit();
+                    edit.putString("telegram_token", setting.optString("apiToken", ""));
+                    edit.putString("telegram_chat", setting.optString("chatId", ""));
+                    edit.putString("telegram_thread", setting.optString("messageThreadId", ""));
+                    String oldPackage = findSinglePackage(db, senderId);
+                    if (prefs.getString("package", "").isEmpty() && !oldPackage.isEmpty()) {
+                        edit.putString("package", oldPackage);
+                    }
+                    edit.apply();
+                }
+            }
+        } catch (Exception ignored) {
+            // Keep old data untouched; the user can enter Telegram settings manually.
+        } finally {
+            prefs.edit().putBoolean("legacy_telegram_checked", true).apply();
+        }
+    }
+
     private static String findSinglePackage(SQLiteDatabase db, long senderId) {
         String selected = "";
         try (Cursor rules = db.rawQuery(
@@ -81,8 +109,23 @@ final class LiteConfig {
     static boolean ready(Context context) {
         SharedPreferences prefs = prefs(context);
         return prefs.getBoolean("enabled", false)
-            && !TextUtils.isEmpty(prefs.getString("package", ""))
-            && prefs.getString("url", "").startsWith("https://");
+            && validPackages(prefs.getString("package", ""))
+            && (prefs.getBoolean("webhook_enabled", false) || prefs.getBoolean("telegram_enabled", false));
+    }
+
+    static boolean validPackages(String selected) {
+        if (selected.trim().isEmpty()) return false;
+        for (String item : selected.split(",", -1)) {
+            if (!item.trim().matches("[A-Za-z0-9_]+(\\.[A-Za-z0-9_]+)+")) return false;
+        }
+        return true;
+    }
+
+    static boolean matchesPackage(String selected, String candidate) {
+        for (String item : selected.split(",")) {
+            if (item.trim().equals(candidate)) return true;
+        }
+        return false;
     }
 
     private LiteConfig() {}

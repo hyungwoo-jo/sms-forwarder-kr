@@ -16,8 +16,8 @@ android {
         applicationId 'com.hwserve.smsforwarder'
         minSdk 23
         targetSdk 33
-        versionCode 300062
-        versionName '3.5.0.260928-works-lite'
+        versionCode 300064
+        versionName '3.5.0.260929-notify-lite'
     }
 
     signingConfigs {
@@ -43,7 +43,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
-            output.outputFileName = "SmsKR_WORKS_Lite_${variant.versionCode}_${variant.name}.apk"
+            output.outputFileName = "SmsKR_Notify_Lite_${variant.versionCode}_${variant.name}.apk"
         }
     }
 }

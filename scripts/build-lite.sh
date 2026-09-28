@@ -9,9 +9,9 @@ if [[ -f scripts/env.local.sh ]]; then source scripts/env.local.sh; fi
 bash ./gradlew :lite:assembleRelease :lite:lintRelease --no-daemon --console=plain -PisNeedClean=false -PisNeedPackage=false
 python3 scripts/check-lite-apk.py
 mkdir -p dist/lite
-cp build/lite/outputs/apk/release/SmsKR_WORKS_Lite_300062_release.apk dist/lite/
+cp build/lite/outputs/apk/release/SmsKR_Notify_Lite_300064_release.apk dist/lite/
 cp docs/README-WORKS-LITE-ko.md dist/lite/
 (
     cd dist/lite
-    sha256sum SmsKR_WORKS_Lite_300062_release.apk > SHA256SUMS
+    sha256sum SmsKR_Notify_Lite_300064_release.apk > SHA256SUMS
 )
