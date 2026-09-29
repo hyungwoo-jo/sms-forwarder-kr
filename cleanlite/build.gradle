@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+def signingProps = new Properties()
+def signingFile = rootProject.file('../signing.properties')
+if (signingFile.exists()) {
+    signingFile.withInputStream { signingProps.load(it) }
+}
+
+android {
+    namespace 'com.hwserve.notifyrelay'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.hwserve.notifyrelay'
+        minSdk 23
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            if (signingFile.exists()) {
+                def keystorePath = new File(signingProps.getProperty('storeFile'))
+                storeFile keystorePath.isAbsolute() ? keystorePath : new File(signingFile.parentFile, signingProps.getProperty('storeFile'))
+                storePassword signingProps.getProperty('storePassword')
+                keyAlias signingProps.getProperty('keyAlias')
+                keyPassword signingProps.getProperty('keyPassword')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (!signingFile.exists()) {
+                throw new GradleException('Existing release signing is required.')
+            }
+            signingConfig signingConfigs.release
+        }
+    }
+
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            output.outputFileName = "NotifyRelay_${variant.versionCode}_${variant.name}.apk"
+        }
+    }
+}

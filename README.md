@@ -7,24 +7,25 @@
 
 ## APK 다운로드
 
-- [arm64-v8a APK — 일반적인 최신 Android 휴대폰](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260926-kr-019d53a/SmsKR_3.5.0.260926-kr-019d53a_300058_arm64-v8a_release.apk)
-- [범용 APK — CPU 종류를 모를 때](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/download/v3.5.0.260926-kr-019d53a/SmsKR_3.5.0.260926-kr-019d53a_100058_universal_release.apk)
-- [릴리스·해시·설치 안내](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260926-kr-019d53a)
+- [표준판: 문자·앱 알림·통화 등](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260929-standard-50c4cf4)
+- [Light: 기존 앱 ID를 유지하는 알림 전달판](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260929-notify-lite-play-300066)
+- [알림 릴레이: 독립 앱 ID를 쓰는 비교판](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v1.0.0-notifyrelay-identity-test)
 
-휴대폰에 설치합니다. 기존 개인판을 갱신할 때는 같은 ABI APK를 사용하십시오.
-실제 휴대폰·워치 확인은 아직 남아 있으며 워치를 사용하지 않으면 워치 항목은 해당되지 않습니다.
+표준판과 Light는 같은 앱 ID를 사용하므로 동시에 설치할 수 없습니다. 알림 릴레이는 `com.hwserve.notifyrelay`라는 별도 앱이며 기존 설정을 가져오지 않습니다. **토스 호환성은 기기에서 아직 확인되지 않았습니다.** 비교할 때 기존 표준판/Light가 남아 있으면 어느 앱에 대한 경고인지 구분할 수 없습니다.
 
 ## 빌드
 
-JDK 11, Android SDK 33, Build Tools 33.0.1을 사용합니다.
+표준판은 JDK 11·Android SDK 33을, 알림 릴레이는 JDK 21·Android SDK 36을 사용합니다.
 
 1. [빌드 안내](docs/BUILD.md)를 따라 로컬 환경을 준비합니다.
 2. `python3 scripts/init-signing.py`로 개인 서명을 준비합니다. 기존 키가 있으면 재사용합니다.
 3. `bash scripts/build-local.sh`를 실행합니다.
 4. 검증된 arm64-v8a 및 범용 APK는 `dist/`에 생성됩니다.
 
+알림 릴레이 APK는 `bash scripts/build-cleanlite.sh`로 빌드합니다. 서명키는 기존 개인 키를 사용하지만 앱 ID가 달라 기존 설치본을 업데이트하지 않습니다.
+
 키와 서명 비밀번호는 Git에 저장하지 않습니다. 자동 외부 배포 워크플로는 없습니다.
-기존 개인판과 같은 키·앱 ID를 사용합니다. 같은 ABI의 APK로 업데이트하십시오.
+표준판과 Light는 기존 개인판의 키·앱 ID를 사용합니다. 알림 릴레이는 같은 키와 별도 앱 ID를 사용합니다.
 
 ## 사용
 

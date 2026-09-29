@@ -8,3 +8,5 @@ pluginManagement {
 rootProject.name = 'lite-play'
 include ':lite'
 project(':lite').projectDir = file('../lite')
+include ':cleanlite'
+project(':cleanlite').projectDir = file('../cleanlite')

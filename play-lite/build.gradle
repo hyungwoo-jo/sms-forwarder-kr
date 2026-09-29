@@ -10,5 +10,5 @@ allprojects {
 }
 
 subprojects {
-    layout.buildDirectory = rootProject.layout.projectDirectory.dir('../build/lite-play')
+    layout.buildDirectory = rootProject.layout.projectDirectory.dir(project.name == 'lite' ? '../build/lite-play' : '../build/cleanlite')
 }

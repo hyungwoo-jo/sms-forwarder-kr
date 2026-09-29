@@ -22,4 +22,4 @@ Webhook 기본 POST 본문은 `from=<앱 패키지>&content=<제목과 본문>`�
 - 이전 Webhook의 HMAC secret, 프록시, PUT/PATCH와 Telegram 프록시는 지원하지 않습니다. 해당 설정은 자동으로 활성화되지 않습니다.
 - 빌드·lint·권한·서명 검사는 수행하지만 실제 휴대폰 설치, WORKS 전달, Telegram·Webhook 수신, 토스 판정은 기기 검증이 필요합니다.
 
-Play 내부 테스트용 AAB 준비와 설치 순서는 [안내문](PLAY-INTERNAL-TEST-LITE-ko.md)에 있습니다. [개인정보 처리방침](PRIVACY-LITE-ko.md)도 함께 확인하세요.
+[개인정보 처리방침](PRIVACY-LITE-ko.md)도 함께 확인하세요.
