@@ -20,6 +20,8 @@
 /app/seeds.txt
 /app/unused.txt
 /build
+/play-lite/build
+/play-lite/.gradle
 /captures
 /keystore
 /local.properties

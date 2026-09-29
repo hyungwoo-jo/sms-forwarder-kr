@@ -8,8 +8,8 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-APK = ROOT / "build/lite/outputs/apk/release/SmsKR_Notify_Lite_300064_release.apk"
-TOOLS = Path(os.environ["ANDROID_HOME"]) / "build-tools/33.0.1"
+APK = ROOT / "build/lite-play/outputs/apk/release/SmsKR_Notify_Lite_300066_release.apk"
+TOOLS = Path(os.environ["ANDROID_HOME"]) / "build-tools/36.0.0"
 EXPECTED_CERT = "e476e7b37e0119f0b01edd874c3cf3bc88547ec7d322988cfdf5d9813b90e710"
 
 def run(*command):
@@ -17,7 +17,8 @@ def run(*command):
 
 badging = run(str(TOOLS / "aapt"), "dump", "badging", str(APK))
 certs = run(str(TOOLS / "apksigner"), "verify", "--verbose", "--print-certs", str(APK))
-assert "name='com.hwserve.smsforwarder' versionCode='300064'" in badging
+assert "name='com.hwserve.smsforwarder' versionCode='300066'" in badging
+assert "targetSdkVersion:'36'" in badging
 assert "certificate SHA-256 digest: " + EXPECTED_CERT in certs
 assert "Verified using v2 scheme (APK Signature Scheme v2): true" in certs
 permissions = set(re.findall(r"uses-permission: name='([^']+)'", badging))

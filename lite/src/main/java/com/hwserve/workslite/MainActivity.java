@@ -1,13 +1,17 @@
 package com.hwserve.workslite;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
 import android.provider.Settings;
 import android.text.InputType;
 import android.view.View;
+import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -45,6 +49,12 @@ public final class MainActivity extends Activity {
         box.setOrientation(LinearLayout.VERTICAL);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
         box.setPadding(pad, pad, pad, pad);
+        box.setOnApplyWindowInsetsListener((view, insets) -> {
+            int top = Build.VERSION.SDK_INT >= 30 ? insets.getInsets(WindowInsets.Type.systemBars()).top : insets.getSystemWindowInsetTop();
+            int bottom = Build.VERSION.SDK_INT >= 30 ? insets.getInsets(WindowInsets.Type.systemBars()).bottom : insets.getSystemWindowInsetBottom();
+            view.setPadding(pad, pad + top, pad, pad + bottom);
+            return insets;
+        });
         scroll.addView(box);
         setContentView(scroll);
 
@@ -88,7 +98,9 @@ public final class MainActivity extends Activity {
         enabled.setChecked(prefs.getBoolean("enabled", false));
         box.addView(enabled);
         button(box, "저장", v -> save());
-        button(box, "알림 접근 권한 열기", v -> startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)));
+        button(box, "알림 접근 권한 열기", v -> showNotificationAccessDisclosure());
+        button(box, "개인정보 처리방침", v -> startActivity(new Intent(Intent.ACTION_VIEW,
+            Uri.parse("https://github.com/hyungwoo-jo/sms-forwarder-kr/blob/main/docs/PRIVACY-LITE-ko.md"))));
         status = new TextView(this);
         box.addView(status);
         updateStatus();
@@ -111,6 +123,15 @@ public final class MainActivity extends Activity {
         button.setOnClickListener(listener);
         box.addView(button);
         return button;
+    }
+
+    private void showNotificationAccessDisclosure() {
+        new AlertDialog.Builder(this)
+            .setTitle("알림 접근 안내")
+            .setMessage("이 권한을 허용하면 앱은 기기에 표시되는 모든 앱의 알림을 읽을 수 있습니다. 앱은 저장한 패키지 목록과 일치하는 알림의 제목과 본문만 선택한 Telegram 채팅 및 HTTPS Webhook으로 전송합니다. 알림 내용은 기기 밖으로 전달되며, 원본 알림은 삭제하지 않습니다. 앱에서 전달 사용을 끄거나 Android 설정에서 알림 접근을 해제할 수 있습니다.")
+            .setNegativeButton("취소", null)
+            .setPositiveButton("계속", (dialog, which) -> startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)))
+            .show();
     }
 
     private void save() {

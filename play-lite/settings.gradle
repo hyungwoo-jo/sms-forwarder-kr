@@ -1,0 +1,10 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'lite-play'
+include ':lite'
+project(':lite').projectDir = file('../lite')

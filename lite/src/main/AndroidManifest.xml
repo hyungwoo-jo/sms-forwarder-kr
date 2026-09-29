@@ -5,6 +5,8 @@
         android:label="알림 전달 Light"
         android:icon="@drawable/ic_launcher_lite"
         android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
