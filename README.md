@@ -11,7 +11,7 @@
 - [Light: 기존 앱 ID를 유지하는 알림 전달판](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v3.5.0.260929-notify-lite-play-300066)
 - [알림 릴레이: 독립 앱 ID를 쓰는 비교판](https://github.com/hyungwoo-jo/sms-forwarder-kr/releases/tag/v1.0.0-notifyrelay-identity-test)
 
-표준판과 Light는 같은 앱 ID를 사용하므로 동시에 설치할 수 없습니다. 알림 릴레이는 `com.hwserve.notifyrelay`라는 별도 앱이며 기존 설정을 가져오지 않습니다. **토스 호환성은 기기에서 아직 확인되지 않았습니다.** 비교할 때 기존 표준판/Light가 남아 있으면 어느 앱에 대한 경고인지 구분할 수 없습니다.
+표준판과 Light는 같은 앱 ID를 사용하므로 동시에 설치할 수 없습니다. 알림 릴레이는 `com.hwserve.notifyrelay`라는 별도 앱이며 기존 설정을 가져오지 않습니다. 사용자는 알림 릴레이 설치 후 토스가 실행된다고 확인했습니다. WORKS 알림의 실제 전달과 장기 동작은 별도 확인이 필요합니다.
 
 ## 빌드
 
